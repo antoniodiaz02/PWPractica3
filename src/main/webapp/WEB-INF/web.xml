@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID" version="3.0" metadata-complete="true">
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0" metadata-complete="true">
 
-<!-- Configuración de Servlets -->
+    <!-- Configuración para el servlet LoginController -->
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <jsp-file>/MVC/Controllers/Common/LoginController.jsp</jsp-file>
+        <servlet-class>es.uco.pw.servlets.common.LoginController</servlet-class> <!-- Clase que maneja la lógica de login -->
     </servlet>
     
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
-        <url-pattern>/MVC/Controllers/Common/LoginController.jsp</url-pattern>
+        <url-pattern>/login</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>RegisterController</servlet-name>
-        <jsp-file>/MVC/Controllers/Common/RegisterController.jsp</jsp-file>
+    <!-- Configuración para el servlet RegisterController -->
+	<servlet>
+	    <servlet-name>RegisterController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.common.RegisterController</servlet-class> <!-- Clase que maneja la lógica de registro -->
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>RegisterController</servlet-name>
+	    <url-pattern>/register</url-pattern> <!-- URL correcta para acceder al servlet -->
+	</servlet-mapping>
+	
+	    <servlet>
+        <servlet-name>LogoutController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.common.LogoutController</servlet-class> <!-- Clase que maneja la lógica de login -->
     </servlet>
     
     <servlet-mapping>
-        <servlet-name>RegisterController</servlet-name>
-        <url-pattern>/MVC/Controllers/Common/RegisterController.jsp</url-pattern>
+        <servlet-name>LogoutController</servlet-name>
+        <url-pattern>/logout</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
     </servlet-mapping>
 
-    <!-- Configuración de seguridad, filtros, etc. -->
-    
+
+    <!-- Puedes agregar más servlets aquí según sea necesario -->
+
 </web-app>
