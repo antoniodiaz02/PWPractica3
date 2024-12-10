@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0" metadata-complete="true">
+
+    <!-- Mapeo del Servlet LoginController -->
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.LoginController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/LoginController</url-pattern>
+    </servlet-mapping>
+
+    <!-- Mapeo del Servlet RegisterController -->
+    <servlet>
+        <servlet-name>RegisterController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.RegisterController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>RegisterController</servlet-name>
+        <url-pattern>/RegisterController</url-pattern>
+    </servlet-mapping>
+    
+    
+        <!-- Servlet LogoutController -->
+    <servlet>
+        <servlet-name>LogoutController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.LogoutController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutController</servlet-name>
+        <url-pattern>/LogoutController</url-pattern>
+    </servlet-mapping>
+
+</web-app>
