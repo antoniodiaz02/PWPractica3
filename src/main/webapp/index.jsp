@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Pistas de Baloncesto</title>
-    <!-- Corregir ruta al archivo CSS -->
+    <!-- Ruta al archivo CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/index.css">
     <style>
         body {
@@ -28,13 +28,13 @@
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
                             <div class="mb-md-5 mt-md-4 pb-5">
-                                <!-- Corregir la ruta de la imagen -->
+                                <!-- Ruta de la imagen -->
                                 <img src="<%= request.getContextPath() %>/images/basketball_logo.jpg" alt="Basketball Logo" class="logo">
                                 <h2 class="fw-bold mb-2 text-uppercase">Gestión de Pistas</h2>
                                 <p class="text-white-50 mb-5">Accede a tu cuenta para gestionar tus reservas</p>
 
                                 <!-- Formulario de login -->
-                                <form method="POST" action="<%= request.getContextPath() %>/MVC/Controllers/Common/LoginController.jsp">
+                                <form method="POST" action="<%= request.getContextPath() %>/login">
                                     <div class="form-outline form-white mb-4">
                                         <input type="email" name="typeEmailX" class="form-control form-control-lg" required/>
                                         <label class="form-label" for="typeEmailX">Correo Electrónico</label>
@@ -57,7 +57,9 @@
 
                             <div>
                                 <!-- Enlace a la página de registro -->
-                                <p class="mb-0">¿Nuevo en el sistema? <a href="<%= request.getContextPath() %>/MVC/Controllers/Common/RegisterController.jsp" class="text-white-50 fw-bold">Regístrate aquí</a></p>
+                                <p class="mb-0">¿Nuevo en el sistema? 
+                                    <a href="<%= request.getContextPath() %>/register" class="text-white-50 fw-bold">Regístrate aquí</a>
+                                </p>
                             </div>
 
                         </div>
