@@ -4,37 +4,27 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0" metadata-complete="true">
 
-    <!-- Mapeo del Servlet LoginController -->
+<!-- Configuración de Servlets -->
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>es.uco.pw.servlets.LoginController</servlet-class>
+        <jsp-file>/MVC/Controllers/Common/LoginController.jsp</jsp-file>
     </servlet>
     
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
-        <url-pattern>/LoginController</url-pattern>
+        <url-pattern>/MVC/Controllers/Common/LoginController.jsp</url-pattern>
     </servlet-mapping>
 
-    <!-- Mapeo del Servlet RegisterController -->
     <servlet>
         <servlet-name>RegisterController</servlet-name>
-        <servlet-class>es.uco.pw.servlets.RegisterController</servlet-class>
+        <jsp-file>/MVC/Controllers/Common/RegisterController.jsp</jsp-file>
     </servlet>
     
     <servlet-mapping>
         <servlet-name>RegisterController</servlet-name>
-        <url-pattern>/RegisterController</url-pattern>
-    </servlet-mapping>
-    
-    
-        <!-- Servlet LogoutController -->
-    <servlet>
-        <servlet-name>LogoutController</servlet-name>
-        <servlet-class>es.uco.pw.servlets.LogoutController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LogoutController</servlet-name>
-        <url-pattern>/LogoutController</url-pattern>
+        <url-pattern>/MVC/Controllers/Common/RegisterController.jsp</url-pattern>
     </servlet-mapping>
 
+    <!-- Configuración de seguridad, filtros, etc. -->
+    
 </web-app>
