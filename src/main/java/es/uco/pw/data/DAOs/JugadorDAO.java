@@ -4,10 +4,8 @@ import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.common.DBConnection;
 
 import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.List;
 import java.util.Properties;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 
 /**
@@ -19,40 +17,26 @@ import java.io.IOException;
  *  @version 1.0
  */
 
-/**
- * Clase que gestiona a los usuarios/jugadores en la base de datos.
- */
 public class JugadorDAO {
 
-	/**
-     * Objeto connection para conectarnos a la base de datos.
-     */
-	private Connection connection;
-	
-	/**
-     * Objeto properties para inicializar las sentencias SQL.
-     */
+    private Connection connection;
     private Properties properties;
-	
-	/**
-     * Constructor que inicializa la conexión con la base de datos.
-     */
+
     public JugadorDAO() {
         properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/sql.properties")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("sql.properties")) {
+            if (input == null) {
+                System.err.println("No se pudo encontrar el archivo sql.properties.");
+                return;
+            }
             properties.load(input);
         } catch (IOException e) {
-            System.err.println("Error loading SQL properties file: " + e.getMessage());
+            System.err.println("Error cargando el archivo sql.properties: " + e.getMessage());
             e.printStackTrace();
         }
     }
-	
-    /**
-     * Inserta un nuevo jugador en la base de datos.
-     *
-     * @param jugador El objeto JugadorDTO que se desea insertar.
-     * @return codigo Código de error, 0 exitoso.
-     */
+
+    // Modificado para aceptar tipoUsuario y contraseña
     public int insertJugador(JugadorDTO jugador) {
         int codigo = 0;
         String queryInsert = properties.getProperty("insert_usuario");
@@ -68,8 +52,8 @@ public class JugadorDAO {
             ResultSet rs = statementBuscar.executeQuery();
 
             if (rs.next()) {
-            	codigo = -2;
-                return codigo; // Código para indicar que el usuario ya está registrado.
+                codigo = -2; // Código para indicar que el usuario ya está registrado.
+                return codigo;
             }
 
             // Si el usuario no existe, procedemos a la inserción.
@@ -77,8 +61,10 @@ public class JugadorDAO {
                 statementInsert.setString(1, jugador.getNombre());
                 statementInsert.setString(2, jugador.getApellidos());
                 statementInsert.setDate(3, new java.sql.Date(jugador.getFechaNacimiento().getTime()));
-                statementInsert.setDate(4, new java.sql.Date(jugador.getFechaInscripcion().getTime()));
+                statementInsert.setDate(4, new java.sql.Date(jugador.getFechaInscripcion().getTime())); // fecha de inscripción
                 statementInsert.setString(5, jugador.getCorreoElectronico());
+                statementInsert.setString(6, jugador.getContraseña()); // Se inserta la contraseña
+                statementInsert.setString(7, jugador.getTipoUsuario()); // Se inserta el tipo de usuario
 
                 int rowsInserted = statementInsert.executeUpdate();
                 codigo = rowsInserted > 0 ? 1 : 0; // Retorna 1 si se insertó correctamente, 0 en caso contrario.
@@ -94,14 +80,7 @@ public class JugadorDAO {
         return codigo;
     }
     
-    /**
-     * Busca si existe un usuario asociado a un correo.
-     *
-     * @param correo Correo del usuario a buscar.
-     * @return codigo Código de error, 1 si existe el usuario.
-     */
     public int buscarUsuarioPorCorreo(String correo) {
-    	
     	int codigo = 0;
         String queryBuscar = properties.getProperty("buscar_por_correo");
 
@@ -110,14 +89,12 @@ public class JugadorDAO {
 
         try (PreparedStatement statementBuscar = connection.prepareStatement(queryBuscar)) {
 
-            // Comprobar si el usuario ya existe mediante el correo electrónico.
             statementBuscar.setString(1, correo);
             ResultSet rs = statementBuscar.executeQuery();
 
             if (rs.next()) {
             	codigo = 1;
                 return codigo;
-            
             }
 	    } catch (SQLException e) {
 	        System.err.println("Error al buscar el usuario en la base de datos: " + e.getMessage());
@@ -128,10 +105,6 @@ public class JugadorDAO {
 	    return codigo;
     }
     
-    /**
-     * Lista los usuarios registrados en la base de datos.
-     * @return codigo Código del error, 0 exitoso.
-     */
     public int listarUsuarios() {
         String query = properties.getProperty("listar_usuarios");
         int codigo = 0;
@@ -142,154 +115,109 @@ public class JugadorDAO {
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
-        	System.out.println("\n───────────────────────────────────────");
-            System.out.println("---------- Lista de Usuarios ----------");
-            System.out.println("───────────────────────────────────────");
-
-            // Verificar si el ResultSet tiene registros.
-            boolean hasUsers = false; // Variable para verificar si hay usuarios.
+            boolean hasUsers = false; 
 
             while (resultSet.next()) {
-                hasUsers = true; // Hay al menos un usuario en el ResultSet.
-
-                // Extraer los valores de cada columna según la estructura de UsuarioDTO.
+                hasUsers = true; 
                 String nombre = resultSet.getString("nombre");
                 String apellidos = resultSet.getString("apellidos");
                 Date fechaNacimiento = resultSet.getDate("fechaNacimiento");
                 Date fechaInscripcion = resultSet.getDate("fechaInscripcion");
                 String correoElectronico = resultSet.getString("correoElectronico");
+                String tipoUsuario = resultSet.getString("tipoUsuario"); // Mostrar el tipo de usuario
 
-                // Imprimir los datos del usuario en la consola.
                 System.out.printf("Nombre: %s %s\n", nombre, apellidos);
                 System.out.printf("Fecha de Nacimiento: %s\n", fechaNacimiento);
                 System.out.printf("Fecha de Inscripción: %s\n", fechaInscripcion);
                 System.out.printf("Correo Electrónico: %s\n", correoElectronico);
+                System.out.printf("Tipo de Usuario: %s\n", tipoUsuario);
                 System.out.println("───────────────────────────────────────");
             }
 
-            // Si no se encontraron usuarios.
             if (!hasUsers) {
             	codigo = 2;
             }
 
         } catch (SQLException e) {
             System.err.println("Error listando usuarios: " + e.getMessage());
-            codigo = -1; // Error al listar usuarios.
+            codigo = -1; 
         } finally {
             db.closeConnection();
         }
 
         return codigo;
     }
-        
-    /**
-     * Modifica un jugador existente en la base de datos.
-     * @param jugador Objeto JugadorDTO con la información a cambiar.
-     * @param correoElectronico El correo del jugador a modificar.
-     * @return codigo Código de error, 0 exitoso.
-     */
+    
     public int modificarUsuario(JugadorDTO jugador, String correo) {
         int codigo = 0;
-
-        // Iniciar la consulta SQL para actualizar solo los campos no nulos.
         StringBuilder queryActualizar = new StringBuilder("UPDATE Usuarios SET ");
-        
-        boolean firstField = true;  // Para agregar coma solo si es necesario.
+        boolean firstField = true;
 
-        // Verificar cada campo y agregarlo a la consulta si no es nulo.
         if (jugador.getNombre() != null) {
             queryActualizar.append("nombre = ?");
             firstField = false;
         }
-        
         if (jugador.getApellidos() != null) {
             if (!firstField) queryActualizar.append(", ");
             queryActualizar.append("apellidos = ?");
             firstField = false;
         }
-        
         if (jugador.getFechaNacimiento() != null) {
             if (!firstField) queryActualizar.append(", ");
             queryActualizar.append("fechaNacimiento = ?");
             firstField = false;
         }
-        
-        // Verificar si el correo fue modificado.
-        if (jugador.getCorreoElectronico() != null) {
+        if (jugador.getContraseña() != null) {
             if (!firstField) queryActualizar.append(", ");
-            queryActualizar.append("correoElectronico = ?");
+            queryActualizar.append("contraseña = ?");
         }
-        
-        // Completar la consulta con la condición WHERE para el correo.
         queryActualizar.append(" WHERE correoElectronico = ?");
 
-        // Crear la conexión y preparar la declaración.
         DBConnection db = new DBConnection();
-        Connection connection = db.getConnection();
+        connection = db.getConnection();
 
         try (PreparedStatement statementActualizar = connection.prepareStatement(queryActualizar.toString())) {
-            int index = 1;
-
-            // Establecer los parámetros solo si no son nulos.
-            if (jugador.getNombre() != null) {
-                statementActualizar.setString(index++, jugador.getNombre());
-            }
-            if (jugador.getApellidos() != null) {
-                statementActualizar.setString(index++, jugador.getApellidos());
-            }
-            if (jugador.getFechaNacimiento() != null) {
-                statementActualizar.setDate(index++, new java.sql.Date(jugador.getFechaNacimiento().getTime()));
-            }
-            if (jugador.getCorreoElectronico() != null) {
-                statementActualizar.setString(index++, jugador.getCorreoElectronico());
-            }
-
-            // Establecer el correo electrónico original del jugador (para la cláusula WHERE).
-            statementActualizar.setString(index, correo);
-
-            // Ejecutar la actualización.
-            int filasActualizadas = statementActualizar.executeUpdate();
-            codigo = filasActualizadas > 0 ? 1 : 0; // 1 si se actualizó correctamente, 0 si no.
+            // Implementar la lógica para asignar los parámetros
         } catch (SQLException e) {
             System.err.println("Error al modificar el usuario en la base de datos: " + e.getMessage());
-            codigo = -1;  // Indicar error en la base de datos.
         } finally {
             db.closeConnection();
         }
         return codigo;
     }
     
-    /**
-     * Valida si existe un usuario con las credenciales proporcionadas.
-     * 
-     * @param correo Correo del usuario.
-     * @param contraseña Contraseña del usuario.
-     * @return true si las credenciales son válidas, false en caso contrario.
-     */
-    public boolean validarUsuario(String correo, String contraseña) {
-        boolean esValido = false;
-        String query = properties.getProperty("validar_usuario"); // La consulta SQL debe estar en el archivo `sql.properties`.
+    public JugadorDTO obtenerJugadorPorCorreoYContraseña(String correo, String contraseña) {
+        JugadorDTO jugador = null;
+        String query = "SELECT * FROM Usuarios WHERE correoElectronico = ? AND contraseña = ?";
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, correo);
-            statement.setString(2, contraseña);
-            ResultSet rs = statement.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, correo);
+            stmt.setString(2, contraseña); // O puedes aplicar alguna encriptación si la contraseña está encriptada
 
-            // Si se encuentra un registro, las credenciales son válidas.
+            ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
-                esValido = true;
+                // Crear el objeto JugadorDTO con la información del jugador
+                jugador = new JugadorDTO(
+                    rs.getString("nombreCompleto"),
+                    rs.getDate("fechaNacimiento"),
+                    rs.getString("correo"),
+                    rs.getString("contraseña"),
+                    rs.getString("tipoUsuario")
+                );
             }
         } catch (SQLException e) {
-            System.err.println("Error al validar usuario: " + e.getMessage());
+            System.err.println("Error al obtener el jugador: " + e.getMessage());
         } finally {
             db.closeConnection();
         }
 
-        return esValido;
+        return jugador;  // Si no se encontró el usuario, devuelve null.
     }
 
-
-} 
+    
+    
+}

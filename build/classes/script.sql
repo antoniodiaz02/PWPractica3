@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS Usuarios (
   fechaNacimiento DATE NOT NULL,
   fechaInscripcion DATE NOT NULL,
   correoElectronico VARCHAR(100) NOT NULL UNIQUE,
-  tipoUsuario ENUM('cliente', 'administrador') NOT NULL DEFAULT 'cliente', -- Nuevo campo para el tipo de usuario
-  contraseña VARCHAR(100) NOT NULL, -- Nuevo campo para la contraseña
+  tipoUsuario VARCHAR(50) NOT NULL DEFAULT 'Cliente', -- Cambiado a VARCHAR(50) en lugar de ENUM
+  contraseña VARCHAR(100) NOT NULL,
   PRIMARY KEY (idUsuario)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 
 -- Tabla: Pistas
 CREATE TABLE IF NOT EXISTS Pistas (
