@@ -8,15 +8,18 @@
 </head>
 <body>
     <h1>Registro de Usuario</h1>
-    <form action="/MVC/Controllers/common/RegisterController" method="POST">
-        <label for="username">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" required><br><br>
+	<form action="/gestionbaloncestopistas/register" method="POST">
+        <label for="nombreCompleto">Nombre Completo:</label>
+        <input type="text" id="nombreCompleto" name="nombreCompleto" required><br><br>
 
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required><br><br>
+        <label for="correo">Correo Electrónico:</label>
+        <input type="email" id="correo" name="correo" required><br><br>
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" name="contraseña" required><br><br>
 
         <label for="userType">Tipo de usuario:</label>
-        <select id="userType" name="userType">
+        <select id="userType" name="tipoUsuario">
             <option value="cliente">Cliente</option>
             <option value="administrador">Administrador</option>
         </select><br><br>
