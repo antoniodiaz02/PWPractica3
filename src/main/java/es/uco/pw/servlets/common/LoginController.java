@@ -2,6 +2,7 @@ package es.uco.pw.servlets.common;
 
 import es.uco.pw.data.DAOs.JugadorDAO;
 import es.uco.pw.business.DTOs.JugadorDTO;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -9,35 +10,46 @@ import java.io.IOException;
 public class LoginController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String correo = request.getParameter("correo");
-        String contraseña = request.getParameter("contraseña");
+        String correo = request.getParameter("correo").trim();
+        String contraseña = request.getParameter("contraseña").trim();
 
         try {
+            if (correo.isEmpty() || contraseña.isEmpty()) {
+                request.setAttribute("error", "Los campos de correo y contraseña son obligatorios.");
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+                return;
+            }
+
             JugadorDAO jugadorDAO = new JugadorDAO();
-            // Usamos el método que obtiene el jugador por correo y contraseña
-            JugadorDTO jugador = jugadorDAO.obtenerJugadorPorCorreoYContraseña(correo, contraseña);
+            // Validar si las credenciales son correctas
+            boolean credencialesValidas = jugadorDAO.validarCredenciales(correo, contraseña);
 
-            if (jugador != null) {
+            if (credencialesValidas) {
+                // Obtener la información del jugador
+                JugadorDTO jugador = jugadorDAO.obtenerJugadorPorCorreo(correo);
+
+                // Crear la sesión e iniciar la sesión para el jugador
                 HttpSession session = request.getSession();
-                session.setAttribute("usuario", jugador);  // Guardamos el objeto completo del jugador en la sesión
+                session.invalidate(); // Evita la fijación de sesión
+                session = request.getSession(true); // Inicia una nueva sesión
+                session.setAttribute("jugador", jugador); // El jugador estará disponible en toda la sesión
 
-                // Verificamos el tipo de usuario
-                if ("administrador".equalsIgnoreCase(jugador.getTipoUsuario())) {
-                    // Si el usuario es administrador, redirigir al menú de administrador
-                    response.sendRedirect("/MVC/Views/admin/adminmenu.jsp");
-                } else {
-                    // Si el usuario es normal, redirigir al menú de usuario
-                    response.sendRedirect("/MVC/Views/user/usermenu.jsp");
-                }
+                // Determina el destino según el tipo de usuario
+                String destino = "administrador".equalsIgnoreCase(jugador.getTipoUsuario())
+                        ? "/MVC/Views/admin/adminmenu.jsp"
+                        : "/MVC/Views/user/usermenu.jsp";
+
+                // Redirige a la página correspondiente
+                response.sendRedirect(request.getContextPath() + destino);
             } else {
-                // Si las credenciales son incorrectas
                 request.setAttribute("error", "Correo o contraseña incorrectos.");
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error en el servidor.");
+            request.setAttribute("error", "Error interno del servidor. Inténtelo más tarde.");
             request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
         }
     }

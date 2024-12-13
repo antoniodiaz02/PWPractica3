@@ -1,0 +1,98 @@
+/* Estilos generales para el cuerpo */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+/* Estilo del título */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Estilos del mensaje de error */
+.error {
+    color: #ff4d4d;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Estilos del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilos para los campos del formulario */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+input, select {
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333;
+}
+
+input:focus, select:focus {
+    border-color: #457b9d;
+    outline: none;
+}
+
+/* Botón de envío */
+input[type="submit"] {
+    background-color: #457b9d;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #1d3557;
+}
+
+/* Estilo para campos opcionales */
+input[type="date"] {
+    background-color: #e0e0e0;
+}
+
+/* Respuesta para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+}

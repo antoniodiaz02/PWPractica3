@@ -186,37 +186,77 @@ public class JugadorDAO {
         return codigo;
     }
     
-    public JugadorDTO obtenerJugadorPorCorreoYContraseña(String correo, String contraseña) {
-        JugadorDTO jugador = null;
-        String query = "SELECT * FROM Usuarios WHERE correoElectronico = ? AND contraseña = ?";
+    public boolean validarCredenciales(String correo, String contraseña) {
+        boolean credencialesValidas = false;
+        String query = "SELECT 1 FROM Usuarios WHERE correoElectronico = ? AND contraseña = ?";
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
+        if (connection == null) {
+            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
+            return false;
+        }
+
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
-            stmt.setString(2, contraseña); // O puedes aplicar alguna encriptación si la contraseña está encriptada
+            stmt.setString(2, contraseña); // Aplica la función de cifrado si la contraseña está cifrada
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Crear el objeto JugadorDTO con la información del jugador
-                jugador = new JugadorDTO(
-                    rs.getString("nombreCompleto"),
-                    rs.getDate("fechaNacimiento"),
-                    rs.getString("correo"),
-                    rs.getString("contraseña"),
-                    rs.getString("tipoUsuario")
-                );
+                credencialesValidas = true; // Se encontró una fila, las credenciales son válidas
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener el jugador: " + e.getMessage());
+            System.err.println("Error al validar las credenciales: " + e.getMessage());
         } finally {
             db.closeConnection();
         }
 
-        return jugador;  // Si no se encontró el usuario, devuelve null.
+        return credencialesValidas;
     }
+
+    /**
+     * Obtiene la información de un jugador a partir de su correo electrónico.
+     * @param correo Correo electrónico del jugador.
+     * @return Objeto JugadorDTO con la información del jugador o null si no se encuentra.
+     */
+    public JugadorDTO obtenerJugadorPorCorreo(String correo) {
+        JugadorDTO jugador = null;
+        String query = "SELECT * FROM Usuarios WHERE correoElectronico = ?";
+
+        DBConnection db = new DBConnection();
+        connection = db.getConnection();
+
+        if (connection == null) {
+            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
+            return null;
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, correo);
+            
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                jugador = new JugadorDTO(
+                    rs.getString("nombreCompleto"),         // Nombre del jugador
+                    rs.getDate("fechaNacimiento"),          // Fecha de nacimiento
+                    rs.getString("correoElectronico"),      // Correo electrónico
+                    rs.getString("contraseña"),             // Contraseña (asegúrate de no exponerla)
+                    rs.getString("tipoUsuario")             // Tipo de usuario (cliente o administrador)
+                );
+                System.out.println("Jugador recuperado: " + jugador.toString());
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener la información del jugador: " + e.getMessage());
+        } finally {
+            db.closeConnection();
+        }
+
+        return jugador;
+    }
+
 
     
     

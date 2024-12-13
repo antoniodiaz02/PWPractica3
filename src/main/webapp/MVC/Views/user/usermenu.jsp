@@ -14,35 +14,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Página Principal - Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/usermenu.css">
 </head>
 <body>
 
-<header>
-    <h1>Bienvenido, <%= jugador.getNombre() %>!</h1>
-    <p>Fecha de Inscripción: <%= jugador.getFechaInscripcion() %></p>
-    <p>Correo: <%= jugador.getCorreoElectronico() %></p>
+<header class="header">
+    <div class="container">
+        <h1>Bienvenido, <%= jugador.getNombre() %>!</h1>
+        <p>Fecha de Inscripción: <%= jugador.getFechaInscripcion() %></p>
+        <p>Correo: <%= jugador.getCorreoElectronico() %></p>
+    </div>
 </header>
 
-<nav>
-    <ul>
-        <li><a href="consultarReservas.jsp">Consultar Reservas</a></li>
-        <li><a href="buscarPista.jsp">Buscar Pista</a></li>
-        <li><a href="realizarReserva.jsp">Realizar Reserva</a></li>
-        <li><a href="adquirirBono.jsp">Adquirir Bono</a></li>
-        <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>
-        <li><a href="modificarDatos.jsp">Modificar Datos</a></li>
-        <li><a href="logout.jsp">Desconectar</a></li>
-    </ul>
+<nav class="navbar">
+    <div class="container">
+        <ul>
+            <li><a href="consultarReservas.jsp">Consultar Reservas</a></li>
+            <li><a href="buscarPista.jsp">Buscar Pista</a></li>
+            <li><a href="realizarReserva.jsp">Realizar Reserva</a></li>
+            <li><a href="adquirirBono.jsp">Adquirir Bono</a></li>
+            <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>
+            <li><a href="modificarDatos.jsp">Modificar Datos</a></li>
+            <li><a href="logout.jsp">Desconectar</a></li>
+        </ul>
+    </div>
 </nav>
 
-<main>
-    <h2>Información General</h2>
-    <p>Aquí puedes gestionar tus reservas, modificar tus datos personales y disfrutar de nuestras pistas deportivas.</p>
+<main class="main-content">
+    <div class="container">
+        <h2>Información General</h2>
+        <p>Aquí puedes gestionar tus reservas, modificar tus datos personales y disfrutar de nuestras pistas deportivas.</p>
+    </div>
 </main>
 
-<footer>
-    <p>Aplicación de Gestión Deportiva - Práctica de Programación Web</p>
+<footer class="footer">
+    <div class="container">
+        <p>Aplicación de Gestión Deportiva - Práctica de Programación Web</p>
+    </div>
 </footer>
 
 </body>
