@@ -1,51 +1,135 @@
-/* index.css */
+/* General body and background styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Roboto', sans-serif;
+    color: white;
     margin: 0;
     padding: 0;
+    height: 100vh;
+    background: url('<%= request.getContextPath() %>/images/basketball-background.jpg') no-repeat center center fixed;
+    background-size: cover;  /* Ensures the image covers the entire viewport */
+    position: relative;
 }
 
-header {
-    background-color: #007BFF;
+/* Gradient overlay to darken background for better readability */
+.gradient-custom {
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+    height: 100%; /* Ensure the gradient covers the full height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Add relative positioning */
+}
+
+/* Use a pseudo-element to add the logo as a background */
+.gradient-custom::before {
+    content: "";
+    background: url('<%= request.getContextPath() %>/images/basketball_logo.jpg') no-repeat center center;
+    background-size: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1; /* Adjust opacity to make it less distracting */
+    z-index: -1; /* Ensure the logo stays behind the form */
+}
+
+/* Card style */
+.card {
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent black background */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    margin: 0 15px;
+}
+
+/* Card body padding */
+.card-body {
+    padding: 30px;
+}
+
+/* Form inputs and labels */
+.form-outline {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 1.1rem;
+    color: #ccc;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1rem;
+    color: #fff;
+}
+
+/* Focus effect on form fields */
+.form-control:focus {
+    border-color: #1d3557;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom button styles */
+.btn-custom {
+    background-color: #457b9d;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #1d3557;
+    cursor: pointer;
+}
+
+/* Error alert styling */
+.alert-danger {
+    background-color: #d9534f;
     color: white;
-    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Footer styling */
+.footer {
     text-align: center;
+    margin-top: 30px;
+    color: #bbb;
 }
 
-nav {
-    text-align: center;
-    margin: 20px 0;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin: 0 10px;
-}
-
-nav ul li a {
+.footer a {
     text-decoration: none;
-    color: #007BFF;
-    font-size: 16px;
+    color: #457b9d;
+    font-weight: bold;
 }
 
-section {
-    padding: 20px;
-    text-align: center;
+.footer a:hover {
+    color: #1d3557;
 }
 
-footer {
-    text-align: center;
-    margin-top: 20px;
-}
+/* Additional responsive design for mobile view */
+@media (max-width: 767px) {
+    .card-body {
+        padding: 20px;
+    }
 
-footer a {
-    text-decoration: none;
-    color: #007BFF;
-    font-size: 14px;
+    .logo {
+        max-width: 120px;
+    }
+
+    .btn-custom {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        font-size: 1rem;
+    }
 }

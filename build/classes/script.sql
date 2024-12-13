@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS Usuarios;
 -- Tabla: Usuarios
 CREATE TABLE IF NOT EXISTS Usuarios (
   idUsuario INT(11) NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(100) NOT NULL,
+  nombreCompleto VARCHAR(100) NOT NULL,
   apellidos VARCHAR(100) NOT NULL,
   fechaNacimiento DATE NOT NULL,
   fechaInscripcion DATE NOT NULL,

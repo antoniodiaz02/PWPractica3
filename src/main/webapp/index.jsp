@@ -6,62 +6,49 @@
     <title>Gestión de Pistas de Baloncesto</title>
     <!-- Ruta al archivo CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/index.css">
-    <style>
-        body {
-            background: linear-gradient(to bottom right, #1d3557, #457b9d);
-            color: white;
-        }
-        .gradient-custom {
-            background: linear-gradient(to bottom right, #457b9d, #1d3557);
-        }
-        .logo {
-            max-width: 100px;
-            margin-bottom: 15px;
-        }
-    </style>
 </head>
 <body>
     <section class="vh-100 gradient-custom">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                        <div class="card-body p-5 text-center">
+                    <div class="card">
+                        <div class="card-body text-center">
                             <div class="mb-md-5 mt-md-4 pb-5">
-                                <!-- Ruta de la imagen -->
-                                <img src="<%= request.getContextPath() %>/images/basketball_logo.jpg" alt="Basketball Logo" class="logo">
+                                <!-- Imagen de fondo con baja opacidad -->
+                                <div class="background-logo"></div>
                                 <h2 class="fw-bold mb-2 text-uppercase">Gestión de Pistas</h2>
                                 <p class="text-white-50 mb-5">Accede a tu cuenta para gestionar tus reservas</p>
 
                                 <!-- Formulario de login -->
                                 <form method="POST" action="<%= request.getContextPath() %>/login">
-                                    <div class="form-outline form-white mb-4">
-                                        <input type="email" name="typeEmailX" class="form-control form-control-lg" required/>
-                                        <label class="form-label" for="typeEmailX">Correo Electrónico</label>
+                                    <div class="form-outline form-white">
+                                        <input type="email" id="correo" name="correo" class="form-control form-control-lg" required autocomplete="off"/>
+                                        <label class="form-label" for="correo">Correo Electrónico</label>
                                     </div>
 
-                                    <div class="form-outline form-white mb-4">
-                                        <input type="password" name="typePasswordX" class="form-control form-control-lg" required/>
-                                        <label class="form-label" for="typePasswordX">Contraseña</label>
+                                    <div class="form-outline form-white">
+                                        <input type="password" id="contraseña" name="contraseña" class="form-control form-control-lg" required autocomplete="off"/>
+                                        <label class="form-label" for="contraseña">Contraseña</label>
                                     </div>
 
-                                    <button class="btn btn-outline-light btn-lg px-5" type="submit">Iniciar Sesión</button>
+                                    <button class="btn-custom btn-lg px-5" type="submit">Iniciar Sesión</button>
                                 </form>
 
                                 <!-- Mostrar mensajes de error -->
-                                <% if (request.getParameter("message") != null && !request.getParameter("message").isEmpty()) { %>
-                                    <p style="color: red; margin-top: 15px;">Error: <%= request.getParameter("message") %></p>
+                                <% if (request.getAttribute("error") != null) { %>
+                                    <div class="alert alert-danger mt-3" role="alert">
+                                        <%= request.getAttribute("error") %>
+                                    </div>
                                 <% } %>
-
                             </div>
 
-                            <div>
+                            <div class="footer">
                                 <!-- Enlace a la página de registro -->
                                 <p class="mb-0">¿Nuevo en el sistema? 
-                                    <a href="<%= request.getContextPath() %>/register" class="text-white-50 fw-bold">Regístrate aquí</a>
+                                    <a href="<%= request.getContextPath() %>/register" class="fw-bold">Regístrate aquí</a>
                                 </p>
                             </div>
-
                         </div>
                     </div>
                 </div>

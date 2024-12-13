@@ -4,27 +4,64 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/registro.css">
 </head>
 <body>
-    <h1>Registro de Usuario</h1>
-	<form action="/gestionbaloncestopistas/register" method="POST">
-        <label for="nombreCompleto">Nombre Completo:</label>
-        <input type="text" id="nombreCompleto" name="nombreCompleto" required><br><br>
+    <div class="container">
+        <div class="form-container">
+            <h1>Registro de Usuario</h1>
 
-        <label for="correo">Correo Electrónico:</label>
-        <input type="email" id="correo" name="correo" required><br><br>
+            <!-- Mostrar mensaje de error si existe -->
+            <% 
+                String error = (String) request.getAttribute("error");
+                if (error != null) {
+            %>
+                <p class="error"><%= error %></p>
+            <% 
+                }
+            %>
 
-        <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" name="contraseña" required><br><br>
+            <form action="/gestionbaloncestopistas/register" method="POST">
+                <!-- Nombre Completo -->
+                <div class="form-group">
+                    <label for="nombreCompleto">Nombre Completo:</label>
+                    <input type="text" id="nombreCompleto" name="nombreCompleto" required>
+                </div>
 
-        <label for="userType">Tipo de usuario:</label>
-        <select id="userType" name="tipoUsuario">
-            <option value="cliente">Cliente</option>
-            <option value="administrador">Administrador</option>
-        </select><br><br>
+                <!-- Correo Electrónico -->
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico:</label>
+                    <input type="email" id="correo" name="correo" required>
+                </div>
 
-        <input type="submit" value="Registrar">
-    </form>
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label for="contraseña">Contraseña:</label>
+                    <input type="password" id="contraseña" name="contraseña" required>
+                </div>
+
+                <!-- Fecha de Nacimiento (opcional) -->
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento">
+                </div>
+
+                <!-- Tipo de Usuario -->
+                <div class="form-group">
+                    <label for="userType">Tipo de Usuario:</label>
+                    <select id="userType" name="tipoUsuario" required>
+                        <option value="cliente">Cliente</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                </div>
+
+                <!-- Botón de envío -->
+                <div class="form-group">
+                    <input type="submit" value="Registrar">
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

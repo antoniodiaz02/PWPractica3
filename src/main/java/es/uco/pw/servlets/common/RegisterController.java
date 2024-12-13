@@ -6,6 +6,7 @@ import es.uco.pw.business.DTOs.JugadorDTO;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class RegisterController extends HttpServlet {
@@ -20,51 +21,67 @@ public class RegisterController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String nombreCompleto = request.getParameter("nombreCompleto");
-        String correo = request.getParameter("correo");
-        String contraseña = request.getParameter("contraseña");
-        String tipoUsuario = request.getParameter("tipoUsuario");
+        // Capturar los parámetros del formulario
+        String nombreCompleto = request.getParameter("nombreCompleto") != null ? request.getParameter("nombreCompleto").trim() : "";
+        String correo = request.getParameter("correo") != null ? request.getParameter("correo").trim() : "";
+        String contraseña = request.getParameter("contraseña") != null ? request.getParameter("contraseña").trim() : "";
+        String tipoUsuario = request.getParameter("tipoUsuario") != null ? request.getParameter("tipoUsuario").trim() : "";
+        String fechaNacimientoStr = request.getParameter("fechaNacimiento") != null ? request.getParameter("fechaNacimiento").trim() : "";
 
-        try {
-            // Validar los datos
-            if (nombreCompleto == null || correo == null || contraseña == null || tipoUsuario == null) {
-                request.setAttribute("error", "Todos los campos son obligatorios.");
-                request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
+        // Validar los campos obligatorios
+        if (nombreCompleto.isEmpty() || correo.isEmpty() || contraseña.isEmpty() || tipoUsuario.isEmpty()) {
+            request.setAttribute("error", "Todos los campos obligatorios deben completarse.");
+            request.getRequestDispatcher("/MVC/Views/common/registro.jsp").forward(request, response);
+            return;
+        }
+
+        // Validar la fecha de nacimiento (si se proporciona)
+        java.util.Date fechaNacimiento = null;
+        if (!fechaNacimientoStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                fechaNacimiento = sdf.parse(fechaNacimientoStr);
+            } catch (ParseException e) {
+                request.setAttribute("error", "El formato de la fecha de nacimiento es incorrecto. Debe ser yyyy-MM-dd.");
+                request.getRequestDispatcher("/MVC/Views/common/registro.jsp").forward(request, response);
                 return;
             }
+        }
 
-            // Crear objeto JugadorDTO
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            JugadorDTO jugador = new JugadorDTO(nombreCompleto, sdf.parse("2000-01-01"), correo, contraseña, tipoUsuario);
-            jugador.setContraseña(contraseña);
-            jugador.setTipoUsuario(tipoUsuario);
+        try {
+            // Crear objeto JugadorDTO (fecha por defecto si es null)
+            if (fechaNacimiento == null) {
+                // Establecemos una fecha por defecto si no se proporcionó
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                fechaNacimiento = sdf.parse("2000-01-01");
+            }
 
+            JugadorDTO jugador = new JugadorDTO(nombreCompleto, fechaNacimiento, correo, contraseña, tipoUsuario);
+            
             // Usar DAO para registrar el jugador
             JugadorDAO jugadorDAO = new JugadorDAO();
             int resultado = jugadorDAO.insertJugador(jugador);
 
             if (resultado == 1) {
-                // Redirigir según el tipo de usuario
-                if ("administrador".equalsIgnoreCase(tipoUsuario)) {
-                	HttpSession session = request.getSession();
-                	session.setAttribute("jugador", jugador); // 💥 Esto asegura que el jugador esté disponible en toda la sesión
-                    response.sendRedirect("MVC/Views/admin/adminmenu.jsp");
-                } else {
-                	HttpSession session = request.getSession();
-                	session.setAttribute("jugador", jugador); // 💥 Esto asegura que el jugador esté disponible en toda la sesión
-                	response.sendRedirect("MVC/Views/user/usermenu.jsp");
+                // Crear la sesión e iniciar la sesión para el jugador registrado
+                HttpSession session = request.getSession();
+                session.setAttribute("jugador", jugador); // Jugador disponible en toda la sesión
 
-                }
+                String destino = "administrador".equalsIgnoreCase(tipoUsuario) 
+                    ? "/MVC/Views/admin/adminmenu.jsp" 
+                    : "/MVC/Views/user/usermenu.jsp";
+
+                response.sendRedirect(request.getContextPath() + destino);
             } else if (resultado == -2) {
                 request.setAttribute("error", "El correo ya está registrado.");
-                request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
+                request.getRequestDispatcher("/MVC/Views/common/registro.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Error desconocido al registrar.");
-                request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
+                request.setAttribute("error", "Error desconocido al registrar. Inténtelo más tarde.");
+                request.getRequestDispatcher("/MVC/Views/common/registro.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error en el servidor.");
+            request.setAttribute("error", "Error en el servidor. Inténtelo más tarde.");
             request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
         }
     }
