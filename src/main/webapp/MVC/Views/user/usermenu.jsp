@@ -35,7 +35,7 @@
             <li><a href="adquirirBono.jsp">Adquirir Bono</a></li>
             <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>
             <li><a href="modificarDatos.jsp">Modificar Datos</a></li>
-            <li><a href="logout.jsp">Desconectar</a></li>
+            <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
         </ul>
     </div>
 </nav>
