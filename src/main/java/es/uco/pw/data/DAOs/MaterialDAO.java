@@ -9,8 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Clase que gestiona los materiales en la base de datos.
@@ -32,8 +33,12 @@ public class MaterialDAO {
      */
     public MaterialDAO() {
         properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/sql.properties")) {
-            properties.load(input);
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("sql.properties")) {
+            if (input != null) {
+                properties.load(input);
+            } else {
+                throw new FileNotFoundException("Properties file 'sql.properties' not found in classpath");
+            }
         } catch (IOException e) {
             System.err.println("Error loading SQL properties file: " + e.getMessage());
             e.printStackTrace();
@@ -46,30 +51,61 @@ public class MaterialDAO {
      * @param material El objeto MaterialDTO que se desea insertar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean insertMaterial(MaterialDTO material) {
-        boolean respuesta = false;
+    public int insertMaterial(MaterialDTO material) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("insert_material");
+        String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar ID existente
+
+        // Validaciones iniciales
+        if (material == null) {
+            return -2; // Error: Material no proporcionado
+        }
+
+        if (material.getTipoMaterial() == null) {
+            return -3; // Error: Tipo de material no válido
+        }
+
+        if (material.getEstadoMaterial() == null) {
+            return -4; // Error: Estado del material no válido
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, material.getIdMaterial());
-            statement.setString(2, material.getTipoMaterial().name());
-            statement.setBoolean(3, material.getUsoInterior());
-            statement.setString(4, material.getEstadoMaterial().name());
+        try {
+            // Verificar si ya existe un material con el mismo ID
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setInt(1, material.getIdMaterial());
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (resultSet.next()) {
+                    return -5; // Error: Ya existe un material con este ID
+                }
+            }
 
-            int rowsInserted = statement.executeUpdate();
-            respuesta = rowsInserted > 0;
+            // Insertar el nuevo material
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, material.getIdMaterial());
+                statement.setString(2, material.getTipoMaterial().name());
+                statement.setBoolean(3, material.getUsoInterior());
+                statement.setString(4, material.getEstadoMaterial().name());
+
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -7; // Error: No se pudo insertar el material
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error inserting material: " + e.getMessage());
+            System.err.println("Error al insertar el material: " + e.getMessage());
             e.printStackTrace();
+            respuesta = -6; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
-
     /**
      * Busca un material por su ID.
      *
