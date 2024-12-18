@@ -1,7 +1,7 @@
 package es.uco.pw.servlets.common;
 
-import es.uco.pw.data.DAOs.JugadorDAO;
 import es.uco.pw.business.DTOs.JugadorDTO;
+import es.uco.pw.business.Gestores.GestorUsuarios;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -22,13 +22,14 @@ public class LoginController extends HttpServlet {
                 return;
             }
 
-            JugadorDAO jugadorDAO = new JugadorDAO();
+            GestorUsuarios gestor = new GestorUsuarios();
+            
             // Validar si las credenciales son correctas
-            boolean credencialesValidas = jugadorDAO.validarCredenciales(correo, contraseña);
-
+            boolean credencialesValidas = gestor.validarCredenciales(correo, contraseña);
+            
             if (credencialesValidas) {
                 // Obtener la información del jugador
-                JugadorDTO jugador = jugadorDAO.obtenerJugadorPorCorreo(correo);
+                JugadorDTO jugador = gestor.obtenerJugadorPorCorreo(correo);
 
                 // Crear la sesión e iniciar la sesión para el jugador
                 HttpSession session = request.getSession();

@@ -257,7 +257,12 @@ public class JugadorDAO {
         return jugador;
     }
 
-
+    public int validarUsuario(String correo, String contrasena) {
+    	
+    	return 0;
+    	
+    	}
+    
     
     
 }

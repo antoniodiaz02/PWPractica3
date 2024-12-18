@@ -58,9 +58,23 @@ public class GestorUsuarios {
     public int buscarUsuarioPorCorreo(String correo) {
         return daoJugador.buscarUsuarioPorCorreo(correo);
     }
-    public boolean validarUsuario(String correo, String contraseña) {
+    public int validarUsuario(String correo, String contraseña) {
         return daoJugador.validarUsuario(correo, contraseña);
     }
+    
+    public boolean validarCredenciales(String correo, String contraseña) {
+    	return daoJugador.validarCredenciales(correo, contraseña);
+    }
+    
+    public JugadorDTO obtenerJugadorPorCorreo(String correo) {
+    	return daoJugador.obtenerJugadorPorCorreo(correo);
+    }
+    
+ 
+    
+    
+    
+    
     
     
 }
