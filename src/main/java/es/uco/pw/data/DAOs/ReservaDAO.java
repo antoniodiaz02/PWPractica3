@@ -15,7 +15,9 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -36,9 +38,13 @@ public class ReservaDAO {
      * Constructor que inicializa la conexión con base de datos.
      */
     public ReservaDAO() {
-        properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/sql.properties")) {
-            properties.load(input);
+    	properties = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("sql.properties")) {
+            if (input != null) {
+                properties.load(input);
+            } else {
+                throw new FileNotFoundException("Properties file 'sql.properties' not found in classpath");
+            }
         } catch (IOException e) {
             System.err.println("Error loading SQL properties file: " + e.getMessage());
             e.printStackTrace();
