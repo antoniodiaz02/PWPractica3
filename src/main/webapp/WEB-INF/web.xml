@@ -36,7 +36,18 @@
         <url-pattern>/logout</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
     </servlet-mapping>
 
-
+	<!-- Configuración para el servlet realizarReservaController -->
+	<servlet>
+	    <servlet-name>realizarReservaController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.user.realizarReservaController</servlet-class> <!-- Clase que maneja la lógica de la reserva -->
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>realizarReservaController</servlet-name>
+	    <url-pattern>/usermenu/reservar</url-pattern> <!-- URL correcta para acceder al servlet -->
+	</servlet-mapping>
+	
+	
     <!-- Puedes agregar más servlets aquí según sea necesario -->
 
 </web-app>

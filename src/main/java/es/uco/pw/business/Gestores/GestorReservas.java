@@ -45,9 +45,9 @@ public class GestorReservas {
 	 * @param numeroAdultos Número de adultos que acuden.
 	 * @param numeroNinos Número de niños que acuden.
 	 * @param tipoReserva Clase Reserva que tiene más cantidad de detalles de la reserva como el tipo de reserva, el tamaño de la pista...
-	 * @return Devuelve true si el procedimiento de reserva se ha hecho de manera correcta, y false si hay algo que se incumple.
+	 * @return Devuelve 0 si se ha realizado correctamente la reserva, y un valor negativo según el tipo de error.
 	 */
-    public boolean hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
+    public int hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
     	return daoReserva.hacerReservaIndividual(correoUsuario, nombrePista, fechaHora, duracion, numeroAdultos, numeroNinos, tipoReserva);
     }
     
@@ -200,6 +200,10 @@ public class GestorReservas {
 	
 	public int buscarIdPista(String idPistaString) {
 		return daoReserva.buscarIdPista(idPistaString);
+	}
+	
+	public boolean mostrarBonos(String correoUser) {
+		return daoReserva.mostrarBonos(correoUser);
 	}
 
 }

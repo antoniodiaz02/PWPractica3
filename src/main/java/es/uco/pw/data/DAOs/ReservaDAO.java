@@ -45,33 +45,28 @@ public class ReservaDAO {
         }
     }
     
-    public boolean hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
+    public int hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
         int jugador = buscarIdJugador(correoUsuario); // Obtener el ID del jugador
         int pistaId = buscarIdPista(nombrePista); // Obtener el ID de la pista
 
         // Comprobación adicional para evitar reservas en la misma pista y hora
         if (existeReservaParaPistaYHora(nombrePista, fechaHora)) {
-            System.out.println(" ERROR! Ya existe una reserva para la misma pista y horario.");
-            return false;
+            return -1;
         }
 
         // Validaciones de existencia y disponibilidad
         if (jugador == -1) {
-            System.out.println("ERROR! El usuario no existe.");
-            return false;
+            return -2;
         }
         PistaDTO pista = buscarPista(nombrePista);
         if (pista == null) {
-            System.out.println("ERROR! La pista no existe.");
-            return false;
+            return -3;
         }
         if (!pista.isDisponible()) {
-            System.out.println("ERROR! La pista no está disponible.");
-            return false;
+            return -4;
         }
         if (plazoExcedido(fechaHora)) {
-            System.out.println("ERROR! No se puede reservar una pista antes de 24 horas.");
-            return false;
+            return -5;
         }
 
         // Calcular precio y descuento
@@ -89,13 +84,12 @@ public class ReservaDAO {
         } else if (tipoReserva == ReservaAdultosDTO.class) {
             tipoReservaString = "ADULTOS";
         } else {
-            System.out.println("ERROR! Tipo incorrecto de reserva.");
-            return false;
+            return -6;
         }
 
         // Inserción en la base de datos
         String query = properties.getProperty("insert_reserva");
-        boolean respuesta = false;
+        int respuesta = -7;
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -112,7 +106,9 @@ public class ReservaDAO {
             statement.setObject(9, numeroAdultos > 0 ? numeroAdultos : null); // NULL si no aplica
 
             int rowsInserted = statement.executeUpdate();
-            respuesta = rowsInserted > 0;
+            if(rowsInserted > 0) {
+            	respuesta = 0;        	
+            }
         } catch (SQLException e) {
             System.err.println("Error al insertar la reserva: " + e.getMessage());
             e.printStackTrace();
@@ -1069,5 +1065,35 @@ public class ReservaDAO {
 
         return reserva; // Devolver null si no se encontró la reserva
     }
+	
+	
+	public boolean mostrarBonos(String correoUser) {
+		int jugador = buscarIdJugador(correoUser); // Obtener ID del jugador
+		String query= properties.getProperty("select_user_bono");
+		DBConnection db = new DBConnection();
+        connection = db.getConnection();
+        
+        int count=0;
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        	stmt.setInt(1, jugador);
+            ResultSet resultSet = stmt.executeQuery();
+		     if (resultSet.next()) {
+		         count++;
+		     }
+        }
+        catch (SQLException e) {
+            System.out.println("ERROR! No se pudo obtener las reservas futuras: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            db.closeConnection();
+        }
+        
+        if(count==0) {
+        	return false;
+        }
+        
+        return true;
+		
+	}
 
 }
