@@ -1,8 +1,7 @@
 package es.uco.pw.servlets.common;
 
-import es.uco.pw.data.DAOs.JugadorDAO;
 import es.uco.pw.business.DTOs.JugadorDTO;
-
+import es.uco.pw.business.Gestores.GestorUsuarios;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -58,9 +57,10 @@ public class RegisterController extends HttpServlet {
 
             JugadorDTO jugador = new JugadorDTO(nombreCompleto, fechaNacimiento, correo, contraseña, tipoUsuario);
             
-            // Usar DAO para registrar el jugador
-            JugadorDAO jugadorDAO = new JugadorDAO();
-            int resultado = jugadorDAO.insertJugador(jugador);
+            // Llamar al gestor para registrar el jugador
+            GestorUsuarios gestor = new GestorUsuarios();
+            
+            int resultado = gestor.insertarUsuario(jugador);
 
             if (resultado == 1) {
                 // Crear la sesión e iniciar la sesión para el jugador registrado
