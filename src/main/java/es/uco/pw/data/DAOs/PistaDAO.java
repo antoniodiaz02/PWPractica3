@@ -1,14 +1,16 @@
 package es.uco.pw.data.DAOs;
 
 import es.uco.pw.business.DTOs.PistaDTO;
+
 import es.uco.pw.common.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Clase que gestiona las pistas en la base de datos.
@@ -30,13 +32,18 @@ public class PistaDAO {
      */
     public PistaDAO() {
         properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/sql.properties")) {
-            properties.load(input);
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("sql.properties")) {
+            if (input != null) {
+                properties.load(input);
+            } else {
+                throw new FileNotFoundException("Properties file 'sql.properties' not found in classpath");
+            }
         } catch (IOException e) {
             System.err.println("Error loading SQL properties file: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    
 
     /**
      * Inserta una nueva pista en la base de datos.
@@ -44,30 +51,66 @@ public class PistaDAO {
      * @param pista El objeto PistaDTO que se desea insertar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean insertPista(PistaDTO pista) {
-        boolean respuesta = false;
+    public int insertPista(PistaDTO pista) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("insert_pista");
+        String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar nombre existente
+
+        if (pista == null) {
+            return -2; // Error: Pista no proporcionada
+        }
+
+        if (pista.getNombre() == null || pista.getNombre().isEmpty()) {
+            return -3; // Error: Nombre de la pista no válido
+        }
+
+        if (pista.getMaxJugadores() <= 0) {
+            return -4; // Error: Número máximo de jugadores no válido
+        }
+
+        if (pista.getTamanoPista() == null) {
+            return -5; // Error: Tamaño de la pista no especificado
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, pista.getNombre());
-            statement.setBoolean(2, pista.isDisponible());
-            statement.setBoolean(3, pista.isInterior());
-            statement.setString(4, pista.getTamanoPista().name());
-            statement.setInt(5, pista.getMaxJugadores());
+        try {
+            // Verificar si ya existe una pista con el mismo nombre
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, pista.getNombre());
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (resultSet.next()) {
+                    return -6; // Error: Ya existe una pista con este nombre
+                }
+            }
 
-            int rowsInserted = statement.executeUpdate();
-            respuesta = rowsInserted > 0;
+            // Insertar la nueva pista
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, pista.getNombre());
+                statement.setBoolean(2, pista.isDisponible());
+                statement.setBoolean(3, pista.isInterior());
+                statement.setString(4, pista.getTamanoPista().name());
+                statement.setInt(5, pista.getMaxJugadores());
+
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -7; // Error: No se pudo insertar la pista
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error inserting pista: " + e.getMessage());
+            System.err.println("Error al insertar la pista: " + e.getMessage());
             e.printStackTrace();
+            respuesta = -8; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Busca una pista por su nombre asociado.

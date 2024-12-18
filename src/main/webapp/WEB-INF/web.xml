@@ -47,6 +47,16 @@
 	    <url-pattern>/usermenu/reservar</url-pattern> <!-- URL correcta para acceder al servlet -->
 	</servlet-mapping>
 	
+	    <!-- Configuración para el servlet RegisterPistaController -->
+    <servlet>
+        <servlet-name>RegisterPistaController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.admin.RegisterPistaController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>RegisterPistaController</servlet-name>
+        <url-pattern>/registerPista</url-pattern>
+    </servlet-mapping>
 	
     <!-- Puedes agregar más servlets aquí según sea necesario -->
 
