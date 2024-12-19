@@ -150,11 +150,13 @@ public class JugadorDAO {
     
     public int modificarUsuario(JugadorDTO jugador, String correo) {
         int codigo = 0;
+
+        // Construcción dinámica de la query
         StringBuilder queryActualizar = new StringBuilder("UPDATE Usuarios SET ");
         boolean firstField = true;
 
         if (jugador.getNombre() != null) {
-            queryActualizar.append("nombre = ?");
+            queryActualizar.append("nombreCompleto = ?");
             firstField = false;
         }
         if (jugador.getApellidos() != null) {
@@ -177,7 +179,26 @@ public class JugadorDAO {
         connection = db.getConnection();
 
         try (PreparedStatement statementActualizar = connection.prepareStatement(queryActualizar.toString())) {
-            // Implementar la lógica para asignar los parámetros
+            int parameterIndex = 1;
+
+            // Asignar valores dinámicamente
+            if (jugador.getNombre() != null) {
+                statementActualizar.setString(parameterIndex++, jugador.getNombre());
+            }
+            if (jugador.getApellidos() != null) {
+                statementActualizar.setString(parameterIndex++, jugador.getApellidos());
+            }
+            if (jugador.getFechaNacimiento() != null) {
+                statementActualizar.setDate(parameterIndex++, new java.sql.Date(jugador.getFechaNacimiento().getTime()));
+            }
+            if (jugador.getContraseña() != null) {
+                statementActualizar.setString(parameterIndex++, jugador.getContraseña());
+            }
+            // Asignar el correo electrónico
+            statementActualizar.setString(parameterIndex, correo);
+
+            // Ejecutar la consulta
+            codigo = statementActualizar.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error al modificar el usuario en la base de datos: " + e.getMessage());
         } finally {

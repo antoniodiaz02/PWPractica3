@@ -36,6 +36,16 @@
         <url-pattern>/logout</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
     </servlet-mapping>
 
+	<!-- Configuración del servlet para modificarUsuario -->
+    <servlet>
+        <servlet-name>modificarUsuarioController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.common.modificarUsuarioController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>modificarUsuarioController</servlet-name>
+        <url-pattern>/modificarUsuario</url-pattern>
+    </servlet-mapping>
+
 	<!-- Configuración para el servlet realizarReservaController -->
 	<servlet>
 	    <servlet-name>realizarReservaController</servlet-name>

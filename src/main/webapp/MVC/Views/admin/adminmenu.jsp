@@ -3,8 +3,9 @@
 <%
     es.uco.pw.business.DTOs.JugadorDTO admin = (es.uco.pw.business.DTOs.JugadorDTO) session.getAttribute("jugador");
 
-    if (admin == null) {
-        response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
+if (admin == null || !admin.getTipoUsuario().equals("administrador")) {
+	
+    	response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
         return; // Detener la ejecución de la página
     }
 %>
@@ -36,6 +37,7 @@
             <li><a href="modificarEstadoMateriales.jsp">Modificar Estado de Materiales</a></li>
             <li><a href="modificarEstadoPistas.jsp">Modificar Estado de Pistas</a></li>
             <li><a href="eliminarReservas.jsp">Eliminar Reservas</a></li>
+            <li><a href="<%= request.getContextPath() %>/modificarUsuario" class="btn btn-danger">Modificar Datos de Usuarios</a></li>
             <li><li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li></li>
         </ul>
     </div>
