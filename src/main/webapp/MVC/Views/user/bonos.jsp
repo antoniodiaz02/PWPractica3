@@ -13,30 +13,46 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Adquirir Bono</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/usermenu.css">
+    <title>Gestión Bonos</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bonos.css">
 </head>
 <body>
 
 <header class="header">
     <div class="container">
-        <h1>Adquirir nuevos Bonos y realizar reservas con Bonos</h1>
+        <h1>Gestión de bonos</h1>
+        <p>Visualización de bonos de usuario, solicitud de nuevos bonos y realizar nuevas reservas con un bono solicitado</p>
     </div>
 </header>
 
 <nav class="navbar">
     <div class="container">
         <ul>
-            <li><a href="usermenu.jsp">Volver al menú principal</a></li>
-            <li><a href="logout.jsp">Desconectar</a></li>
+            <li><a href="<%= request.getContextPath() %>/MVC/Views/user/usermenu.jsp">Volver al menú principal</a></li>
+            <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
         </ul>
     </div>
 </nav>
 
 <main class="main-content">
     <div class="container">
-        <h2>Adquirir nuevo bono</h2>
-        <p>Aquí puedes gestionar tus reservas, modificar tus datos personales y disfrutar de nuestras pistas deportivas.</p>
+        <h2>Tus bonos</h2>
+        <p>Aquí puedes visualizar los bonos que has solicitado previamente:</p>
+    </div>
+    
+    <div class="container">
+        <h2>Solicitar un nuevo bono</h2>
+        <p>Para realizar reservas a un precio rebajado puedes solicitar un bono.
+           Este bono aplicará una rebaja del 5% a cada reserva que realices con el bono.</p>
+        <!-- Botón para Solicitar un Bono -->
+        <a href="<%= request.getContextPath() %>/usermenu/bonos/nuevobono">Solicitar Bono</a>
+    </div>
+    
+    <div class="container">
+        <h2>Realizar reserva con un bono</h2>
+        <p>En esta opción podrás realizar reservas con algún bono que hayas solicitado.</p>
+        <!-- Formulario para Reservar con el Bono -->
+        <a href="<%= request.getContextPath() %>/usermenu/bonos/reservar">Realizar Reserva</a>
     </div>
 </main>
 

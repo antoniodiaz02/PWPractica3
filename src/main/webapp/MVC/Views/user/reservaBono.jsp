@@ -32,9 +32,16 @@
                 }
             %>
             
-	        <form action="<%= request.getContextPath() %>/usermenu/reservar" method="POST">
+	        <form action="<%= request.getContextPath() %>/usermenu/bonos/reservar" method="POST">
 	        
 	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
+	                
+	                <!-- Identificador del bono -->
+	                <div class="form-group">
+	                    <label for="bonoId">Identificador del bono</label>
+	                    <input type="number" id="bonoId" name="bonoId" required>
+	                </div>
+	                
 	                
 	                <!-- Nombre de la pista -->
 	                <div class="form-group">

@@ -64,7 +64,7 @@ public class GestorReservas {
 	 * @param bonoId El identificador del bono con el que se va a realizar la reserva.
 	 * @return Devuelve true si el procedimiento de reserva se ha hecho de manera correcta, y false si hay algo que se incumple.
 	 */
-    public boolean hacerReservaBono(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva, int bonoId) {
+    public int hacerReservaBono(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva, int bonoId) {
     	return daoReserva.hacerReservaBono(correoUsuario, nombrePista, fechaHora, duracion, numeroAdultos, numeroNinos, tipoReserva, bonoId);
     }	
     
@@ -73,9 +73,9 @@ public class GestorReservas {
 	 * Genera un nuevo bono de usuario.
 	 * @param correoUsuario Correo del usuario que pide el bono.
 	 * @param tamano Tipo de pista a la que asignar el bono.
-	 * @return Devuelve true si el procedimiento de creacion del bono se ha hecho de manera correcta, y false si hay algo que falla.
+	 * @return Devuelve 0 si el procedimiento de creacion del bono se ha hecho de manera correcta, y un valor negativo si hay algo que falla.
 	 */
-    public boolean hacerNuevoBono(String correoUsuario, TamanoPista tamano){
+    public int hacerNuevoBono(String correoUsuario, TamanoPista tamano){
     	return daoReserva.hacerNuevoBono(correoUsuario, tamano);
     }
     
@@ -116,7 +116,7 @@ public class GestorReservas {
 	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si contradice una de las condiciones
 	 * 		   o si ha habido un error.
 	 */
-    public boolean comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
+    public int comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
     	return daoReserva.comprobarBono(bonoId, correoUsuario, tamano);
     }
 

@@ -74,6 +74,10 @@ public class ReservaDAO {
         if (plazoExcedido(fechaHora)) {
             return -5;
         }
+        
+        if(pista.getMaxJugadores() < numeroAdultos + numeroNinos) {
+        	return -7;
+        }
 
         // Calcular precio y descuento
         float precio = calcularPrecio(duracion);
@@ -95,7 +99,7 @@ public class ReservaDAO {
 
         // Inserción en la base de datos
         String query = properties.getProperty("insert_reserva");
-        int respuesta = -7;
+        int respuesta = -8;
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -138,47 +142,45 @@ public class ReservaDAO {
 	 * @param bonoId El identificador del bono con el que se va a realizar la reserva.
 	 * @return Devuelve true si el procedimiento de reserva se ha hecho de manera correcta, y false si hay algo que se incumple.
 	 */
-    public boolean hacerReservaBono(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva, int bonoId) {
+    public int hacerReservaBono(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva, int bonoId) {
         int jugador = buscarIdJugador(correoUsuario); // Obtener ID del jugador
         int pistaId = buscarIdPista(nombrePista); // Obtener ID de la pista
 
         // Comprobación adicional para evitar reservas en la misma pista y hora
         if (existeReservaParaPistaYHora(nombrePista, fechaHora)) {
-            System.out.println("ERROR! Ya existe una reserva para la misma pista y horario.");
-            return false;
+            return -1;
         }
 
         // Validaciones de existencia y disponibilidad
         if (jugador == -1) {
-            System.out.println("ERROR! El usuario no existe.");
-            return false;
+            return -2;
         }
         PistaDTO pista = buscarPista(nombrePista);
         if (pista == null) {
-            System.out.println("ERROR! La pista no existe.");
-            return false;
+            return -3;
         }
         if (!pista.isDisponible()) {
-            System.out.println("ERROR! La pista no está disponible.");
-            return false;
+            return -4;
         }
         if (plazoExcedido(fechaHora)) {
-            System.out.println("ERROR! No se puede reservar una pista antes de 24 horas.");
-            return false;
+            return -5;
+        }
+
+        if(pista.getMaxJugadores() < numeroAdultos + numeroNinos) {
+        	return -6;
         }
 
         // Comprobación del bono
-        if (!comprobarBono(bonoId, correoUsuario, pista.getTamanoPista())) {
-            System.out.println("ERROR! El bono no es válido para esta reserva.");
-            return false;
+        int error= comprobarBono(bonoId, correoUsuario, pista.getTamanoPista());
+        if(error !=0) {
+            return error;
         }
 
         int sesionesRestantes = obtenerSesionesRestantes(bonoId);
 
         // Validar que queden sesiones disponibles
         if (sesionesRestantes <= 0) {
-            System.out.println("ERROR! No quedan sesiones disponibles en el bono.");
-            return false;
+            return -10;
         }
 
         float precio = calcularPrecio(duracion);
@@ -195,13 +197,12 @@ public class ReservaDAO {
         } else if (tipoReserva == ReservaAdultosDTO.class) {
             tipoReservaString = "ADULTOS";
         } else {
-            System.out.println("ERROR! Tipo incorrecto de reserva.");
-            return false;
+            return -7;
         }
 
         // Inserción en la base de datos
         String queryInsertReserva = properties.getProperty("insert_reserva");
-        boolean respuesta = false;
+        int respuesta = 0;
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -225,7 +226,7 @@ public class ReservaDAO {
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted <= 0) {
                     System.out.println(" ERROR! No se pudo insertar la reserva.");
-                    return false;
+                    return -13;
                 }
             }
 
@@ -233,7 +234,7 @@ public class ReservaDAO {
             actualizarSesionesBono(bonoId);
 
             // Confirmar transacción
-            respuesta = true;
+            respuesta= 0;
 
         } catch (SQLException e) {
             System.err.println("Error al realizar la reserva con bono: " + e.getMessage());
@@ -291,9 +292,9 @@ public class ReservaDAO {
 	 * Genera un nuevo bono de usuario.
 	 * @param correoUsuario Correo del usuario que pide el bono.
 	 * @param tamano Tipo de pista a la que asignar el bono.
-	 * @return Devuelve true si el procedimiento de creacion del bono se ha hecho de manera correcta, y false si hay algo que falla.
+	 * @return Devuelve 0 si el procedimiento de creacion del bono se ha hecho de manera correcta, y un valor negativo si hay algo que falla.
 	 */
-    public boolean hacerNuevoBono(String correoUsuario, TamanoPista tamano){
+    public int hacerNuevoBono(String correoUsuario, TamanoPista tamano){
     	    	
     	JugadorDAO jugador= new JugadorDAO();
     	int idUsuario= -1;
@@ -305,7 +306,7 @@ public class ReservaDAO {
     	connection = dbConnection.getConnection();
  	
         if(jugador.buscarUsuarioPorCorreo(correoUsuario) != 1) {
-        	return false;
+        	return -1;
         }
   
     	// Valor por defecto para las sesiones de un bono nuevo
@@ -329,23 +330,20 @@ public class ReservaDAO {
             	
             	// Ejecutar la consulta
             	stmtInsert.executeUpdate();
-            	System.out.println("Bono creado exitosamente");
             } catch (SQLException e) {
-            	System.out.println("ERROR! No se pudo insertar el nuevo bono en la base de datos: " + e.getMessage());
             	e.printStackTrace();
-            	return false;
+            	return -2;
             }
     		
     	} catch (SQLException e) {
-    		System.out.println(" ERROR! No se pudo acceder a la base de datos del Jugador: " + e.getMessage());
     		e.printStackTrace();
-    		return false;
+    		return -3;
     	} finally {		
     		// Cerrar la conexión a la base de datos
     		dbConnection.closeConnection();
     	}
     	// Si todo fue bien, retornamos true
-    	return true;
+    	return 0;
         	
     }
 
@@ -455,7 +453,7 @@ public class ReservaDAO {
 	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si contradice una de las condiciones
 	 * 		   o si ha habido un error.
 	 */
-    public boolean comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
+    public int comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
     	String query = properties.getProperty("buscar_bono");
     	
     	DBConnection db = new DBConnection();
@@ -482,46 +480,40 @@ public class ReservaDAO {
 
                 // Comprobar si el tamaño de la pista coincide con el del bono
                 if (!tamanoBono.equals(tamano)) {
-                    System.out.println(" ERROR! La reserva que se intenta hacer no es del mismo tipo de tamaño de pista que el del bono.");
-                    return false;
+                    return -7;
                 }
             } 
             
             else {
-                System.out.println(" ERROR! El bono utilizado no existe.");
-                return bonoFound;
+                return -8;
             }
 
         } catch (SQLException e) {
-            System.out.println(" ERROR! Error al acceder a la base de datos: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return -9;
         } finally {
             db.closeConnection();
         }
 
         // Comprobar que el bono tiene sesiones disponibles
         if (sesiones == 0) {
-            System.out.println(" ERROR! El bono ya no tiene sesiones disponibles.");
-            return false;
+            return -10;
         }
 
         int idComprobar= buscarIdJugador(correoUsuario);
         // Comprobar que el bono pertenece al usuario que intenta acceder a él
         if (idComprobar!=idPropietario) {
-            System.out.println(" ERROR! El bono no pertenece al usuario que intenta hacer la reserva.");
-            return false;
+            return -11;
         }
 
         // Verificar que la fecha del bono no exceda en un año la fecha actual
         if(fechaBono!=null) {
         	if (plazoExcedido(fechaBono)) {
-        		System.out.println(" ERROR! El bono está caducado.");
-        		return false;
+        		return -12;
         	}        	
         }
 	    	
-    	return true; // El bono es válido
+    	return 0; // El bono es válido
     }
 
     
