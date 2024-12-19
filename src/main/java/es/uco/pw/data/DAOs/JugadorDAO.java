@@ -8,6 +8,9 @@ import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  @author Antonio Diaz Barbancho
  *  @author Carlos Marín Rodríguez 
@@ -104,10 +107,11 @@ public class JugadorDAO {
 	    }
 	    return codigo;
     }
-    
-    public int listarUsuarios() {
+
+
+    public List<JugadorDTO> listarUsuarios() {
         String query = properties.getProperty("listar_usuarios");
-        int codigo = 0;
+        List<JugadorDTO> usuarios = new ArrayList<>(); // Lista para almacenar los usuarios
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -115,38 +119,37 @@ public class JugadorDAO {
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
-            boolean hasUsers = false; 
-
             while (resultSet.next()) {
-                hasUsers = true; 
-                String nombre = resultSet.getString("nombre");
+                String nombre = resultSet.getString("nombreCompleto");
                 String apellidos = resultSet.getString("apellidos");
                 Date fechaNacimiento = resultSet.getDate("fechaNacimiento");
                 Date fechaInscripcion = resultSet.getDate("fechaInscripcion");
                 String correoElectronico = resultSet.getString("correoElectronico");
-                String tipoUsuario = resultSet.getString("tipoUsuario"); // Mostrar el tipo de usuario
+                String tipoUsuario = resultSet.getString("tipoUsuario");
 
-                System.out.printf("Nombre: %s %s\n", nombre, apellidos);
-                System.out.printf("Fecha de Nacimiento: %s\n", fechaNacimiento);
-                System.out.printf("Fecha de Inscripción: %s\n", fechaInscripcion);
-                System.out.printf("Correo Electrónico: %s\n", correoElectronico);
-                System.out.printf("Tipo de Usuario: %s\n", tipoUsuario);
-                System.out.println("───────────────────────────────────────");
-            }
+                String nombreCompleto = nombre + " " + apellidos;
+                
+                // Crear un objeto JugadorDTO y agregarlo a la lista
+                JugadorDTO jugador = new JugadorDTO();
+                jugador.setNombreCompleto(nombreCompleto);
+                jugador.setFechaNacimiento(fechaNacimiento);
+                jugador.setFechaInscripcion(fechaInscripcion);
+                jugador.setCorreoElectronico(correoElectronico);
+                jugador.setTipoUsuario(tipoUsuario); // Asignar tipo de usuario
 
-            if (!hasUsers) {
-            	codigo = 2;
+                usuarios.add(jugador);
             }
 
         } catch (SQLException e) {
             System.err.println("Error listando usuarios: " + e.getMessage());
-            codigo = -1; 
+            usuarios = null; // En caso de error, retornar null
         } finally {
             db.closeConnection();
         }
 
-        return codigo;
+        return usuarios; // Devolver la lista de usuarios
     }
+
     
     public int modificarUsuario(JugadorDTO jugador, String correo) {
         int codigo = 0;
