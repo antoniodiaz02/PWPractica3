@@ -13,24 +13,24 @@
 <head>
 	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Realizar nueva reserva exito</title>
+	<title>Nuevo bono exito</title>
 	<link rel="stylesheet" href="<%= request.getContextPath() %>/css/registro.css">
 </head>
 
 <body>
     <div class="container">
     	<div class="form-container">
-    		<h1>Realizar nueva reserva</h1>
+    		<h1>Solicitar Nuevo Bono</h1>
     		
     		<!-- Mensaje de éxito: "Reserva realizada con éxito" -->
-            <p><strong>¡Reserva realizada correctamente!</strong></p>
+            <p><strong>¡Bono creado correctamente!</strong></p>
     
             
-	        <form action="<%= request.getContextPath() %>/registroExitoso" method="POST">>
+	        <form action="<%= request.getContextPath() %>/usermenu/bonos/nuevobono/exito" method="POST">>
     
                 <!-- Botón de regreso al menú -->
                 <div class="form-group">
-                    <a href="<%= request.getContextPath() %>/MVC/Views/user/usermenu.jsp"" class="fw-bold">Volver al menú principal</a>
+                    <a href="<%= request.getContextPath() %>/MVC/Views/user/usermenu.jsp" class="fw-bold">Volver al menú principal</a>
                 </div>
             </form>
 	           

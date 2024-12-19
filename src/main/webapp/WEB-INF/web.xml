@@ -26,6 +26,7 @@
 	    <url-pattern>/register</url-pattern> <!-- URL correcta para acceder al servlet -->
 	</servlet-mapping>
 	
+	<!-- Configuración para el servlet LoginController -->
 	    <servlet>
         <servlet-name>LogoutController</servlet-name>
         <servlet-class>es.uco.pw.servlets.common.LogoutController</servlet-class> <!-- Clase que maneja la lógica de login -->
@@ -57,7 +58,48 @@
         <servlet-name>RegisterPistaController</servlet-name>
         <url-pattern>/registerPista</url-pattern>
     </servlet-mapping>
-	
+    
+    	<!-- Configuración para el servlet bonosController -->
+    <servlet>
+        <servlet-name>bonosController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.bonosController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>bonosController</servlet-name>
+        <url-pattern>/usermenu/bonos</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Configuración para el servlet crearBonosController -->
+	<servlet>
+        <servlet-name>crearBonosController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.crearBonosController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>crearBonosController</servlet-name>
+        <url-pattern>/usermenu/bonos/nuevobono</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Configuración para el servlet crearBonosExitoController -->
+	<servlet>
+        <servlet-name>CrearBonosExitoController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.CrearBonosExitoController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CrearBonosExitoController</servlet-name>
+        <url-pattern>/usermenu/bonos/nuevobono/exito</url-pattern>
+    </servlet-mapping>
     <!-- Puedes agregar más servlets aquí según sea necesario -->
+    <servlet>
+        <servlet-name>RealizarReservaBonoController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.RealizarReservaBonoController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>RealizarReservaBonoController</servlet-name>
+        <url-pattern>/usermenu/bonos/reservar</url-pattern>
+    </servlet-mapping>
 
 </web-app>

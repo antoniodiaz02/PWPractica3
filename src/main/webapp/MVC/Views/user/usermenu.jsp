@@ -32,7 +32,7 @@
             <li><a href="consultarReservas.jsp">Consultar Reservas</a></li>
             <li><a href="buscarPista.jsp">Buscar Pista</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/reservar">Realizar Reserva</a></li>
-            <li><a href="bonos.jsp">Bonos</a></li>
+            <li><a href="<%= request.getContextPath() %>/usermenu/bonos">Gestionar Bonos</a></li>
             <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>
             <li><a href="modificarDatos.jsp">Modificar Datos</a></li>
             <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
