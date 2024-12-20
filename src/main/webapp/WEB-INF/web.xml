@@ -66,7 +66,7 @@
     
     <servlet-mapping>
         <servlet-name>RegisterPistaController</servlet-name>
-        <url-pattern>/registerPista</url-pattern>
+        <url-pattern>/adminmenu/registerPista</url-pattern>
     </servlet-mapping>
     
     	<!-- Configuración para el servlet bonosController -->
@@ -102,15 +102,17 @@
         <url-pattern>/usermenu/bonos/nuevobono/exito</url-pattern>
     </servlet-mapping>
   
-        <!-- Configuración del servlet para registrar material -->
-    <servlet>
-        <servlet-name>RegisterMaterialController</servlet-name>
-        <servlet-class>es.uco.pw.servlets.admin.RegisterMaterialController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RegisterMaterialController</servlet-name>
-        <url-pattern>/registerMaterial</url-pattern>
-    </servlet-mapping>
+     <!-- Configuración del servlet para registrar material -->
+	<servlet>
+	    <servlet-name>RegisterMaterialController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.RegisterMaterialController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>RegisterMaterialController</servlet-name>
+	    <url-pattern>/adminmenu/registerMaterial</url-pattern>
+	</servlet-mapping>
+		
+		
   
     <!-- Puedes agregar más servlets aquí según sea necesario -->
     <servlet>
@@ -122,5 +124,25 @@
         <servlet-name>RealizarReservaBonoController</servlet-name>
         <url-pattern>/usermenu/bonos/reservar</url-pattern>
     </servlet-mapping>
-
+    
+    <!-- Configuración del servlet ListarPistasController -->
+    <servlet>
+        <servlet-name>ListarPistasController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.common.ListarPistasController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListarPistasController</servlet-name>
+        <url-pattern>/listarPistas</url-pattern>
+    </servlet-mapping>
+    
+	<!-- Configuración para el servlet ListarUsuariosController -->
+	<servlet>
+	    <servlet-name>ListarUsuariosController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.ListarUsuariosController</servlet-class> <!-- Clase que maneja la lógica de listar usuarios -->
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>ListarUsuariosController</servlet-name>
+	    <url-pattern>/listarUsuarios</url-pattern> 
+	</servlet-mapping>
 </web-app>

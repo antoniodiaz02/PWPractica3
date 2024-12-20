@@ -10,8 +10,8 @@
     }
 
     // Obtener la lista de usuarios desde el DAO
-    es.uco.pw.data.DAOs.JugadorDAO jugadorDAO = new es.uco.pw.data.DAOs.JugadorDAO();
-    List<es.uco.pw.business.DTOs.JugadorDTO> usuarios = jugadorDAO.listarUsuarios();
+    //es.uco.pw.data.DAOs.JugadorDAO jugadorDAO = new es.uco.pw.data.DAOs.JugadorDAO();
+    //List<es.uco.pw.business.DTOs.JugadorDTO> usuarios = jugadorDAO.listarUsuarios();
 
 %>
 
@@ -36,9 +36,10 @@
 <nav class="navbar">
     <div class="container">
         <ul>
-            <li><a href="listarClientes.jsp">Listar Clientes</a></li>
-            <li><a href="darAltaMateriales.jsp">Dar de Alta Materiales</a></li>
-            <li><a href="darAltaPistas.jsp">Dar de Alta Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/listarUsuarios">Listar Usuarios</a></li>
+            <li><a href="<%= request.getContextPath() %>/listarPistas">Listar Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/registerMaterial">Dar de Alta Materiales</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/registerPista">Dar de Alta Pistas</a></li>
             <li><a href="asociarMaterialesPistas.jsp">Asociar Materiales a Pistas</a></li>
             <li><a href="modificarEstadoMateriales.jsp">Modificar Estado de Materiales</a></li>
             <li><a href="modificarEstadoPistas.jsp">Modificar Estado de Pistas</a></li>
@@ -48,7 +49,7 @@
         </ul>
     </div>
 </nav>
-
+<%-- 
 <main class="main-content">
     <div class="container">
         <h2>Lista de Clientes</h2>
@@ -87,6 +88,7 @@
         %>
     </div>
 </main>
+--%>
 
 <footer class="footer">
     <div class="container">

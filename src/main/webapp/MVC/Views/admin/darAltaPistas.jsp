@@ -40,7 +40,7 @@
                 }
             %>
 
-            <form action="<%= request.getContextPath() %>/registerPista" method="POST">
+            <form action="<%= request.getContextPath() %>/adminmenu/registerPista" method="POST">
                 <!-- Nombre de la Pista -->
                 <div class="form-group">
                     <label for="nombre">Nombre de la Pista:</label>

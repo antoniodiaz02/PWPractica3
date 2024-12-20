@@ -13,7 +13,8 @@
             <h1>¡Registro Exitoso!</h1>
             <p>El material ha sido registrado correctamente.</p>
             <a href="<%= request.getContextPath() %>/listaMateriales" class="button">Ver Lista de Materiales    </a>
-            <a href="<%= request.getContextPath() %>/MVC/Views/admin/darAltaMateriales.jsp" class="button">Registrar Otro Material</a>
+            <a href="<%= request.getContextPath() %>/registerMaterial" class="button">Registrar Otro Material</a>
+            <a href="<%= request.getContextPath() %>/MVC/Views/admin/adminmenu.jsp" class="button">Volver al inicio</a>
         </div>
     </div>
 </body>
