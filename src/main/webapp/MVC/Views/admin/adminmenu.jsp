@@ -38,6 +38,7 @@
         <ul>
             <li><a href="<%= request.getContextPath() %>/listarUsuarios">Listar Usuarios</a></li>
             <li><a href="<%= request.getContextPath() %>/listarPistas">Listar Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/listarMateriales">Listar Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerMaterial">Dar de Alta Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerPista">Dar de Alta Pistas</a></li>
             <li><a href="asociarMaterialesPistas.jsp">Asociar Materiales a Pistas</a></li>
