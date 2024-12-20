@@ -7,6 +7,9 @@
         response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
         return; // Detener la ejecución de la página
     }
+
+    es.uco.pw.data.DAOs.BonoDAO bonoDAO = new es.uco.pw.data.DAOs.BonoDAO();
+    java.util.List<es.uco.pw.business.DTOs.BonoDTO> bonos = bonoDAO.obtenerBonosPorCorreo(jugador.getCorreoElectronico()); // Se asume que esta función devuelve una lista de objetos BonoDTO
 %>
 
 <!DOCTYPE html>
@@ -38,6 +41,38 @@
     <div class="container">
         <h2>Tus bonos</h2>
         <p>Aquí puedes visualizar los bonos que has solicitado previamente:</p>
+        
+        <table border="1">
+            <tr>
+                <th>ID Bono</th>
+                <th>Sesiones</th>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Caducidad</th>
+                <th>Tipo de Pista</th>
+            </tr>
+            
+            <% 
+                if (bonos != null && !bonos.isEmpty()) {
+                    for (es.uco.pw.business.DTOs.BonoDTO bono : bonos) { 
+            %>
+                        <tr>
+                            <td><%= bono.getIdBono() %></td>
+                            <td><%= bono.getSesiones() %></td>
+                            <td><%= bono.getFechaInicio() != null ? bono.getFechaInicio().toString() : "N/A" %></td>
+                            <td><%= bono.getFechaCaducidad() != null ? bono.getFechaCaducidad().toString() : "N/A" %></td>
+                            <td><%= bono.getTipoPista() %></td>
+                        </tr>
+            <% 
+                    } 
+                } else { 
+            %>
+                    <tr>
+                        <td colspan="5">No tienes bonos registrados.</td>
+                    </tr>
+            <% 
+                } 
+            %>
+        </table>
     </div>
     
     <div class="container">
