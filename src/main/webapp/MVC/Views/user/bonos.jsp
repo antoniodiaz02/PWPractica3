@@ -9,7 +9,7 @@
     }
 
     es.uco.pw.data.DAOs.BonoDAO bonoDAO = new es.uco.pw.data.DAOs.BonoDAO();
-    java.util.List<es.uco.pw.business.DTOs.BonoDTO> bonos = bonoDAO.obtenerBonosPorCorreo(jugador.getCorreoElectronico()); // Se asume que esta función devuelve una lista de objetos BonoDTO
+    java.util.List<es.uco.pw.business.DTOs.BonoDTO> bonos = bonoDAO.obtenerBonosPorCorreo(jugador.getCorreoElectronico());
 %>
 
 <!DOCTYPE html>
