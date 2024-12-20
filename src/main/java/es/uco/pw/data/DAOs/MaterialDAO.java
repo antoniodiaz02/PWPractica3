@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -210,34 +211,56 @@ public class MaterialDAO {
      * Recupera todos los materiales de la base de datos.
      * @return materials Una lista de objetos MaterialDTO.
      */
-    public List<MaterialDTO> findAllMaterials() {
-        List<MaterialDTO> materials = new ArrayList<>();
-        String query = properties.getProperty("find_all_materials");
-
+    public int listarMateriales(Vector<MaterialDTO> vectorMateriales) {
+        String query = properties.getProperty("find.all.materials");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+        if (vectorMateriales == null) {
+            // Error: El vector proporcionado es null
+            return -1;
+        }
 
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            // Limpiar el vector antes de llenarlo
+            vectorMateriales.clear();
+
+            // Iterar sobre los resultados y agregarlos al vector
             while (resultSet.next()) {
-                int idMaterial = resultSet.getInt("idMaterial");
-                TipoMaterial tipoMaterial = TipoMaterial.valueOf(resultSet.getString("tipoMaterial"));
-                boolean usoInterior = resultSet.getBoolean("usoInterior");
-                EstadoMaterial estadoMaterial = EstadoMaterial.valueOf(resultSet.getString("estadoMaterial"));
+                try {
+                    int idMaterial = resultSet.getInt("idMaterial");
+                    TipoMaterial tipoMaterial = TipoMaterial.valueOf(resultSet.getString("tipo"));
+                    boolean usoInterior = resultSet.getBoolean("uso");
+                    EstadoMaterial estadoMaterial = EstadoMaterial.valueOf(resultSet.getString("estado"));
 
-                MaterialDTO material = new MaterialDTO(idMaterial, tipoMaterial, usoInterior, estadoMaterial);
-                materials.add(material);
+                    MaterialDTO material = new MaterialDTO(idMaterial, tipoMaterial, usoInterior, estadoMaterial);
+                    vectorMateriales.add(material);
+                } catch (IllegalArgumentException e) {
+                    // Error: Formato de datos inválido en el ResultSet
+                    System.err.println("Error processing material data: " + e.getMessage());
+                    return -2;
+                }
             }
+
+            if (vectorMateriales.isEmpty()) {
+                // No se encontraron materiales
+                return -3;
+            }
+
+            // Operación exitosa
+            return 0;
+
         } catch (SQLException e) {
-            System.err.println("Error retrieving materials: " + e.getMessage());
+            // Error en la consulta SQL
+            System.err.println("Error listing materials: " + e.getMessage());
             e.printStackTrace();
+            return -4;
         } finally {
             db.closeConnection();
         }
-        return materials;
     }
-    
     /**
      * Obtiene los materiales por pista.
      * @return materiales Una lista de objetos MaterialDTO.
