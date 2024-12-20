@@ -1,10 +1,12 @@
 package es.uco.pw.data.DAOs;
 
 import es.uco.pw.business.DTOs.JugadorDTO;
+
 import es.uco.pw.common.DBConnection;
 
 import java.sql.*;
 import java.util.Properties;
+import java.util.Vector;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -109,45 +111,66 @@ public class JugadorDAO {
     }
 
 
-    public List<JugadorDTO> listarUsuarios() {
+    public int listarUsuarios(Vector<JugadorDTO> vectorUsuarios) {
         String query = properties.getProperty("listar_usuarios");
-        List<JugadorDTO> usuarios = new ArrayList<>(); // Lista para almacenar los usuarios
-
         DBConnection db = new DBConnection();
         connection = db.getConnection();
+
+        if (vectorUsuarios == null) {
+            // Error: El vector proporcionado es null
+            return -1;
+        }
 
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
+            // Limpiar el vector antes de llenarlo
+            vectorUsuarios.clear();
+
+            // Iterar sobre los resultados y agregarlos al vector
             while (resultSet.next()) {
-                String nombre = resultSet.getString("nombreCompleto");
-                String apellidos = resultSet.getString("apellidos");
-                Date fechaNacimiento = resultSet.getDate("fechaNacimiento");
-                Date fechaInscripcion = resultSet.getDate("fechaInscripcion");
-                String correoElectronico = resultSet.getString("correoElectronico");
-                String tipoUsuario = resultSet.getString("tipoUsuario");
+                try {
+                    String nombre = resultSet.getString("nombreCompleto");
+                    String apellidos = resultSet.getString("apellidos");
+                    Date fechaNacimiento = resultSet.getDate("fechaNacimiento");
+                    Date fechaInscripcion = resultSet.getDate("fechaInscripcion");
+                    String correoElectronico = resultSet.getString("correoElectronico");
+                    String tipoUsuario = resultSet.getString("tipoUsuario");
 
-                String nombreCompleto = nombre + " " + apellidos;
-                
-                // Crear un objeto JugadorDTO y agregarlo a la lista
-                JugadorDTO jugador = new JugadorDTO();
-                jugador.setNombreCompleto(nombreCompleto);
-                jugador.setFechaNacimiento(fechaNacimiento);
-                jugador.setFechaInscripcion(fechaInscripcion);
-                jugador.setCorreoElectronico(correoElectronico);
-                jugador.setTipoUsuario(tipoUsuario); // Asignar tipo de usuario
+                    String nombreCompleto = nombre + " " + apellidos;
 
-                usuarios.add(jugador);
+                    // Crear un objeto JugadorDTO y agregarlo al vector
+                    JugadorDTO jugador = new JugadorDTO();
+                    jugador.setNombreCompleto(nombreCompleto);
+                    jugador.setFechaNacimiento(fechaNacimiento);
+                    jugador.setFechaInscripcion(fechaInscripcion);
+                    jugador.setCorreoElectronico(correoElectronico);
+                    jugador.setTipoUsuario(tipoUsuario);
+
+                    vectorUsuarios.add(jugador);
+                } catch (IllegalArgumentException e) {
+                    // Error: Formato de datos inválido en el ResultSet
+                    System.err.println("Error processing usuario data: " + e.getMessage());
+                    return -2;
+                }
             }
 
+            if (vectorUsuarios.isEmpty()) {
+                // No se encontraron usuarios
+                return -3;
+            }
+
+            // Operación exitosa
+            return 0;
+
         } catch (SQLException e) {
-            System.err.println("Error listando usuarios: " + e.getMessage());
-            usuarios = null; // En caso de error, retornar null
+            // Error en la consulta SQL
+            System.err.println("Error listing usuarios: " + e.getMessage());
+            e.printStackTrace();
+            return -4;
         } finally {
             db.closeConnection();
         }
-
-        return usuarios; // Devolver la lista de usuarios
     }
 
     

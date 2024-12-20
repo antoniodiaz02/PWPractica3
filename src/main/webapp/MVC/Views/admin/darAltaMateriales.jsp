@@ -40,7 +40,7 @@
                 }
             %>
 
-            <form action="<%= request.getContextPath() %>/registerMaterial" method="POST">
+            <form action="<%= request.getContextPath() %>/adminmenu/registerMaterial" method="POST">
                 <!-- ID del Material -->
                 <div class="form-group">
                     <label for="idMaterial">ID del Material:</label>

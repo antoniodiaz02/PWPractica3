@@ -13,7 +13,7 @@ public class RegisterPistaController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Redirigir a la página de registro de pistas
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/registroPista.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/darAltaPistas.jsp");
         dispatcher.forward(request, response);
     }
 

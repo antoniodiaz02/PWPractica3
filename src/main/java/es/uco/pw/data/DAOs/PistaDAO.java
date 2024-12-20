@@ -2,12 +2,15 @@ package es.uco.pw.data.DAOs;
 
 import es.uco.pw.business.DTOs.PistaDTO;
 
+
 import es.uco.pw.common.DBConnection;
+
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -211,35 +214,62 @@ public class PistaDAO {
      * Lista las pistas en la base de datos.
      * @return todasLasPistas Todas las pistas de la base de datos.
      */
-    public List<PistaDTO> listarPistas() {
-        List<PistaDTO> todasLasPistas = new ArrayList<>();
+    /**
+     * Lista las pistas en la base de datos.
+     * @param vectorPistas Vector donde se almacenarán las pistas recuperadas.
+     * @return Código de resultado (0 si es exitoso, o un número negativo para errores).
+     */
+    public int listarPistas(Vector<PistaDTO> vectorPistas) {
         String query = properties.getProperty("listar_todas_las_pistas");
-
         DBConnection db = new DBConnection();
         connection = db.getConnection();
+
+        if (vectorPistas == null) {
+            // Error: El vector proporcionado es null
+            return -1;
+        }
 
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
+            // Limpiar el vector antes de llenarlo
+            vectorPistas.clear();
+
+            // Iterar sobre los resultados y agregarlos al vector
             while (resultSet.next()) {
-                PistaDTO.TamanoPista tamanoPista = PistaDTO.TamanoPista.valueOf(resultSet.getString("tamano").toUpperCase());
-                PistaDTO pista = new PistaDTO(
-                    resultSet.getString("nombre"),
-                    resultSet.getBoolean("estado"),
-                    resultSet.getString("tipo").equalsIgnoreCase("INTERIOR"),
-                    tamanoPista,
-                    resultSet.getInt("numMaxJugadores")
-                );
-                todasLasPistas.add(pista);
+                try {
+                    PistaDTO.TamanoPista tamanoPista = PistaDTO.TamanoPista.valueOf(resultSet.getString("tamano").toUpperCase());
+                    PistaDTO pista = new PistaDTO(
+                        resultSet.getString("nombre"),
+                        resultSet.getBoolean("estado"),
+                        resultSet.getString("tipo").equalsIgnoreCase("INTERIOR"),
+                        tamanoPista,
+                        resultSet.getInt("numMaxJugadores")
+                    );
+                    vectorPistas.add(pista);
+                } catch (IllegalArgumentException e) {
+                    // Error: Formato de datos inválido en el ResultSet
+                    System.err.println("Error processing pista data: " + e.getMessage());
+                    return -2;
+                }
             }
+
+            if (vectorPistas.isEmpty()) {
+                // No se encontraron pistas
+                return -3;
+            }
+
+            // Operación exitosa
+            return 0;
+
         } catch (SQLException e) {
+            // Error en la consulta SQL
             System.err.println("Error listing pistas: " + e.getMessage());
             e.printStackTrace();
+            return -4;
         } finally {
             db.closeConnection();
         }
-
-        return todasLasPistas;
     }
     
     /**

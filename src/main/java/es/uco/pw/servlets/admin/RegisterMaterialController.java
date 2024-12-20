@@ -13,7 +13,7 @@ public class RegisterMaterialController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Redirigir a la página de registro de materiales
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/registroMaterial.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/darAltaMateriales.jsp");
         dispatcher.forward(request, response);
     }
 
