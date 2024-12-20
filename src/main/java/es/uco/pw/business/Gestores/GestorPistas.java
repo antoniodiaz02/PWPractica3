@@ -2,6 +2,7 @@ package es.uco.pw.business.Gestores;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import es.uco.pw.business.DTOs.PistaDTO;
 import es.uco.pw.business.DTOs.MaterialDTO;
@@ -35,12 +36,12 @@ public class GestorPistas {
      * @param pista PistaDTO con los datos de la pista a crear
      * @return int Código de respuesta (0: éxito, 1: error)
      */
-    public boolean crearPista(PistaDTO pista) {
+    public int crearPista(PistaDTO pista) {
         // Insertar la nueva pista a través del DAO
         return daoPista.insertPista(pista);
     }
     
-    public boolean crearMaterial(MaterialDTO material) {
+    public int crearMaterial(MaterialDTO material) {
         // Insertar la nueva pista a través del DAO
         return daoMaterial.insertMaterial(material);
     }
@@ -50,9 +51,9 @@ public class GestorPistas {
      * 
      * @return List<PistaDTO> Lista de pistas
      */
-    public List<PistaDTO> listarPistas() {
+    public int listarPistas(Vector<PistaDTO> vectorPistas) {
         // Obtener todas las pistas a través del DAO
-        return daoPista.listarPistas();
+        return daoPista.listarPistas(vectorPistas);
     }
     
     public List<MaterialDTO> obtenerMaterialesDePista(String nombrePista) {
@@ -122,7 +123,7 @@ public class GestorPistas {
         List<PistaDTO> pistasNoDisponibles = new ArrayList<>();
         
         // Recorrer las pistas y verificar si no están disponibles
-        for (PistaDTO pista : daoPista.listarPistas()) {
+        for (PistaDTO pista : daoPista.listarPistasNoDisponibles()) {
             if (!pista.isDisponible()) {
                 pistasNoDisponibles.add(pista);
             }

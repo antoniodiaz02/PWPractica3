@@ -145,4 +145,15 @@
 	    <servlet-name>ListarUsuariosController</servlet-name>
 	    <url-pattern>/listarUsuarios</url-pattern> 
 	</servlet-mapping>
+	
+	<!-- Configuración para el servlet ListarMaterialesController -->
+	<servlet>
+	    <servlet-name>ListarMaterialesController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.common.ListarMaterialesController</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>ListarMaterialesController</servlet-name>
+	    <url-pattern>/listarMateriales</url-pattern>
+	</servlet-mapping>
 </web-app>
