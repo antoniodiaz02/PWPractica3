@@ -40,7 +40,7 @@ public class crearBonosController extends HttpServlet {
             
             //Si se realiza la reserva con éxto se redirecciona a la página de éxito con el precio.
             if (resultado == 0){
-            	response.sendRedirect("/gestionbaloncestopistas/MVC/Views/user/crearBonosExito.jsp");
+            	response.sendRedirect(request.getContextPath() + "/usermenu/bonos/nuevobono/exito");
             } 
             
             //Si hay algún error

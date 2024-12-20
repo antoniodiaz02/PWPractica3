@@ -81,7 +81,7 @@
 				    <div id="numeroParticipantesContainer">
 				        <div class="form-group" id="participantes">
 				            <label for="numParticipantes">Número de participantes</label>
-				            <input type="number" id="numParticipantes" name="numParticipantes" required>
+				            <input type="number" id="numParticipantes" name="numParticipantes">
 				        </div>
 				    </div>
 				

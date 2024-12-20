@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -459,7 +460,6 @@ public class ReservaDAO {
     	DBConnection db = new DBConnection();
     	connection = db.getConnection();
     	
-    	boolean bonoFound = false;
     	int sesiones = 0;
     	Date fechaBono = null;
     	int idPropietario = -1;
@@ -470,7 +470,6 @@ public class ReservaDAO {
 
             if (rs.next()) {
                 // Se encontró el bono
-                bonoFound = true;
                 idPropietario = rs.getInt("usuarioId");
                 sesiones = rs.getInt("sesiones");
                 fechaBono = rs.getTimestamp("fechaCaducidad");  // Obtener la fecha de la primera sesión como Timestamp
@@ -677,6 +676,99 @@ public class ReservaDAO {
         return codigo;
     }
 	
+	/**
+	 * Función que muestra todos los detalles de las reservas de un usuario cuya fecha está entre las dos fechas.
+	 * @param vectorReserva Vector que contiene todos los detalles de las reservas buscadas.
+	 * @param fechaInicio Fecha inicial del filtro de la búsqueda.
+	 * @param fechaFinal Fecha final del filtro de la búsqueda.
+	 * @param correoUser Correo del reservante.
+	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 */
+	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Date fechaInicio, Date fechaFinal, String correoUser) {
+        String query = properties.getProperty("select_entre_fechas");
+        
+        DBConnection db = new DBConnection();
+        connection = db.getConnection();
+        
+        int usuarioId = buscarIdJugador(correoUser);
+        
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDate(1, new java.sql.Date(fechaInicio.getTime()));
+            stmt.setDate(2, new java.sql.Date(fechaFinal.getTime()));
+            stmt.setInt(3, usuarioId);
+            ResultSet rs = stmt.executeQuery();
+
+            // Iterar sobre los resultados de la consulta
+            while(rs.next()) {
+            	String tipoReserva= rs.getString("tipoReserva");
+            	if(tipoReserva.equals("FAMILIAR")) {
+            		try {
+            			ReservaFamiliarDTO reserva = new ReservaFamiliarDTO(
+            					rs.getInt("usuarioId"),
+            					rs.getTimestamp("fechaHora"),
+            					rs.getInt("duracion"),
+            					rs.getInt("pistaId"),
+            					rs.getFloat("precio"),
+            					rs.getFloat("descuento"),
+            					rs.getInt("numAdultos"),
+            					rs.getInt("numNinos")
+            					);
+            			vectorReserva.add(reserva);
+            		} catch (IllegalArgumentException e) {
+            			return -1;
+            		}
+            		
+            	}
+            	
+            	else if(tipoReserva.equals("INFANTIL")) {
+            		try {
+            			ReservaInfantilDTO reserva = new ReservaInfantilDTO(
+            					rs.getInt("usuarioId"),
+            					rs.getTimestamp("fechaHora"),
+            					rs.getInt("duracion"),
+            					rs.getInt("pistaId"),
+            					rs.getFloat("precio"),
+            					rs.getFloat("descuento"),
+            					rs.getInt("numNinos")
+            					);
+            			vectorReserva.add(reserva);
+            		} catch (IllegalArgumentException e) {
+            			return -1;
+            		}
+            	}
+            	
+            	else {
+            		try {
+            			ReservaAdultosDTO reserva = new ReservaAdultosDTO(
+            					rs.getInt("usuarioId"),
+            					rs.getTimestamp("fechaHora"),
+            					rs.getInt("duracion"),
+            					rs.getInt("pistaId"),
+            					rs.getFloat("precio"),
+            					rs.getFloat("descuento"),
+            					rs.getInt("numAdultos")
+            					);
+            			vectorReserva.add(reserva);
+            		} catch (IllegalArgumentException e) {
+            			return -1;
+            		}
+            	}
+               
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return -2;
+        } finally {
+            db.closeConnection();
+        }
+        
+        if(vectorReserva.isEmpty()){
+            return -3;
+        }
+
+        return 0;
+
+	}
 	
 	/**
 	 * Función que modifica una reserva buscada por identificador único.
