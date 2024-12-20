@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import es.uco.pw.business.DTOs.PistaDTO;
+import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.MaterialDTO;
 import es.uco.pw.data.DAOs.MaterialDAO;
 import es.uco.pw.data.DAOs.PistaDAO;
@@ -36,7 +37,7 @@ public class GestorPistas {
      * @param pista PistaDTO con los datos de la pista a crear
      * @return int Código de respuesta (0: éxito, 1: error)
      */
-    public int crearPista(PistaDTO pista) {
+    public int insertPista(PistaDTO pista) {
         // Insertar la nueva pista a través del DAO
         return daoPista.insertPista(pista);
     }
@@ -119,17 +120,9 @@ public class GestorPistas {
      * 
      * @return List<PistaDTO> Lista de pistas no disponibles
      */
-    public List<PistaDTO> listarPistasNoDisponibles() {
-        List<PistaDTO> pistasNoDisponibles = new ArrayList<>();
+    public int listarPistasNoDisponibles(Vector<PistaDTO> pistasNoDisponibles) {
         
-        // Recorrer las pistas y verificar si no están disponibles
-        for (PistaDTO pista : daoPista.listarPistasNoDisponibles()) {
-            if (!pista.isDisponible()) {
-                pistasNoDisponibles.add(pista);
-            }
-        }
-        
-        return pistasNoDisponibles;
+        return daoPista.listarPistasNoDisponibles(pistasNoDisponibles);
     }
 
     /**
@@ -139,16 +132,18 @@ public class GestorPistas {
      * @param esInterior Si la pista debe ser interior o exterior
      * @return List<PistaDTO> Lista de pistas libres
      */
-    public List<PistaDTO> buscarPistasLibres(int numeroJugadores, boolean esInterior) {
+    public int buscarPistasLibres(int numeroJugadores, boolean esInterior, Vector<PistaDTO> vectorPistas) {
         List<PistaDTO> pistasLibres = new ArrayList<>();
 
+        int result = daoPista.listarPistas(vectorPistas);
+        
         // Verificar pistas disponibles y cumplir requisitos de capacidad y tipo
-        for (PistaDTO pista : daoPista.listarPistas()) {
+        for (PistaDTO pista : vectorPistas) {
             if (pista.isDisponible() && pista.getMaxJugadores() >= numeroJugadores && pista.isInterior() == esInterior) {
                 pistasLibres.add(pista);
             }
         }
 
-        return pistasLibres;
+        return result;
     }
 }

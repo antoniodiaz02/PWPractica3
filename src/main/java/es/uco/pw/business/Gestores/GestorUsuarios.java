@@ -1,5 +1,7 @@
 package es.uco.pw.business.Gestores;
 
+import java.util.Vector;
+
 import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.data.DAOs.JugadorDAO;
 
@@ -34,8 +36,8 @@ public class GestorUsuarios {
 	 * 
 	 * @return codigo Código de salida.
 	 */
-    public int listarUsuarios() {
-        return daoJugador.listarUsuarios();
+    public int listarUsuarios(Vector<JugadorDTO> vectorUsuarios) {
+        return daoJugador.listarUsuarios(vectorUsuarios);
     }
     
     /**

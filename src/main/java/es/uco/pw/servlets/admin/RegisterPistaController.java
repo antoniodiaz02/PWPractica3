@@ -1,6 +1,6 @@
 package es.uco.pw.servlets.admin;
 
-import es.uco.pw.data.DAOs.PistaDAO;
+import es.uco.pw.business.Gestores.GestorPistas;
 import es.uco.pw.business.DTOs.PistaDTO;
 
 import javax.servlet.*;
@@ -53,8 +53,10 @@ public class RegisterPistaController extends HttpServlet {
             PistaDTO pista = new PistaDTO(nombre, disponible, interior, PistaDTO.TamanoPista.valueOf(tamano.toUpperCase()), maxJugadores);
 
             // Usar DAO para registrar la pista
-            PistaDAO pistaDAO = new PistaDAO();
-            int resultado = pistaDAO.insertPista(pista);
+            
+            GestorPistas gestor = new GestorPistas();
+     
+            int resultado = gestor.insertPista(pista);
 
             switch (resultado) {
                 case 0:

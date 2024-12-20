@@ -1,6 +1,6 @@
 package es.uco.pw.servlets.admin;
 
-import es.uco.pw.data.DAOs.JugadorDAO;
+import es.uco.pw.business.Gestores.GestorUsuarios;
 
 import es.uco.pw.business.DTOs.JugadorDTO;
 
@@ -16,11 +16,12 @@ public class ListarUsuariosController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             // Crear DAO y Vector para almacenar los clientes
-            JugadorDAO jugadorDAO = new JugadorDAO();
+        	GestorUsuarios gestor = new GestorUsuarios();
+      
             Vector<JugadorDTO> todosLosUsuarios = new Vector<>();
 
             // Llamar al método listarClientes y obtener el código de resultado
-            int resultado = jugadorDAO.listarUsuarios(todosLosUsuarios);
+            int resultado = gestor.listarUsuarios(todosLosUsuarios);
 
             // Manejar resultados según el código devuelto
             if (resultado == 0) {

@@ -1,5 +1,6 @@
 package es.uco.pw.data.DAOs;
 
+import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
 
 
@@ -299,4 +300,13 @@ public class PistaDAO {
         
         return respuesta;
     }
+    
+    public int listarPistasNoDisponibles(Vector<PistaDTO> pistas) {
+
+      return 0;
+    }
+    
+    
+    
+    
 }
