@@ -1,6 +1,6 @@
 package es.uco.pw.servlets.common;
 
-import es.uco.pw.data.DAOs.PistaDAO;
+import es.uco.pw.business.Gestores.GestorPistas;
 import es.uco.pw.business.DTOs.PistaDTO;
 
 import javax.servlet.*;
@@ -15,11 +15,12 @@ public class ListarPistasController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             // Crear DAO y Vector para almacenar las pistas
-            PistaDAO pistaDAO = new PistaDAO();
+        	GestorPistas gestor = new GestorPistas();
+        	
             Vector<PistaDTO> todasLasPistas = new Vector<>();
 
             // Llamar al método listarPistas y obtener el código de resultado
-            int resultado = pistaDAO.listarPistas(todasLasPistas);
+            int resultado = gestor.listarPistas(todasLasPistas);
 
             // Manejar resultados según el código devuelto
             if (resultado == 0) {
