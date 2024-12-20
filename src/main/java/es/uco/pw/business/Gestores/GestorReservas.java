@@ -3,8 +3,7 @@ package es.uco.pw.business.Gestores;
 import java.io.*;
 
 import java.util.Date;
-
-
+import java.util.Vector;
 
 import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
@@ -181,6 +180,18 @@ public class GestorReservas {
 		return daoReserva.obtenerSesionesRestantes(bonoId);
 	}
 
+	
+	/**
+	 * Función que muestra todos los detalles de las reservas cuya fecha está entre las dos fechas.
+	 * @param vectorReserva Vector que contiene todos los detalles de las reservas buscadas.
+	 * @param fechaInicio Fecha inicial del filtro de la búsqueda.
+	 * @param fechaFinal Fecha final del filtro de la búsqueda.
+	 * @param correoUser Correo del reservante.
+	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 */
+	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Date fechaInicio, Date fechaFinal, String correoUser) {
+		return daoReserva.listarReservasEntreFechas(vectorReserva,fechaInicio,fechaFinal,correoUser);
+	}
 	
 	/**
 	 * Obtiene el tamaño de pistas del bono. 

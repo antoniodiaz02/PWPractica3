@@ -29,7 +29,7 @@
 <nav class="navbar">
     <div class="container">
         <ul>
-            <li><a href="consultarReservas.jsp">Consultar Reservas</a></li>
+            <li><a href="<%= request.getContextPath() %>/usermenu/consultareservas">Consultar Reservas</a></li>
             <li><a href="buscarPista.jsp">Buscar Pista</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/reservar">Realizar Reserva</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/bonos">Gestionar Bonos</a></li>

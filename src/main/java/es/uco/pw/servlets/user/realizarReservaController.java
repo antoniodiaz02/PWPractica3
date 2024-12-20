@@ -104,7 +104,7 @@ public class realizarReservaController extends HttpServlet {
             
             //Si se realiza la reserva con éxto se redirecciona a la página de éxito con el precio.
             if (resultado == 0){
-            	response.sendRedirect("/MVC/Views/user/reservaExito.jsp");
+            	response.sendRedirect(request.getContextPath() + "/usermenu/reservar/exito");
             } 
             
             //Si hay algún error

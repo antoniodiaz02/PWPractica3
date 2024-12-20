@@ -101,6 +101,17 @@
         <servlet-name>CrearBonosExitoController</servlet-name>
         <url-pattern>/usermenu/bonos/nuevobono/exito</url-pattern>
     </servlet-mapping>
+    
+    <!-- Configuración para el servlet crearBonosExitoController -->
+	<servlet>
+        <servlet-name>ReservaExitoController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.ReservaExitoController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ReservaExitoController</servlet-name>
+        <url-pattern>/usermenu/reservar/exito</url-pattern>
+    </servlet-mapping>
   
      <!-- Configuración del servlet para registrar material -->
 	<servlet>
@@ -110,9 +121,7 @@
 	<servlet-mapping>
 	    <servlet-name>RegisterMaterialController</servlet-name>
 	    <url-pattern>/adminmenu/registerMaterial</url-pattern>
-	</servlet-mapping>
-		
-		
+	</servlet-mapping>	
   
     <!-- Puedes agregar más servlets aquí según sea necesario -->
     <servlet>
@@ -123,6 +132,17 @@
     <servlet-mapping>
         <servlet-name>RealizarReservaBonoController</servlet-name>
         <url-pattern>/usermenu/bonos/reservar</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Puedes agregar más servlets aquí según sea necesario -->
+    <servlet>
+        <servlet-name>ConsultarReservasController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.ConsultarReservasController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ConsultarReservasController</servlet-name>
+        <url-pattern>/usermenu/consultareservas</url-pattern>
     </servlet-mapping>
     
     <!-- Configuración del servlet ListarPistasController -->
