@@ -108,7 +108,7 @@ public class GestorPistas {
      * @param material MaterialDTO a asociar.
      * @return boolean True si la asociación fue exitosa, False si no.
      */
-    public boolean asociarMaterialAPista(String nombrePista, int idMaterial) {
+    public int asociarMaterialAPista(String nombrePista, int idMaterial) {
         // Crear una instancia de PistaDAO y llamar al método asociarMaterialAPista
         return daoPista.asociarMaterialAPista(nombrePista, idMaterial);
     }

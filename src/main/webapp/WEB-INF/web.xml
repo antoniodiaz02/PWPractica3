@@ -187,4 +187,14 @@
 	    <servlet-name>ListarMaterialesController</servlet-name>
 	    <url-pattern>/listarMateriales</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Configuración para el servlet AsociarMaterialAPistaController -->
+    <servlet>
+        <servlet-name>AsociarMaterialAPistaController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.admin.AsociarMaterialAPistaController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AsociarMaterialAPistaController</servlet-name>
+        <url-pattern>/adminmenu/asociarMaterialAPista</url-pattern>
+    </servlet-mapping>
 </web-app>
