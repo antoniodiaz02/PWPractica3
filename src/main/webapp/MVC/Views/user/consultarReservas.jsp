@@ -71,6 +71,7 @@
                 }
             %>
 	    </div>
+	    <% if ("POST".equalsIgnoreCase(request.getMethod())) { %>
         <hr>
         <div class="main-content">
 	        <div class="container">
@@ -149,6 +150,7 @@
 
 	        </div>
 	    </div>
+	    <% } %>
     </main>
     
     <div class="footer">

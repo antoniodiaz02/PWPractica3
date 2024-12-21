@@ -14,8 +14,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Página Principal - Usuario</title>
-    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/usermenu.css">
     
@@ -37,7 +37,7 @@
             <li><a href="<%= request.getContextPath() %>/usermenu/buscarpista">Buscar Pista</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/reservar">Realizar Reserva</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/bonos">Gestionar Bonos</a></li>
-            <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>
+            <li><a href="<%= request.getContextPath() %>/usermenu/gestionreservas">Modificar/Cancelar Reserva</a></li>
             <li><a href="<%= request.getContextPath() %>/modificarUsuario" class="btn btn-danger">Modificar Datos</a></li>
             <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
         </ul>

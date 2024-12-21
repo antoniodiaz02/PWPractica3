@@ -187,4 +187,26 @@
 	    <servlet-name>ListarMaterialesController</servlet-name>
 	    <url-pattern>/listarMateriales</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Configuración para el servlet MenuGestionController -->
+	<servlet>
+	    <servlet-name>MenuGestionController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.user.MenuGestionController</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>MenuGestionController</servlet-name>
+	    <url-pattern>/usermenu/gestionreservas</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Configuración para el servlet ModificarReservaController -->
+	<servlet>
+	    <servlet-name>ModificarReservaController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.user.ModificarReservaController</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>ModificarReservaController</servlet-name>
+	    <url-pattern>/usermenu/gestionreservas/modificar</url-pattern>
+	</servlet-mapping>
 </web-app>
