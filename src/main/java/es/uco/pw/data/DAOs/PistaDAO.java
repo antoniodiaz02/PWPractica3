@@ -282,6 +282,7 @@ public class PistaDAO {
     public int asociarMaterialAPista(String nombrePista, int idMaterial) {
         String queryPista = properties.getProperty("obtener_tipo_pista");
         String queryMaterial = properties.getProperty("obtener_uso_material");
+        String queryActualizarEstado = properties.getProperty("actualizar_estado_material");
         String queryInsert = properties.getProperty("insertar_material_a_pista");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -311,13 +312,15 @@ public class PistaDAO {
                 }
             }
 
-            // Obtener el uso del material (0: Exterior, 1: Interior)
+            // Obtener el uso y estado del material (uso: 0 Exterior, 1 Interior; estado: Disponible, Reservado, Mal Estado)
             int usoMaterial;
+            String estadoMaterial;
             try (PreparedStatement pstmtMaterial = connection.prepareStatement(queryMaterial)) {
                 pstmtMaterial.setInt(1, idMaterial);
                 try (ResultSet rs = pstmtMaterial.executeQuery()) {
                     if (rs.next()) {
                         usoMaterial = rs.getInt("uso");
+                        estadoMaterial = rs.getString("estado");
                     } else {
                         // Error: El material no existe
                         return -4;
@@ -325,10 +328,16 @@ public class PistaDAO {
                 }
             }
 
+            // Verificar si el material está en estado RESERVADO o MAL_ESTADO
+            if ("RESERVADO".equalsIgnoreCase(estadoMaterial) || "MAL_ESTADO".equalsIgnoreCase(estadoMaterial)) {
+                // Error: El material no está disponible para asociarse
+                return -5;
+            }
+
             // Verificar restricción: no se pueden asociar materiales de interior a pistas de exterior y viceversa
             if (tipoPista != usoMaterial) {
                 // Error: Tipos incompatibles
-                return -5;
+                return -6;
             }
 
             // Realizar la asociación
@@ -339,11 +348,18 @@ public class PistaDAO {
                 int rowsAffected = pstmtInsert.executeUpdate();
 
                 if (rowsAffected > 0) {
+                    // Actualizar el estado del material a RESERVADO
+                    try (PreparedStatement pstmtActualizarEstado = connection.prepareStatement(queryActualizarEstado)) {
+                        pstmtActualizarEstado.setString(1, "RESERVADO");
+                        pstmtActualizarEstado.setInt(2, idMaterial);
+                        pstmtActualizarEstado.executeUpdate();
+                    }
+
                     // Operación exitosa
                     return 0;
                 } else {
                     // Error: No se afectaron filas, probablemente el nombre de la pista no existe
-                    return -6;
+                    return -7;
                 }
             }
 
@@ -352,10 +368,12 @@ public class PistaDAO {
             e.printStackTrace();
 
             // Error en la consulta SQL
-            return -7;
+            return -8;
 
         } finally {
             db.closeConnection();
         }
     }
+
+
 }

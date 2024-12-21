@@ -10,82 +10,88 @@ public class AsociarMaterialAPistaController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            // Obtener los parámetros del formulario
-            String nombrePista = request.getParameter("nombre");
-            String idMaterialStr = request.getParameter("idMaterial");
-
-            // Validar parámetros
-            if (nombrePista == null || nombrePista.isEmpty() || idMaterialStr == null || idMaterialStr.isEmpty()) {
-                request.setAttribute("mensajeError", "Error: Parámetros inválidos.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
-                dispatcher.forward(request, response);
-                return;
-            }
-
-            int idMaterial;
-            try {
-                idMaterial = Integer.parseInt(idMaterialStr);
-            } catch (NumberFormatException e) {
-                request.setAttribute("mensajeError", "Error: ID del material inválido.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
-                dispatcher.forward(request, response);
-                return;
-            }
-
-            // Crear instancia del gestor
-            GestorPistas gestor = new GestorPistas();
-
-            // Llamar al método asociarMaterialAPista y obtener el código de resultado
-            int resultado = gestor.asociarMaterialAPista(nombrePista, idMaterial);
-
-            // Manejar resultados según el código devuelto
-            String mensajeError = null;
-            if (resultado == 0) {
-                // Éxito: Pasar mensaje de éxito
-                request.setAttribute("mensajeExito", "Material asociado exitosamente a la pista.");
-            } else if (resultado == -1) {
-                mensajeError = "Error: Nombre de la pista inválido.";
-            } else if (resultado == -2) {
-                mensajeError = "Error: ID del material inválido.";
-            } else if (resultado == -3) {
-                mensajeError = "Error: La pista no existe.";
-            } else if (resultado == -4) {
-                mensajeError = "Error: El material no existe.";
-            } else if (resultado == -5) {
-                mensajeError = "Error: Tipos incompatibles.";
-            } else if (resultado == -6) {
-                mensajeError = "Error: No se afectaron filas.";
-            } else if (resultado == -7) {
-                mensajeError = "Error: Excepción SQL.";
-            } else {
-                mensajeError = "Error desconocido.";
-            }
-
-            // Si hubo un error, pasar el mensaje de error a la vista
-            if (mensajeError != null) {
-                request.setAttribute("mensajeError", mensajeError);
-            }
-
-            // Redirigir a la página asociarMaterialAPista.jsp
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
-            dispatcher.forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Pasar mensaje de error general en caso de excepción
-            request.setAttribute("mensajeError", "Error: Se produjo una excepción en el servidor.");
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
-            dispatcher.forward(request, response);
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirigir a la página de asociación de material a pista
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
+        dispatcher.forward(request, response);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Redirigir a una página de error ya que esta operación debe ser vía POST
-        request.setAttribute("mensajeError", "Error: La operación debe ser realizada vía POST.");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/admin/asociarMaterialAPista.jsp");
-        dispatcher.forward(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Capturar los parámetros del formulario
+        String nombrePista = request.getParameter("nombre") != null ? request.getParameter("nombre").trim() : "";
+        String idMaterialStr = request.getParameter("idMaterial") != null ? request.getParameter("idMaterial").trim() : "";
+
+        // Validar campos obligatorios
+        if (nombrePista.isEmpty() || idMaterialStr.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=campos-obligatorios");
+            return;
+        }
+
+        int idMaterial;
+
+        try {
+            // Validar ID del material como entero positivo
+            idMaterial = Integer.parseInt(idMaterialStr);
+            if (idMaterial <= 0) {
+                response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=id-material");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=id-material");
+            return;
+        }
+
+        try {
+            // Usar DAO para asociar el material a la pista
+            GestorPistas gestor = new GestorPistas();
+            int resultado = gestor.asociarMaterialAPista(nombrePista, idMaterial);
+
+            switch (resultado) {
+                case 0:
+                    // Asociación exitosa
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-exito-asociar.jsp");
+                    break;
+                case -1:
+                    // Error: Nombre de la pista inválido
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=nombre-pista");
+                    break;
+                case -2:
+                    // Error: ID del material inválido
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=id-material-invalido");
+                    break;
+                case -3:
+                    // Error: La pista no existe
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=pista-no-existe");
+                    break;
+                case -4:
+                    // Error: El material no existe
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=material-no-existe");
+                    break;
+                case -5:
+                    // Error: El material no está disponible (reservado o mal estado)
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=material-no-disponible");
+                    break;
+                case -6:
+                    // Error: Tipos incompatibles
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=tipos-incompatibles");
+                    break;
+                case -7:
+                    // Error: Sin cambios realizados
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=sin-cambios");
+                    break;
+                case -8:
+                    // Error: Fallo en la consulta SQL
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=sql-excepcion");
+                    break;
+                default:
+                    // Error desconocido
+                    response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=desconocido");
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/MVC/Views/admin/registro-error-asociar.jsp?error=desconocido");
+        }
     }
 }
