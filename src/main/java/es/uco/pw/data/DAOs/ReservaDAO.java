@@ -1185,5 +1185,62 @@ public class ReservaDAO {
         return true;
 		
 	}
+	
+	public int buscarPistas(Vector<PistaDTO> vectorPistas, boolean isInterior, Date fechaHora) {
+		String query = properties.getProperty("select_pistas_disponibles");
+        DBConnection db = new DBConnection();
+        connection = db.getConnection();
+
+        if (vectorPistas == null) {
+            // Error: El vector proporcionado es null
+            return -1;
+        }
+
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+    		statement.setInt(1, isInterior ? 1 : 0);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Limpiar el vector antes de llenarlo
+            vectorPistas.clear();
+
+            // Iterar sobre los resultados y agregarlos al vector
+            while (resultSet.next()) {
+                try {
+                	String pistaName= resultSet.getString("nombre");
+                	if(!existeReservaParaPistaYHora(pistaName,fechaHora)) {
+                		PistaDTO.TamanoPista tamanoPista = PistaDTO.TamanoPista.valueOf(resultSet.getString("tamano").toUpperCase());
+                		PistaDTO pista = new PistaDTO(
+                				pistaName,
+                				resultSet.getBoolean("estado"),
+                				resultSet.getBoolean("tipo"),
+                				tamanoPista,
+                				resultSet.getInt("numMaxJugadores")
+                				);
+                		vectorPistas.add(pista);                		
+                	}
+                } catch (IllegalArgumentException e) {
+                    // Error: Formato de datos inválido en el ResultSet
+                    System.err.println("Error processing pista data: " + e.getMessage());
+                    return -2;
+                }
+            }
+
+            if (vectorPistas.isEmpty()) {
+                // No se encontraron pistas
+                return -3;
+            }
+
+            // Operación exitosa
+            return 0;
+
+        } catch (SQLException e) {
+            // Error en la consulta SQL
+            System.err.println("Error listing pistas: " + e.getMessage());
+            e.printStackTrace();
+            return -4;
+        } finally {
+            db.closeConnection();
+        }
+	}
 
 }

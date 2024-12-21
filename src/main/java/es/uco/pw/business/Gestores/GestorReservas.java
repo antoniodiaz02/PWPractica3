@@ -216,5 +216,9 @@ public class GestorReservas {
 	public boolean mostrarBonos(String correoUser) {
 		return daoReserva.mostrarBonos(correoUser);
 	}
+	
+	public int buscarPistas(Vector<PistaDTO> vectorPistas, boolean isInterior, Date fechaHora) {
+		return daoReserva.buscarPistas(vectorPistas,isInterior,fechaHora);
+	}
 
 }

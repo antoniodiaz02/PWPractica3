@@ -4,7 +4,7 @@
     es.uco.pw.business.DTOs.JugadorDTO jugador = (es.uco.pw.business.DTOs.JugadorDTO) session.getAttribute("jugador");
 
     if (jugador == null) {
-        response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
+        response.sendRedirect(request.getContextPath() + "/"); // Redireccionar al login si no hay usuario en sesión
         return; // Detener la ejecución de la página
     }
 
