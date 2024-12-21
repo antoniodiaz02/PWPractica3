@@ -1,4 +1,5 @@
 <%@ page import="es.uco.pw.business.DTOs.PistaDTO" %>
+<%@ page import="es.uco.pw.business.DTOs.MaterialDTO" %>
 <%@ page import="java.util.Vector" %>
 
 <!DOCTYPE html>
@@ -26,13 +27,17 @@
                         <th>Tipo</th>
                         <th>Tamaño</th>
                         <th>Número Máximo de Jugadores</th>
+                        <th>Materiales Asociados</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% 
                         Vector<PistaDTO> pistas = (Vector<PistaDTO>) request.getAttribute("pistas");
+                        Vector<Vector<MaterialDTO>> materialesPorPista = (Vector<Vector<MaterialDTO>>) request.getAttribute("materialesPorPista");
                         if (pistas != null && !pistas.isEmpty()) {
-                            for (PistaDTO pista : pistas) {
+                            for (int i = 0; i < pistas.size(); i++) {
+                                PistaDTO pista = pistas.get(i);
+                                Vector<MaterialDTO> materiales = materialesPorPista.get(i);  // Obtener los materiales para esta pista
                     %>
                     <tr>
                         <td><%= pista.getNombre() %></td>
@@ -40,13 +45,30 @@
                         <td><%= pista.isInterior() ? "Interior" : "Exterior" %></td>
                         <td><%= pista.getTamanoPista().toString() %></td>
                         <td><%= pista.getMaxJugadores() %></td>
+                        <td>
+                            <% if (materiales != null && !materiales.isEmpty()) { %>
+                                <ul>
+                                    <% for (MaterialDTO material : materiales) { %>
+                                        <li>
+                                            <strong>ID Material:</strong> <%= material.getIdMaterial() %><br>
+                                            <strong>Tipo de Material:</strong> <%= material.getTipoMaterial().name() %><br>
+                                            <strong>Uso Interior:</strong> <%= material.getUsoInterior() ? "Interior" : "Exterior" %><br>
+                                            <strong>Estado del Material:</strong> <%= material.getEstadoMaterial().name() %><br>
+                                        </li>
+                                        <hr>
+                                    <% } %>
+                                </ul>
+                            <% } else { %>
+                                No hay materiales disponibles
+                            <% } %>
+                        </td>
                     </tr>
                     <% 
                             }
                         } else {
                     %>
                     <tr>
-                        <td colspan="5">No hay pistas disponibles.</td>
+                        <td colspan="6">No hay pistas disponibles.</td>
                     </tr>
                     <% 
                         } 

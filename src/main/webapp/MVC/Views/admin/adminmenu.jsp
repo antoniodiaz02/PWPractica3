@@ -41,7 +41,7 @@
             <li><a href="<%= request.getContextPath() %>/listarMateriales">Listar Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerMaterial">Dar de Alta Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerPista">Dar de Alta Pistas</a></li>
-            <li><a href="asociarMaterialesPistas.jsp">Asociar Materiales a Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/asociarMaterialAPista">Asociar Materiales a Pistas</a></li>
             <li><a href="modificarEstadoMateriales.jsp">Modificar Estado de Materiales</a></li>
             <li><a href="modificarEstadoPistas.jsp">Modificar Estado de Pistas</a></li>
             <li><a href="eliminarReservas.jsp">Eliminar Reservas</a></li>
