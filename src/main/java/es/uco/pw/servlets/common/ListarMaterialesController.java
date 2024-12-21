@@ -14,45 +14,53 @@ public class ListarMaterialesController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            // Crear gestor y Vector para almacenar los materiales
+            // Crear gestor de materiales y vector para almacenar los materiales
             GestorMateriales gestor = new GestorMateriales();
             Vector<MaterialDTO> todosLosMateriales = new Vector<>();
 
-            // Llamar al método listarMateriales y obtener el código de resultado
+            // Llamar al método listarMateriales del gestor
             int resultado = gestor.listarMateriales(todosLosMateriales);
 
-            // Manejar resultados según el código devuelto
+            String mensajeError = null;
             if (resultado == 0) {
-                // Éxito: Pasar la lista de materiales a la vista
+                // Éxito: Pasar la lista de materiales al JSP
                 request.setAttribute("materiales", todosLosMateriales);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/common/listarMateriales.jsp");
-                dispatcher.forward(request, response);
             } else if (resultado == -1) {
-                // Error: Vector proporcionado es nulo
-                response.sendRedirect(request.getContextPath() + "/MVC/Views/common/error-listar-materiales.jsp?error=vector-nulo");
+                // Error: El vector proporcionado es nulo
+                mensajeError = "Error: El vector proporcionado es nulo.";
             } else if (resultado == -2) {
                 // Error: Datos inválidos en la base de datos
-                response.sendRedirect(request.getContextPath() + "/MVC/Views/common/error-listar-materiales.jsp?error=datos-invalidos");
+                mensajeError = "Error: Datos inválidos en la base de datos.";
             } else if (resultado == -3) {
-                // No se encontraron materiales
-                response.sendRedirect(request.getContextPath() + "/MVC/Views/common/lista-vacia-materiales.jsp");
+                // No se encontraron materiales disponibles
+                mensajeError = "No se encontraron materiales disponibles.";
             } else if (resultado == -4) {
                 // Error en la consulta SQL
-                response.sendRedirect(request.getContextPath() + "/MVC/Views/common/error-listar-materiales.jsp?error=sql");
+                mensajeError = "Error: Fallo en la consulta SQL.";
             } else {
                 // Error desconocido
-                response.sendRedirect(request.getContextPath() + "/MVC/Views/common/error-listar-materiales.jsp?error=desconocido");
+                mensajeError = "Error desconocido.";
             }
+
+            // Si hubo un error, pasar el mensaje de error a la vista
+            if (mensajeError != null) {
+                request.setAttribute("mensajeError", mensajeError);
+            }
+
+            // Redirigir a la vista de listar materiales
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/common/listarMateriales.jsp");
+            dispatcher.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            // Redirigir a página de error en caso de excepción general
-            response.sendRedirect(request.getContextPath() + "/MVC/Views/common/error-listar-materiales.jsp?error=excepcion");
+            // Pasar mensaje de error general en caso de excepción
+            request.setAttribute("mensajeError", "Error: Se produjo una excepción en el servidor.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/MVC/Views/common/listarMateriales.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Redirigir a doGet para manejar la lógica de listado
         doGet(request, response);
     }
 }

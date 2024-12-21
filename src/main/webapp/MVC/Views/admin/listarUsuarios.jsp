@@ -9,6 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuarios</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/tabla.css">
+    <style>
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            border: 2px solid red;
+            border-radius: 5px;
+            background-color: #ffe6e6;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -18,41 +29,50 @@
     </div>
     <div class="main-content">
         <div class="container">
-            <table class="tabla-pistas">
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th>Fecha de Nacimiento</th>
-                        <th>Fecha de Inscripción</th>
-                        <th>Correo Electrónico</th>
-                        <th>Tipo de Usuario</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% 
-                        Vector<JugadorDTO> usuarios = (Vector<JugadorDTO>) request.getAttribute("clientes");
-                        if (usuarios != null && !usuarios.isEmpty()) {
-                            for (JugadorDTO usuario : usuarios) {
-                    %>
-                    <tr>
-                        <td><%= usuario.getNombreCompleto() %></td>
-                        <td><%= usuario.getFechaNacimiento() %></td>
-                        <td><%= usuario.getFechaInscripcion() %></td>
-                        <td><%= usuario.getCorreoElectronico() %></td>
-                        <td><%= usuario.getTipoUsuario() %></td>
-                    </tr>
-                    <% 
-                            }
-                        } else {
-                    %>
-                    <tr>
-                        <td colspan="5">No hay usuarios disponibles.</td>
-                    </tr>
-                    <% 
-                        } 
-                    %>
-                </tbody>
-            </table>
+            <% 
+                String mensajeError = (String) request.getAttribute("mensajeError");
+                if (mensajeError != null) { 
+            %>
+                <div class="error-message">
+                    <p><%= mensajeError %></p>
+                </div>
+            <% } else { %>
+                <table class="tabla-pistas">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Fecha de Inscripción</th>
+                            <th>Correo Electrónico</th>
+                            <th>Tipo de Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% 
+                            Vector<JugadorDTO> usuarios = (Vector<JugadorDTO>) request.getAttribute("usuarios");
+                            if (usuarios != null && !usuarios.isEmpty()) {
+                                for (JugadorDTO usuario : usuarios) {
+                        %>
+                        <tr>
+                            <td><%= usuario.getNombreCompleto() %></td>
+                            <td><%= usuario.getFechaNacimiento() %></td>
+                            <td><%= usuario.getFechaInscripcion() %></td>
+                            <td><%= usuario.getCorreoElectronico() %></td>
+                            <td><%= usuario.getTipoUsuario() %></td>
+                        </tr>
+                        <% 
+                                }
+                            } else {
+                        %>
+                        <tr>
+                            <td colspan="5">No hay usuarios disponibles.</td>
+                        </tr>
+                        <% 
+                            } 
+                        %>
+                    </tbody>
+                </table>
+            <% } %>
             <a href="<%= request.getContextPath() %>/MVC/Views/admin/adminmenu.jsp" class="button">Volver al Menú</a>
         </div>
     </div>

@@ -12,34 +12,6 @@
         <div class="form-container">
             <h1>Registro de Material</h1>
 
-            <!-- Mostrar mensaje de error si existe -->
-            <% 
-                String error = request.getParameter("error");
-                if (error != null) {
-                    String errorMessage = "";
-                    if ("campos-obligatorios".equals(error)) {
-                        errorMessage = "Todos los campos son obligatorios.";
-                    } else if ("id-material".equals(error)) {
-                        errorMessage = "El ID del material debe ser un número positivo.";
-                    } else if ("tipo-material".equals(error)) {
-                        errorMessage = "El tipo de material no es válido.";
-                    } else if ("estado-material".equals(error)) {
-                        errorMessage = "El estado del material no es válido.";
-                    } else if ("id-existente".equals(error)) {
-                        errorMessage = "Ya existe un material con este ID.";
-                    } else if ("insertar-fallido".equals(error)) {
-                        errorMessage = "No se pudo registrar el material. Intente nuevamente.";
-                    } else if ("sql-excepcion".equals(error)) {
-                        errorMessage = "Ocurrió un error con la base de datos. Consulte al administrador.";
-                    } else {
-                        errorMessage = "Ocurrió un error desconocido.";
-                    }
-            %>
-                <p class="error"><%= errorMessage %></p>
-            <% 
-                }
-            %>
-
             <form action="<%= request.getContextPath() %>/adminmenu/registerMaterial" method="POST">
                 <!-- ID del Material -->
                 <div class="form-group">

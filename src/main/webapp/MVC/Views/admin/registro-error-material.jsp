@@ -41,7 +41,7 @@
             <% 
                 }
             %>
-            <a href="<%= request.getContextPath() %>/MVC/Views/admin/darAltaMaterial.jsp" class="button">Volver al Registro</a>
+            <a href="<%= request.getContextPath() %>/adminmenu/registerMaterial" class="button">Volver al Registro</a>
         </div>
     </div>
 </body>
