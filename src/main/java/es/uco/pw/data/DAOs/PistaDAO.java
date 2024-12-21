@@ -279,34 +279,83 @@ public class PistaDAO {
      * @param idMaterial Id del material a asociar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean asociarMaterialAPista(String nombrePista, int idMaterial) {
-        boolean respuesta = false;
-        String query = properties.getProperty("insertar_material_a_pista");
-        
+    public int asociarMaterialAPista(String nombrePista, int idMaterial) {
+        String queryPista = properties.getProperty("obtener_tipo_pista");
+        String queryMaterial = properties.getProperty("obtener_uso_material");
+        String queryInsert = properties.getProperty("insertar_material_a_pista");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, nombrePista);
-            pstmt.setInt(2, idMaterial);
-            
-            int rowsAffected = pstmt.executeUpdate();
-            respuesta = rowsAffected > 0;
+
+        if (nombrePista == null || nombrePista.isEmpty()) {
+            // Error: El nombre de la pista es null o vacío
+            return -1;
+        }
+
+        if (idMaterial <= 0) {
+            // Error: El ID del material no es válido
+            return -2;
+        }
+
+        try {
+            // Obtener el tipo de la pista (0: Exterior, 1: Interior)
+            int tipoPista;
+            try (PreparedStatement pstmtPista = connection.prepareStatement(queryPista)) {
+                pstmtPista.setString(1, nombrePista);
+                try (ResultSet rs = pstmtPista.executeQuery()) {
+                    if (rs.next()) {
+                        tipoPista = rs.getInt("tipo");
+                    } else {
+                        // Error: La pista no existe
+                        return -3;
+                    }
+                }
+            }
+
+            // Obtener el uso del material (0: Exterior, 1: Interior)
+            int usoMaterial;
+            try (PreparedStatement pstmtMaterial = connection.prepareStatement(queryMaterial)) {
+                pstmtMaterial.setInt(1, idMaterial);
+                try (ResultSet rs = pstmtMaterial.executeQuery()) {
+                    if (rs.next()) {
+                        usoMaterial = rs.getInt("uso");
+                    } else {
+                        // Error: El material no existe
+                        return -4;
+                    }
+                }
+            }
+
+            // Verificar restricción: no se pueden asociar materiales de interior a pistas de exterior y viceversa
+            if (tipoPista != usoMaterial) {
+                // Error: Tipos incompatibles
+                return -5;
+            }
+
+            // Realizar la asociación
+            try (PreparedStatement pstmtInsert = connection.prepareStatement(queryInsert)) {
+                pstmtInsert.setString(1, nombrePista);
+                pstmtInsert.setInt(2, idMaterial);
+
+                int rowsAffected = pstmtInsert.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    // Operación exitosa
+                    return 0;
+                } else {
+                    // Error: No se afectaron filas, probablemente el nombre de la pista no existe
+                    return -6;
+                }
+            }
+
         } catch (SQLException e) {
-            System.out.println("Error al asociar material a pista: " + e.getMessage());
+            System.err.println("Error al asociar material a pista: " + e.getMessage());
+            e.printStackTrace();
+
+            // Error en la consulta SQL
+            return -7;
+
         } finally {
             db.closeConnection();
         }
-        
-        return respuesta;
     }
-    
-    public int listarPistasNoDisponibles(Vector<PistaDTO> pistas) {
-
-      return 0;
-    }
-    
-    
-    
-    
 }
