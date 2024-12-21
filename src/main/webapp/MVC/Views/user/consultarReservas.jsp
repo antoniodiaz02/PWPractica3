@@ -10,7 +10,7 @@
     es.uco.pw.business.DTOs.JugadorDTO jugador = (es.uco.pw.business.DTOs.JugadorDTO) session.getAttribute("jugador");
 
     if (jugador == null) {
-        response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
+        response.sendRedirect(request.getContextPath() + "/"); // Redireccionar al login si no hay usuario en sesión
         return; // Detener la ejecución de la página
     }
 %>
@@ -48,12 +48,12 @@
 	        <form action="<%= request.getContextPath() %>/usermenu/consultareservas" method="POST">
 	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
 	        		 <div class="form-group">
-	                    <label for="fechaHora">Fecha de filtrado inicial</label>
+	                    <label for="fechaInicio">Fecha de filtrado inicial</label>
 	                    <input type="datetime-local" id="fechaInicio" name="fechaInicio" required>
 	                </div>
 	                
 	                <div class="form-group">
-	                    <label for="fechaHora">Fecha de filtrado final</label>
+	                    <label for="fechaFinal">Fecha de filtrado final</label>
 	                    <input type="datetime-local" id="fechaFinal" name="fechaFinal" required>
 	                </div>   
 	                

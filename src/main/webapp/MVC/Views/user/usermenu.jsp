@@ -4,7 +4,7 @@
     es.uco.pw.business.DTOs.JugadorDTO jugador = (es.uco.pw.business.DTOs.JugadorDTO) session.getAttribute("jugador");
 
     if (jugador == null) {
-        response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
+        response.sendRedirect(request.getContextPath() + "/"); // Redireccionar al login si no hay usuario en sesión
         return; // Detener la ejecución de la página
     }
 %>
@@ -14,7 +14,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Página Principal - Usuario</title>
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
+    
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/usermenu.css">
+    
 </head>
 <body>
 
@@ -30,7 +34,7 @@
     <div class="container">
         <ul>
             <li><a href="<%= request.getContextPath() %>/usermenu/consultareservas">Consultar Reservas</a></li>
-            <li><a href="buscarPista.jsp">Buscar Pista</a></li>
+            <li><a href="<%= request.getContextPath() %>/usermenu/buscarpista">Buscar Pista</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/reservar">Realizar Reserva</a></li>
             <li><a href="<%= request.getContextPath() %>/usermenu/bonos">Gestionar Bonos</a></li>
             <li><a href="modificarReserva.jsp">Modificar/Cancelar Reserva</a></li>

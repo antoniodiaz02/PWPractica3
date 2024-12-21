@@ -123,7 +123,7 @@
 	    <url-pattern>/adminmenu/registerMaterial</url-pattern>
 	</servlet-mapping>	
   
-    <!-- Puedes agregar más servlets aquí según sea necesario -->
+    <!-- Configuración para el servlet RealizarReservaBonoController -->
     <servlet>
         <servlet-name>RealizarReservaBonoController</servlet-name>
         <servlet-class>es.uco.pw.servlets.user.RealizarReservaBonoController</servlet-class>
@@ -134,7 +134,7 @@
         <url-pattern>/usermenu/bonos/reservar</url-pattern>
     </servlet-mapping>
     
-    <!-- Puedes agregar más servlets aquí según sea necesario -->
+    <!-- Configuración para el servlet ConsultarReservasController -->
     <servlet>
         <servlet-name>ConsultarReservasController</servlet-name>
         <servlet-class>es.uco.pw.servlets.user.ConsultarReservasController</servlet-class>
@@ -143,6 +143,17 @@
     <servlet-mapping>
         <servlet-name>ConsultarReservasController</servlet-name>
         <url-pattern>/usermenu/consultareservas</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Configuración para el servlet BuscarPistaController -->
+    <servlet>
+        <servlet-name>BuscarPistaController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.BuscarPistaController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>BuscarPistaController</servlet-name>
+        <url-pattern>/usermenu/buscarpista</url-pattern>
     </servlet-mapping>
     
     <!-- Configuración del servlet ListarPistasController -->
