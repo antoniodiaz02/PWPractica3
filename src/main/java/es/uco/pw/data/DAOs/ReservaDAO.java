@@ -685,91 +685,76 @@ public class ReservaDAO {
 	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
 	 */
 	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Date fechaInicio, Date fechaFinal, String correoUser) {
-        String query = properties.getProperty("select_entre_fechas");
-        
-        DBConnection db = new DBConnection();
-        connection = db.getConnection();
-        
-        int usuarioId = buscarIdJugador(correoUser);
-        
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new java.sql.Date(fechaInicio.getTime()));
-            stmt.setDate(2, new java.sql.Date(fechaFinal.getTime()));
-            stmt.setInt(3, usuarioId);
-            ResultSet rs = stmt.executeQuery();
+	    String query = properties.getProperty("select_entre_fechas");
+	    DBConnection db = null;
+	    Connection connection = null;
+	    int usuarioId = buscarIdJugador(correoUser);
 
-            // Iterar sobre los resultados de la consulta
-            while(rs.next()) {
-            	String tipoReserva= rs.getString("tipoReserva");
-            	if(tipoReserva.equals("FAMILIAR")) {
-            		try {
-            			ReservaFamiliarDTO reserva = new ReservaFamiliarDTO(
-            					rs.getInt("usuarioId"),
-            					rs.getTimestamp("fechaHora"),
-            					rs.getInt("duracion"),
-            					rs.getInt("pistaId"),
-            					rs.getFloat("precio"),
-            					rs.getFloat("descuento"),
-            					rs.getInt("numAdultos"),
-            					rs.getInt("numNinos")
-            					);
-            			vectorReserva.add(reserva);
-            		} catch (IllegalArgumentException e) {
-            			return -1;
-            		}
-            		
-            	}
-            	
-            	else if(tipoReserva.equals("INFANTIL")) {
-            		try {
-            			ReservaInfantilDTO reserva = new ReservaInfantilDTO(
-            					rs.getInt("usuarioId"),
-            					rs.getTimestamp("fechaHora"),
-            					rs.getInt("duracion"),
-            					rs.getInt("pistaId"),
-            					rs.getFloat("precio"),
-            					rs.getFloat("descuento"),
-            					rs.getInt("numNinos")
-            					);
-            			vectorReserva.add(reserva);
-            		} catch (IllegalArgumentException e) {
-            			return -1;
-            		}
-            	}
-            	
-            	else {
-            		try {
-            			ReservaAdultosDTO reserva = new ReservaAdultosDTO(
-            					rs.getInt("usuarioId"),
-            					rs.getTimestamp("fechaHora"),
-            					rs.getInt("duracion"),
-            					rs.getInt("pistaId"),
-            					rs.getFloat("precio"),
-            					rs.getFloat("descuento"),
-            					rs.getInt("numAdultos")
-            					);
-            			vectorReserva.add(reserva);
-            		} catch (IllegalArgumentException e) {
-            			return -1;
-            		}
-            	}
-               
+	    try {
+	        db = new DBConnection();
+	        connection = db.getConnection();
+	        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+	            stmt.setDate(1, new java.sql.Date(fechaInicio.getTime()));
+	            stmt.setDate(2, new java.sql.Date(fechaFinal.getTime()));
+	            stmt.setInt(3, usuarioId);
+
+	            try (ResultSet rs = stmt.executeQuery()) {
+	                while (rs.next()) {
+	                    try {
+	                        String tipoReserva = rs.getString("tipoReserva");
+	                        if (tipoReserva.equals("FAMILIAR")) {
+	                            vectorReserva.add(new ReservaFamiliarDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numAdultos"),
+	                                rs.getInt("numNinos")
+	                            ));
+	                        } else if (tipoReserva.equals("INFANTIL")) {
+	                            vectorReserva.add(new ReservaInfantilDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numNinos")
+	                            ));
+	                        } else {
+	                            vectorReserva.add(new ReservaAdultosDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numAdultos")
+	                            ));
+	                        }
+	                    } catch (IllegalArgumentException e) {
+	                        e.printStackTrace();
+	                    }
+	                }
 	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	            return -2;
-        } finally {
-            db.closeConnection();
-        }
-        
-        if(vectorReserva.isEmpty()){
-            return -3;
-        }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return -2;
+	    } finally {
+	        if (db != null) {
+	            db.closeConnection();
+	        }
+	    }
 
-        return 0;
+	    if (vectorReserva.isEmpty()) {
+	        return -3;
+	    }
 
+	    return 0;
 	}
-	
 	/**
 	 * Función que modifica una reserva buscada por identificador único.
 	 * @param idReserva Identificador único de la reserva a modificar.
