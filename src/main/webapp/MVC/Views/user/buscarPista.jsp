@@ -48,7 +48,8 @@
 	        
 	        <form action="<%= request.getContextPath() %>/usermenu/buscarpista" method="POST">
 	        	
-	        		 <div class="form-group">
+	        		 <!-- Nombre de la pista de la reserva -->
+	                <div class="form-group">
 	                    <label for="interior">Tipo de pista:</label>
 	                    <select id="interior" name="interior" required>
 	                        <option value="true">Interior</option>
@@ -56,10 +57,11 @@
 	                    </select>
 	                </div>
 	                
+	                <!-- Fecha de la reserva a modificar -->
 	                <div class="form-group">
 	                    <label for="fechaBuscar">Fecha a buscar:</label>
 	                    <input type="datetime-local" id="fechaBuscar" name="fechaBuscar" required>
-	                </div>   
+	                </div>  
 	                
 	                <div class="form-group">
 	                    <input type="submit" value="Buscar Pistas">
@@ -75,6 +77,7 @@
                 }
             %>
 	    </div>
+	    <% if ("POST".equalsIgnoreCase(request.getMethod())) { %>
         <hr>
         <div class="main-content">
 	        <div class="container">
@@ -104,7 +107,7 @@
                         } else {
                     %>
                     <tr>
-                        <td colspan="4">No hay pistas disponibles.</td>
+                        <td colspan="4">No existe la reserva.</td>
                     </tr>
                     <% 
                         } 
@@ -113,6 +116,7 @@
             </table>
 	        </div>
 	    </div>
+	    <% } %>
     </main>
     
     <div class="footer">

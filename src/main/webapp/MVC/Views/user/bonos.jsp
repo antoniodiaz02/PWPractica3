@@ -40,7 +40,6 @@
 <main class="main-content">
     <div class="container">
         <h2>Tus bonos</h2>
-        <p>Aquí puedes visualizar los bonos que has solicitado previamente:</p>
         
         <table border="1">
             <tr>

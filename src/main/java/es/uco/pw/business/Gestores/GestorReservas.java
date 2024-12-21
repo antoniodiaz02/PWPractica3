@@ -152,12 +152,16 @@ public class GestorReservas {
 	
 	/**
 	 * Función que calcula si muestra todos los detalles de las reservas con una fecha y pista exacta.
+	 * @param reserva Se almacenan los datos de la reserva si la encuentra.
 	 * @param fechaBuscada Fecha de la reserva a filtrar.
 	 * @param nombrePista Nombre de la pista a filtrar.
-	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
+	 * @param idReserva Rellena el id de la reserva encontrada.
+	 * @param codigo Devuelve el código de error de la función.
+	 * @return Una clase reserva con todos los detalles de la reserva.
 	 */
-	public int listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista) {
-		return daoReserva.listarReservasPorFechaYPista(fechaBuscada, nombrePista);
+	public ReservaDTO listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista, String correoUser, int idReserva, int codigo) {
+		return daoReserva.listarReservasPorFechaYPista(fechaBuscada, nombrePista, correoUser, idReserva, codigo);
 	}
 	
 	

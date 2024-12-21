@@ -863,15 +863,20 @@ public class ReservaDAO {
 	
 	/**
 	 * Función que calcula si muestra todos los detalles de las reservas con una fecha y pista exacta.
+	 * @param reserva Se almacenan los datos de la reserva si la encuentra.
 	 * @param fechaBuscada Fecha de la reserva a filtrar.
 	 * @param nombrePista Nombre de la pista a filtrar.
-	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
-	 */
-	public int listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista) {
+	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
+	 * @param idReserva Rellena el id de la reserva encontrada.
+	 * @param codigo Devuelve el código de error de la función.
+	 * @return Una clase reserva con todos los detalles de la reserva.
+	*/
+	public ReservaDTO listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista, String correoUser, int idReserva, int codigo) {
 		
 		int pistaId = buscarIdPista(nombrePista);
+		int userId = buscarIdJugador(correoUser);
 		String query = properties.getProperty("buscar_fecha_pista");
-	    int codigo = 0;
+	    codigo = 0;
 	    
 	    DBConnection db = new DBConnection();
 	    connection = db.getConnection();
@@ -882,52 +887,55 @@ public class ReservaDAO {
         	
             ResultSet rs = stmt.executeQuery();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); // Formato de fecha requerido
-            
-            System.out.println("\n───────────────────────────────────────");
-            System.out.println("---------- Lista de Reservas ----------");
-            System.out.println("───────────────────────────────────────");
-
             // Iterar sobre los resultados de la consulta
-            while (rs.next()) {
-                String idReserva = rs.getString("idReserva");
+            if(rs.next()) {
+                idReserva = rs.getInt("idReserva");
                 String tipoReserva= rs.getString("tipoReserva");
                 int usuarioId = rs.getInt("usuarioId");
-                java.util.Date fechaReserva = rs.getTimestamp("fechaHora");
                 int duracion = rs.getInt("duracion");
                 float precio = rs.getFloat("precio");
                 float descuento = rs.getFloat("descuento");
                 
-                int numAdultos = rs.getInt("numAdultos");
-                int numNinos = rs.getInt("numNinos");
-
-                // Imprimir los datos de la reserva
-                System.out.println("ID Reserva: " + idReserva);
-                System.out.println("Tipo de reserva: " + tipoReserva);
-                System.out.println("Usuario ID: " + usuarioId);
-                System.out.println("Pista ID: " + pistaId);
-                System.out.println("Fecha Reserva: " + sdf.format(fechaReserva));
-                System.out.println("Duración: " + duracion + " minutos");
-                System.out.println("Precio: " + precio + " €");
-                System.out.println("Descuento: " + descuento);
-                
-                if(tipoReserva=="ADULTOS" || tipoReserva=="FAMILIAR") {
-                	System.out.println("Numero de adultos: " + numAdultos);
+                if(usuarioId != userId) {
+                	codigo= -1;
+                	return null;
                 }
-                else if(tipoReserva=="INFANTIL" || tipoReserva=="FAMILIAR"){
-                	System.out.println("Numero de niños: " + numNinos);
+                if(tipoReserva.equals("INFANTIL")) {
+                	int numNinos = rs.getInt("numNinos");
+                	ReservaInfantilDTO reserva = new ReservaInfantilDTO(
+                            userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numNinos
+                        );
+                	return reserva;
                 	
                 }
-                System.out.println("───────────────────────────────────────");
+                else if(tipoReserva.equals("FAMILIAR")) {
+                	int numNinos = rs.getInt("numNinos");
+                	int numAdultos = rs.getInt("numAdultos");
+                	ReservaFamiliarDTO reserva = new ReservaFamiliarDTO(
+                			userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numAdultos, numNinos
+                        );
+                	return reserva;
+                }
+                else {
+                	int numAdultos = rs.getInt("numAdultos");
+                	ReservaAdultosDTO reserva = new ReservaAdultosDTO(
+                			userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numAdultos
+                        );
+                	return reserva;
+                }
+            }
+            
+            else {
+            	codigo= -2;
+            	return null;
             }
         } catch (SQLException e) {
-            System.out.println("ERROR! No se pudo obtener las reservas futuras: " + e.getMessage());
-            e.printStackTrace();
+        	e.printStackTrace();
+            codigo= -3;
+            return null;
         } finally {
             db.closeConnection();
         }
-
-	    return codigo;
 	}
 	
 	
