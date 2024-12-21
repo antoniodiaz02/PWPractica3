@@ -23,65 +23,57 @@ public class ConsultarReservasController extends HttpServlet {
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Obtener los parámetros del formulario
-    	String correoUser = request.getParameter("correoUser") != null ? request.getParameter("correoUser").trim() : "";
-    	String fechaInicioStr = request.getParameter("fechaInicio") != null ? request.getParameter("fechaInicio").trim() : "";
-    	String fechaFinalStr = request.getParameter("fechaFinal") != null ? request.getParameter("fechaFinal").trim() : "";
-        
+        String correoUser = request.getParameter("correoUser") != null ? request.getParameter("correoUser").trim() : "";
+        String fechaInicioStr = request.getParameter("fechaInicio") != null ? request.getParameter("fechaInicio").trim() : "";
+        String fechaFinalStr = request.getParameter("fechaFinal") != null ? request.getParameter("fechaFinal").trim() : "";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
         java.util.Date fechaInicio = null;
-        if (!fechaInicioStr.isEmpty()) {
-            try {
-                // Ajustar el formato de la fecha al formato devuelto por un input datetime-local
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                fechaInicio = sdf.parse(fechaInicioStr);
-            } catch (ParseException e) {
-                request.setAttribute("error", "El formato de la fecha inicial es incorrecto.");
-                request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
-                return;
-            }
-        }
-        
         java.util.Date fechaFinal = null;
-        if(!fechaFinalStr.isEmpty()) {
-            try {
-                // Ajustar el formato de la fecha al formato devuelto por un input datetime-local
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                fechaFinal = sdf.parse(fechaFinalStr);
-            } catch (ParseException e) {
-                request.setAttribute("error", "El formato de la fecha final es incorrecto.");
-                request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
-                return;
+
+        // Validar y parsear fechas
+        try {
+            if (!fechaInicioStr.isEmpty()) {
+                fechaInicio = sdf.parse(fechaInicioStr);
             }
+            if (!fechaFinalStr.isEmpty()) {
+                fechaFinal = sdf.parse(fechaFinalStr);
+            }
+        } catch (ParseException e) {
+            request.setAttribute("error", "Formato de fecha incorrecto. Use el formato correcto: yyyy-MM-dd'T'HH:mm.");
+            request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+            return;
         }
 
         try {
-	        // Lógica de consulta a la base de datos (simulada aquí)
-	        GestorReservas gestor = new GestorReservas();
-	        Vector<ReservaDTO> vectorReservas = new Vector<>();
-	
-	        int resultado= gestor.listarReservasEntreFechas(vectorReservas,fechaInicio,fechaFinal,correoUser);
-	
-	        // Manejar resultados según el código devuelto
-	        if (resultado == 0) {
-	        	// Éxito: Pasar la lista de pistas a la vista
-	        	request.setAttribute("reservas", vectorReservas);
-	        	RequestDispatcher dispatcher = request.getRequestDispatcher("/usermenu/consultareservas");
-	        	dispatcher.forward(request, response);
-	        } else if (resultado == -1) {
-	        	request.setAttribute("error", "Se produjo un error al intentar buscar las soluciones");
-	        	response.sendRedirect(request.getContextPath() + "/usermenu/consultareservas");
-	        } else if (resultado == -2) {
-	        	request.setAttribute("error", "Ocurrió un error al acceder a la base de datos");
-	        	response.sendRedirect(request.getContextPath() + "/usermenu/consultareservas");
-	        } else if (resultado == -3) {
-	        	request.setAttribute("error", "No existe ninguna reserva para las fechas indicadas.");
-	        	response.sendRedirect(request.getContextPath() + "/usermenu/consultareservas");
-	        } else {
-	        	request.setAttribute("error", "Ha ocurrido un error desconocido.");
-	        	response.sendRedirect(request.getContextPath() + "/usermenu/consultareservas");
-	        }
-	    
+            // Consultar reservas a través del Gestor
+            GestorReservas gestor = new GestorReservas();
+            Vector<ReservaDTO> vectorReservas = new Vector<>();
+            int resultado = gestor.listarReservasEntreFechas(vectorReservas, fechaInicio, fechaFinal, correoUser);
+
+            switch (resultado) {
+                case 0: // Reservas encontradas
+                    request.setAttribute("reservas", vectorReservas);
+                    request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+                    break;
+                case -1: // Error genérico
+                    request.setAttribute("error", "Se produjo un error al intentar buscar las reservas.");
+                    request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+                    break;
+                case -2: // Error en la base de datos
+                    request.setAttribute("error", "Ocurrió un error al acceder a la base de datos.");
+                    request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+                    break;
+                case -3: // Sin reservas
+                    request.setAttribute("error", "No existen reservas para las fechas indicadas.");
+                    request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+                    break;
+                default: // Error desconocido
+                    request.setAttribute("error", "Ha ocurrido un error desconocido.");
+                    request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
+            }
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             request.setAttribute("error", "Error en el servidor. Inténtelo más tarde.");
             request.getRequestDispatcher("/MVC/Views/common/error.jsp").forward(request, response);
         }
