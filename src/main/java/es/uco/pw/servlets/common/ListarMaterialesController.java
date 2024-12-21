@@ -1,6 +1,6 @@
 package es.uco.pw.servlets.common;
 
-import es.uco.pw.data.DAOs.MaterialDAO;
+import es.uco.pw.business.Gestores.GestorMateriales;
 import es.uco.pw.business.DTOs.MaterialDTO;
 
 import javax.servlet.*;
@@ -14,12 +14,12 @@ public class ListarMaterialesController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            // Crear DAO y Vector para almacenar los materiales
-            MaterialDAO materialDAO = new MaterialDAO();
+            // Crear gestor y Vector para almacenar los materiales
+            GestorMateriales gestor = new GestorMateriales();
             Vector<MaterialDTO> todosLosMateriales = new Vector<>();
 
             // Llamar al método listarMateriales y obtener el código de resultado
-            int resultado = materialDAO.listarMateriales(todosLosMateriales);
+            int resultado = gestor.listarMateriales(todosLosMateriales);
 
             // Manejar resultados según el código devuelto
             if (resultado == 0) {

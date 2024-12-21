@@ -1,6 +1,6 @@
 package es.uco.pw.servlets.admin;
 
-import es.uco.pw.data.DAOs.MaterialDAO;
+import es.uco.pw.business.Gestores.GestorMateriales;
 import es.uco.pw.business.DTOs.MaterialDTO;
 
 import javax.servlet.*;
@@ -59,8 +59,10 @@ public class RegisterMaterialController extends HttpServlet {
             );
 
             // Usar DAO para registrar el material
-            MaterialDAO materialDAO = new MaterialDAO();
-            int resultado = materialDAO.insertMaterial(material);
+            
+            GestorMateriales gestor = new GestorMateriales();
+            
+            int resultado = gestor.insertMaterial(material);
 
             switch (resultado) {
                 case 0:
