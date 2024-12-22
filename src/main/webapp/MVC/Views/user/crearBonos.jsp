@@ -15,6 +15,7 @@
     <meta charset="UTF-8">
     <title>Solicitar Bono</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/registro.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 
 <body>

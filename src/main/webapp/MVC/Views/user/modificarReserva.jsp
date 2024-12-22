@@ -24,6 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Reserva</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/buscar.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header class="header">
@@ -48,6 +49,7 @@
         
         <form action="<%= request.getContextPath() %>/usermenu/gestionreservas/modificar" method="POST">
             <input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
+       		<input type="hidden" name="action" value="buscar">
             
             <div class="form-group">
                 <label for="nombrePista">Nombre de la pista</label>
@@ -78,74 +80,123 @@
     <div class="main-content">
         <div class="container">
             <table class="tabla-reservas">
-                <thead>
-                    <tr>
-                        <th>Pista</th>
-                        <th>Tipo de reserva</th>
-                        <th>Día y hora</th>
-                        <th>Duración</th>
-                        <th>Precio</th>
-                        <th>Descuento</th>
-                        <th>Nº de adultos</th>
-                        <th>Nº de niños</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% 
-                        ReservaDTO reserva = (ReservaDTO) request.getAttribute("reserva");
-                    	String tipo= "";
-                        if (reserva != null) {
-                            // Declarar variables null por fuera
-                            ReservaInfantilDTO infantil = null;
-                            ReservaFamiliarDTO familiar = null;
-                            ReservaAdultosDTO adultos = null;
-
-                            // Realizar los castings según el tipo de reserva
-                            if (reserva instanceof ReservaInfantilDTO) {
-                                tipo = "Infantil";
-                                infantil = (ReservaInfantilDTO) reserva;
-                            } else if (reserva instanceof ReservaFamiliarDTO) {
-                                tipo = "Familiar";
-                                familiar = (ReservaFamiliarDTO) reserva;
-                            } else {
-                                tipo = "Adultos";
-                                adultos = (ReservaAdultosDTO) reserva;
-                            }
-                    %>
-                    <tr>
-                        <td><%= reserva.getPistaId() %></td>
-                        <td><%= tipo %></td>
-                        <td><%= reserva.getFechaHora() %></td>
-                        <td><%= reserva.getDuracion() %></td>
-                        <td><%= reserva.getPrecio() %></td>
-                        <td><%= reserva.getDescuento() %></td>
-
-                        <!-- Condicional para imprimir numAdultos según el tipo -->
-                        <td>
-                            <% if ("Adultos".equals(tipo) || "Familiar".equals(tipo)) { %>
-                                <%= (adultos != null) ? adultos.getNumAdultos() : familiar.getNumAdultos() %>
-                            <% } %>
-                        </td>
-
-                        <!-- Condicional para imprimir numNinos según el tipo -->
-                        <td>
-                            <% if ("Infantil".equals(tipo) || "Familiar".equals(tipo)) { %>
-                                <%= (infantil != null) ? infantil.getNumNinos() : familiar.getNumNinos() %>
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% 
-                        } else {  // Corregido, cerrando correctamente el bloque else
-                    %>
-                    <tr>
-                        <td colspan="8">No tienes reservas entre las fechas especificadas.</td>
-                    </tr>
-                    <% 
-                        }  // Cierre del bloque if-else correctamente
-                    %>
-                </tbody>
-            </table>
+				    <thead>
+				        <tr>
+				            <th>Pista</th>
+				            <th>Tipo de reserva</th>
+				            <th>Día y hora</th>
+				            <th>Duración</th>
+				            <th>Precio</th>
+				            <th>Descuento</th>
+				            <th>Nº de adultos</th>
+				            <th>Nº de niños</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <% 
+				            Vector<ReservaDTO> reservas = (Vector<ReservaDTO>) request.getAttribute("reservas");
+				            GestorReservas gestor = new GestorReservas();
+				            if (reservas != null && !reservas.isEmpty()) {
+				                for (ReservaDTO reserva : reservas) {
+				                    String tipo = ""; // Declarar la variable 'tipo' para cada reserva
+				                    
+				                    // Declarar variables null por fuera
+				                    ReservaInfantilDTO infantil = null;
+				                    ReservaFamiliarDTO familiar = null;
+				                    ReservaAdultosDTO adultos = null;
+				
+				                    // Realizar los castings según el tipo de reserva
+				                    if (reserva instanceof ReservaInfantilDTO) {
+				                        tipo = "Infantil";
+				                        infantil = (ReservaInfantilDTO) reserva;
+				                    } else if (reserva instanceof ReservaFamiliarDTO) {
+				                        tipo = "Familiar";
+				                        familiar = (ReservaFamiliarDTO) reserva;
+				                    } else {
+				                        tipo = "Adultos";
+				                        adultos = (ReservaAdultosDTO) reserva;
+				                    }
+				        %>
+				        <tr>
+				            <td><%= reserva.getPistaId() %></td>
+				            <td><%= tipo %></td>
+				            <td><%= reserva.getFechaHora() %></td>
+				            <td><%= reserva.getDuracion() %></td>
+				            <td><%= reserva.getPrecio() %></td>
+				            <td><%= reserva.getDescuento() %></td>
+				
+				            <!-- Condicional para imprimir numAdultos según el tipo -->
+				            <td>
+				                <% if ("Adultos".equals(tipo) || "Familiar".equals(tipo)) { %>
+				                    <%= (adultos != null) ? adultos.getNumAdultos() : familiar.getNumAdultos() %>
+				                <% } %>
+				            </td>
+				
+				            <!-- Condicional para imprimir numNinos según el tipo -->
+				            <td>
+				                <% if ("Infantil".equals(tipo) || "Familiar".equals(tipo)) { %>
+				                    <%= (infantil != null) ? infantil.getNumNinos() : familiar.getNumNinos() %>
+				                <% } %>
+				            </td>
+				        </tr>
+				        <% 
+				                }
+				            } else {
+				        %>
+				        <tr>
+				            <td colspan="8">No tienes reservas entre las fechas especificadas</td>
+				        </tr>
+				        <% 
+				            } 
+				        %>
+				    </tbody>
+			</table>
         </div>
+    <div class="container">
+        <h2>Modificar Datos</h2>
+        	<form action="<%= request.getContextPath() %>/usermenu/gestionreservas/modificar" method="POST">
+	        	<input type="hidden" name="action" value="modificar">
+	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
+	                
+	
+	                <!-- Nueva Duracion -->
+	                <div class="form-group">
+	                    <label for="nuevDuracion">Duración</label>
+	                    <select id="nuevDuracion" name="nuevDuracion" required>
+	                        <option value="60">60 mins.</option>
+	                        <option value="90">90 mins.</option>
+	                        <option value="120">120 mins.</option>
+	                    </select>
+	                </div>
+	                
+	                <!-- Nueva Fecha de Reserva -->
+	                <div class="form-group">
+	                    <label for="NuevaFechaHora">Nueva fecha de reserva</label>
+	                    <input type="datetime-local" id="NuevaFechaHora" name="NuevaFechaHora" required>
+	                </div>
+	                
+	                <!-- Nueva cantidad de Participantes -->
+	                
+			        <div class="form-group">
+			            <label for="numAdultos">Número de Adultos</label>
+			            <input type="number" id="numAdultos" name="numAdultos">
+			        </div>
+				
+			        <!-- Mostrar el campo de número de niños si el tipo es Infantil o Familiar -->
+			        
+			        <div class="form-group">
+			            <label for="numNinos">Número de Niños</label>
+			            <input type="number" id="numNinos" name="numNinos">
+			        </div>
+	                
+	               
+	                
+	                
+             </form>
+    
+    </div>
+    
+    
     </div>
     <% } %>
 </main>

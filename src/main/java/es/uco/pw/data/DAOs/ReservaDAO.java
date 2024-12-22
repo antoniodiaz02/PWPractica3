@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.io.InputStream;
 
 
 /**
- * Clase que gestiona las pistas en la base de datos.
+ * Clase que gestiona las reservas en la base de datos.
  */
 public class ReservaDAO {
 
@@ -853,74 +854,91 @@ public class ReservaDAO {
 	 * @param nombrePista Nombre de la pista a filtrar.
 	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
 	 * @param idReserva Rellena el id de la reserva encontrada.
-	 * @param codigo Devuelve el código de error de la función.
-	 * @return Una clase reserva con todos los detalles de la reserva.
+	 * @return Devuelve el código de error de la función.
 	*/
-	public ReservaDTO listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista, String correoUser, int idReserva, int codigo) {
+	public int listarReservasPorFechaYPista(Vector<ReservaDTO> vectorReserva, Date fechaBuscada, String nombrePista, String correoUser, AtomicInteger idReserva) {
 		
 		int pistaId = buscarIdPista(nombrePista);
 		int userId = buscarIdJugador(correoUser);
 		String query = properties.getProperty("buscar_fecha_pista");
-	    codigo = 0;
 	    
 	    DBConnection db = new DBConnection();
 	    connection = db.getConnection();
+	    int counter= 0;
         
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
         	stmt.setInt(1, pistaId);
         	stmt.setDate(2, new java.sql.Date(fechaBuscada.getTime()));
-        	
-            ResultSet rs = stmt.executeQuery();
 
             // Iterar sobre los resultados de la consulta
-            if(rs.next()) {
-                idReserva = rs.getInt("idReserva");
-                String tipoReserva= rs.getString("tipoReserva");
-                int usuarioId = rs.getInt("usuarioId");
-                int duracion = rs.getInt("duracion");
-                float precio = rs.getFloat("precio");
-                float descuento = rs.getFloat("descuento");
-                
-                if(usuarioId != userId) {
-                	codigo= -1;
-                	return null;
-                }
-                if(tipoReserva.equals("INFANTIL")) {
-                	int numNinos = rs.getInt("numNinos");
-                	ReservaInfantilDTO reserva = new ReservaInfantilDTO(
-                            userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numNinos
-                        );
-                	return reserva;
-                	
-                }
-                else if(tipoReserva.equals("FAMILIAR")) {
-                	int numNinos = rs.getInt("numNinos");
-                	int numAdultos = rs.getInt("numAdultos");
-                	ReservaFamiliarDTO reserva = new ReservaFamiliarDTO(
-                			userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numAdultos, numNinos
-                        );
-                	return reserva;
-                }
-                else {
-                	int numAdultos = rs.getInt("numAdultos");
-                	ReservaAdultosDTO reserva = new ReservaAdultosDTO(
-                			userId, rs.getTimestamp("fechaHora"), duracion, pistaId, precio, descuento, numAdultos
-                        );
-                	return reserva;
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                	counter++;
+                    try {
+                        String tipoReserva = rs.getString("tipoReserva");
+                        int usuarioDB= rs.getInt("usuarioId");
+                        
+                        if(usuarioDB== userId) {
+                        	
+	                        if (tipoReserva.equals("FAMILIAR")) {
+	                        	idReserva.set(rs.getInt("idReserva"));
+	                            vectorReserva.add(new ReservaFamiliarDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numAdultos"),
+	                                rs.getInt("numNinos")
+	                            ));
+	                        } else if (tipoReserva.equals("INFANTIL")) {
+	                        	idReserva.set(rs.getInt("idReserva"));
+	                            vectorReserva.add(new ReservaInfantilDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numNinos")
+	                            ));
+	                        } else {
+	                        	idReserva.set(rs.getInt("idReserva"));
+	                            vectorReserva.add(new ReservaAdultosDTO(
+	                                rs.getInt("usuarioId"),
+	                                rs.getTimestamp("fechaHora"),
+	                                rs.getInt("duracion"),
+	                                rs.getInt("pistaId"),
+	                                rs.getFloat("precio"),
+	                                rs.getFloat("descuento"),
+	                                rs.getInt("numAdultos")
+	                            ));
+	                        }
+                        }
+                        
+                        else {
+                        	return -1;
+                        }
+                    } catch (IllegalArgumentException e) {
+	                        e.printStackTrace();
+                    }
                 }
             }
-            
-            else {
-            	codigo= -2;
-            	return null;
-            }
-        } catch (SQLException e) {
+        }
+         catch (SQLException e) {
         	e.printStackTrace();
-            codigo= -3;
-            return null;
+            return -3;
         } finally {
             db.closeConnection();
         }
+        
+        if(counter== 0) {
+        	return -2;
+        }
+        
+    	return 0;
+        
 	}
 	
 	

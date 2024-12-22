@@ -23,6 +23,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar reservas</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/buscar.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header class="header">

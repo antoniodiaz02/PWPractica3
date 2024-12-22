@@ -10,7 +10,6 @@ import java.util.Vector;
 import java.io.InputStream;
 import java.io.IOException;
 
-
 /**
  *  @author Antonio Diaz Barbancho
  *  @author Carlos Marín Rodríguez 
@@ -20,11 +19,24 @@ import java.io.IOException;
  *  @version 1.0
  */
 
+/**
+ * Clase que gestiona los jugadores en la base de datos.
+ */
 public class JugadorDAO {
 
+	/**
+     * Objeto connection para la conexión con la base de datos.
+     */
     private Connection connection;
+    
+    /**
+     * Objeto properties para las sentencias SQL.
+     */
     private Properties properties;
 
+    /**
+     * Constructor para inicializar la conexión a la base de datos.
+     */
     public JugadorDAO() {
         properties = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("sql.properties")) {
@@ -39,7 +51,11 @@ public class JugadorDAO {
         }
     }
 
-    // Modificado para aceptar tipoUsuario y contraseña
+    /**
+	 * Inserta un usuario en la base de datos.
+	 * @param jugador Objeto JugadorDTO.
+	 * @return codigo Devuelve el código de error.
+	 */
     public int insertJugador(JugadorDTO jugador) {
         int codigo = 0;
         String queryInsert = properties.getProperty("insert_usuario");
@@ -74,8 +90,9 @@ public class JugadorDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al insertar el usuario en la base de datos: " + e.getMessage());
-            return -1; // Código para indicar error general de base de datos.
+        	codigo = -1;
+            return codigo; // Código para indicar error general de base de datos.
+
         } finally {
             db.closeConnection();
         }
@@ -83,6 +100,11 @@ public class JugadorDAO {
         return codigo;
     }
     
+    /**
+	 * Busca un suario por correo electrónico asociado.
+	 * @param correo Correo del usuario asociado.
+	 * @return codigo Devuelve el código de error.
+	 */
     public int buscarUsuarioPorCorreo(String correo) {
     	int codigo = 0;
         String queryBuscar = properties.getProperty("buscar_por_correo");
@@ -100,23 +122,30 @@ public class JugadorDAO {
                 return codigo;
             }
 	    } catch (SQLException e) {
-	        System.err.println("Error al buscar el usuario en la base de datos: " + e.getMessage());
-	        return -1; // Código para indicar error general de base de datos.
+	    	codigo = -1;
+	        return codigo; // Código para indicar error general de base de datos.
 	    } finally {
 	        db.closeConnection();
 	    }
 	    return codigo;
     }
 
-
+    /**
+	 * Lista los usuarios en la base de datos.
+	 * @param vectorUsuarios Vector vacío donde se guardarán los usuarios.
+	 * @return codigo Devuelve el código de error.
+	 */
     public int listarUsuarios(Vector<JugadorDTO> vectorUsuarios) {
+    	
+    	int codigo = -1; // Codigo error por defecto.
+    	
         String query = properties.getProperty("listar_usuarios");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
         if (vectorUsuarios == null) {
             // Error: El vector proporcionado es null
-            return -1;
+            return codigo;
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query);
@@ -148,30 +177,37 @@ public class JugadorDAO {
                     vectorUsuarios.add(jugador);
                 } catch (IllegalArgumentException e) {
                     // Error: Formato de datos inválido en el ResultSet
-                    System.err.println("Error processing usuario data: " + e.getMessage());
-                    return -2;
+                    codigo = -2;
+                    return codigo;
                 }
             }
 
             if (vectorUsuarios.isEmpty()) {
                 // No se encontraron usuarios
-                return -3;
+            	codigo = -3;
+                return codigo;
             }
 
             // Operación exitosa
-            return 0;
+            codigo = 0;
+            return codigo;
 
         } catch (SQLException e) {
             // Error en la consulta SQL
-            System.err.println("Error listing usuarios: " + e.getMessage());
             e.printStackTrace();
-            return -4;
+            codigo = -4;
+            return codigo;
         } finally {
             db.closeConnection();
         }
     }
 
-    
+    /**
+	 * Modifica los datos de un usuario por su correo.
+	 * @param jugador Objeto JugadorDTO.
+	 * @param correo Correo del usuario a modificar.
+	 * @return codigo Devuelve el código de error.
+	 */
     public int modificarUsuario(JugadorDTO jugador, String correo) {
         int codigo = 0;
 
@@ -224,24 +260,29 @@ public class JugadorDAO {
             // Ejecutar la consulta
             codigo = statementActualizar.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error al modificar el usuario en la base de datos: " + e.getMessage());
+        	//Error SQL
+            codigo = -10;
+            return codigo;
         } finally {
             db.closeConnection();
         }
         return codigo;
     }
-    
+
+    /**
+	 * Valida las credenciales de un usuario.
+	 * @param correo Correo del usuario a validar.
+	 * @param contraseña Contraseña del usuario a validar.
+	 * @return codigo Devuelve el código de error.
+	 */
     public boolean validarCredenciales(String correo, String contraseña) {
         boolean credencialesValidas = false;
-        String query = "SELECT 1 FROM Usuarios WHERE correoElectronico = ? AND contraseña = ?";
+        
+        // Recuperar la consulta desde el archivo properties
+        String query = properties.getProperty("validar_credenciales");
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
-
-        if (connection == null) {
-            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
-            return false;
-        }
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
@@ -253,13 +294,14 @@ public class JugadorDAO {
                 credencialesValidas = true; // Se encontró una fila, las credenciales son válidas
             }
         } catch (SQLException e) {
-            System.err.println("Error al validar las credenciales: " + e.getMessage());
+        	return credencialesValidas;
         } finally {
             db.closeConnection();
         }
 
         return credencialesValidas;
     }
+
 
     /**
      * Obtiene la información de un jugador a partir de su correo electrónico.
@@ -268,15 +310,12 @@ public class JugadorDAO {
      */
     public JugadorDTO obtenerJugadorPorCorreo(String correo) {
         JugadorDTO jugador = null;
-        String query = "SELECT * FROM Usuarios WHERE correoElectronico = ?";
+        
+        // Recuperar la consulta desde el archivo properties
+        String query = properties.getProperty("obtener_jugador_por_correo");
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
-
-        if (connection == null) {
-            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
-            return null;
-        }
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
@@ -291,22 +330,17 @@ public class JugadorDAO {
                     rs.getString("contraseña"),             // Contraseña (asegúrate de no exponerla)
                     rs.getString("tipoUsuario")             // Tipo de usuario (cliente o administrador)
                 );
-                System.out.println("Jugador recuperado: " + jugador.toString());
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener la información del jugador: " + e.getMessage());
+        	jugador = null;
+        	return jugador;
+        	
         } finally {
             db.closeConnection();
         }
 
         return jugador;
     }
-
-    public int validarUsuario(String correo, String contrasena) {
-    	
-    	return 0;
-    	
-    	}
     
     
     

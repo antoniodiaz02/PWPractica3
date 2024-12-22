@@ -79,10 +79,18 @@ public class modificarUsuarioController extends HttpServlet {
             int resultado = gestor.modificarUsuario(jugador, correo);
 
             if (resultado == 1) {
+            	
                 // Éxito al modificar el usuario
                 HttpSession session = request.getSession();
                 session.setAttribute("mensaje", "Usuario modificado correctamente.");
                 response.sendRedirect(request.getContextPath() + "/MVC/Views/common/modificarUsuario.jsp");
+                
+                JugadorDTO jugadorActualizado = gestor.obtenerJugadorPorCorreo(correo);
+
+                // Actualizar la sesión con los datos del usuario actualizados
+                session = request.getSession();
+                session.setAttribute("jugador", jugadorActualizado);
+                
             } else if (resultado == 0) {
                 request.setAttribute("error", "No se encontró ningún usuario con el correo proporcionado.");
                 request.getRequestDispatcher("/MVC/Views/common/modificarUsuario.jsp").forward(request, response);
