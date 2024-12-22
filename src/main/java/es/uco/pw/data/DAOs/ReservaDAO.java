@@ -23,7 +23,7 @@ import java.io.InputStream;
 
 
 /**
- * Clase que gestiona las pistas en la base de datos.
+ * Clase que gestiona las reservas en la base de datos.
  */
 public class ReservaDAO {
 
