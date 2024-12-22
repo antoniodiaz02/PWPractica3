@@ -156,29 +156,61 @@ public class MaterialDAO {
      * @param material El objeto MaterialDTO con los nuevos datos.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean updateMaterial(MaterialDTO material) {
-        boolean respuesta = false;
+    public int updateMaterial(MaterialDTO material) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("update_material");
+        String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar existencia de material
+
+        if (material == null) {
+            return -2; // Error: Material no proporcionado
+        }
+
+        if (material.getTipoMaterial() == null) {
+            return -3; // Error: Tipo de material no especificado
+        }
+
+        if (material.getEstadoMaterial() == null) {
+            return -4; // Error: Estado del material no especificado
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, material.getTipoMaterial().name());
-            statement.setBoolean(2, material.getUsoInterior());
-            statement.setString(3, material.getEstadoMaterial().name());
-            statement.setInt(4, material.getIdMaterial());
+        try {
+            // Verificar si el material existe
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setInt(1, material.getIdMaterial());
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -5; // Error: El material no existe
+                }
+            }
 
-            int rowsUpdated = statement.executeUpdate();
-            respuesta = rowsUpdated > 0;
+            // Actualizar el material
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, material.getTipoMaterial().name());
+                statement.setBoolean(2, material.getUsoInterior());
+                statement.setString(3, material.getEstadoMaterial().name());
+                statement.setInt(4, material.getIdMaterial());
+
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -6; // Error: No se pudo actualizar el material
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error updating material: " + e.getMessage());
+            System.err.println("Error al actualizar el material: " + e.getMessage());
             e.printStackTrace();
+            respuesta = -7; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Elimina un material de la base de datos.
@@ -186,26 +218,50 @@ public class MaterialDAO {
      * @param idMaterial El ID del material que se desea eliminar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean deleteMaterial(int idMaterial) {
-        boolean respuesta = false;
+    public int eliminarMaterial(int idMaterial) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("delete_material");
+        String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar existencia
+
+        if (idMaterial <= 0) {
+            return -2; // Error: ID de material no válido
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, idMaterial);
+        try {
+            // Verificar si existe un material con el ID dado
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setInt(1, idMaterial);
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -3; // Error: No existe un material con este ID
+                }
+            }
 
-            int rowsDeleted = statement.executeUpdate();
-            respuesta = rowsDeleted > 0;
+            // Eliminar el material
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, idMaterial);
+
+                int rowsDeleted = statement.executeUpdate();
+                if (rowsDeleted > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -4; // Error: No se pudo eliminar el material
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error deleting material: " + e.getMessage());
+            System.err.println("Error al eliminar el material: " + e.getMessage());
             e.printStackTrace();
+            respuesta = -5; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Recupera todos los materiales de la base de datos.

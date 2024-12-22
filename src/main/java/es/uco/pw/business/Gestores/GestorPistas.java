@@ -78,7 +78,7 @@ public class GestorPistas {
      * @param pista PistaDTO con los datos actualizados
      * @return int Código de respuesta (0: éxito, 1: error)
      */
-    public boolean actualizarPista(PistaDTO pista) {
+    public int updatePista(PistaDTO pista) {
         // Actualizar la pista a través del DAO
         return daoPista.updatePista(pista);
     }
@@ -89,9 +89,9 @@ public class GestorPistas {
      * @param idPista ID de la pista a eliminar
      * @return int Código de respuesta (0: éxito, 1: error)
      */
-    public boolean eliminarPista(String nombrePista) {
+    public int eliminarPista(String nombre) {
         // Eliminar la pista a través del DAO
-        return daoPista.deletePista(nombrePista);
+        return daoPista.eliminarPista(nombre);
     }
 
     /**
