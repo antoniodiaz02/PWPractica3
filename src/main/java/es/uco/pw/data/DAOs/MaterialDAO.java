@@ -41,7 +41,6 @@ public class MaterialDAO {
                 throw new FileNotFoundException("Properties file 'sql.properties' not found in classpath");
             }
         } catch (IOException e) {
-            System.err.println("Error loading SQL properties file: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -49,25 +48,29 @@ public class MaterialDAO {
     /**
      * Inserta un nuevo material en la base de datos.
      *
-     * @param material El objeto MaterialDTO que se desea insertar.
+     * @param material Objeto MaterialDTO que se desea insertar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
     public int insertMaterial(MaterialDTO material) {
+    	
         int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("insert_material");
         String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar ID existente
 
         // Validaciones iniciales
         if (material == null) {
-            return -2; // Error: Material no proporcionado
+        	respuesta = -2;
+            return respuesta; // Error: Material no proporcionado
         }
 
         if (material.getTipoMaterial() == null) {
-            return -3; // Error: Tipo de material no válido
+        	respuesta = -3;
+            return respuesta; // Error: Tipo de material no válido
         }
 
         if (material.getEstadoMaterial() == null) {
-            return -4; // Error: Estado del material no válido
+        	respuesta = -4;
+            return respuesta; // Error: Estado del material no válido
         }
 
         DBConnection db = new DBConnection();
@@ -79,7 +82,8 @@ public class MaterialDAO {
                 checkStatement.setInt(1, material.getIdMaterial());
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (resultSet.next()) {
-                    return -5; // Error: Ya existe un material con este ID
+                	respuesta = -5;
+                    return respuesta; // Error: Ya existe un material con este ID
                 }
             }
 
@@ -98,7 +102,6 @@ public class MaterialDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al insertar el material: " + e.getMessage());
             e.printStackTrace();
             respuesta = -6; // Error: Excepción SQL
         } finally {
@@ -117,12 +120,6 @@ public class MaterialDAO {
         MaterialDTO material = null;
         String query = properties.getProperty("find_material_by_id");
 
-        // Verificación adicional para ver si la consulta se cargó correctamente
-        if (query == null) {
-            System.err.println("La consulta SQL para 'find_material_by_id' no se cargó correctamente.");
-            return null;
-        }
-
         DBConnection db = new DBConnection();
         Connection connection = db.getConnection();
 
@@ -138,10 +135,10 @@ public class MaterialDAO {
 
                 material = new MaterialDTO(idMaterial, tipoMaterial, usoInterior, estadoMaterial);
             } else {
-                System.out.println("Material no encontrado para el ID: " + idMaterial);
+            	// No se encontró el material.
+            	material = null;
             }
         } catch (SQLException e) {
-            System.err.println("Error finding material by ID: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
@@ -154,7 +151,7 @@ public class MaterialDAO {
      * Actualiza la información de un material en la base de datos.
      *
      * @param material El objeto MaterialDTO con los nuevos datos.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Codigo de respuesta.
      */
     public int updateMaterial(MaterialDTO material) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -162,15 +159,18 @@ public class MaterialDAO {
         String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar existencia de material
 
         if (material == null) {
-            return -2; // Error: Material no proporcionado
+        	respuesta = -2;
+            return respuesta; // Error: Material no proporcionado
         }
 
         if (material.getTipoMaterial() == null) {
-            return -3; // Error: Tipo de material no especificado
+        	respuesta = -3;
+            return respuesta; // Error: Tipo de material no especificado
         }
 
         if (material.getEstadoMaterial() == null) {
-            return -4; // Error: Estado del material no especificado
+        	respuesta = -4;
+            return respuesta; // Error: Estado del material no especificado
         }
 
         DBConnection db = new DBConnection();
@@ -182,7 +182,8 @@ public class MaterialDAO {
                 checkStatement.setInt(1, material.getIdMaterial());
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (!resultSet.next()) {
-                    return -5; // Error: El material no existe
+                	respuesta = -5;
+                    return respuesta; // Error: El material no existe
                 }
             }
 
@@ -201,7 +202,6 @@ public class MaterialDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al actualizar el material: " + e.getMessage());
             e.printStackTrace();
             respuesta = -7; // Error: Excepción SQL
         } finally {
@@ -216,7 +216,7 @@ public class MaterialDAO {
      * Elimina un material de la base de datos.
      *
      * @param idMaterial El ID del material que se desea eliminar.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Código de respuesta.
      */
     public int eliminarMaterial(int idMaterial) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -224,7 +224,8 @@ public class MaterialDAO {
         String checkQuery = properties.getProperty("check_material_id"); // Consulta para verificar existencia
 
         if (idMaterial <= 0) {
-            return -2; // Error: ID de material no válido
+        	respuesta = -2;
+            return respuesta; // Error: ID de material no válido
         }
 
         DBConnection db = new DBConnection();
@@ -236,7 +237,8 @@ public class MaterialDAO {
                 checkStatement.setInt(1, idMaterial);
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (!resultSet.next()) {
-                    return -3; // Error: No existe un material con este ID
+                	respuesta = -3;
+                    return respuesta; // Error: No existe un material con este ID
                 }
             }
 
@@ -252,7 +254,6 @@ public class MaterialDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al eliminar el material: " + e.getMessage());
             e.printStackTrace();
             respuesta = -5; // Error: Excepción SQL
         } finally {
@@ -265,16 +266,20 @@ public class MaterialDAO {
 
     /**
      * Recupera todos los materiales de la base de datos.
+     * 
+     * @param vectorMateriales Vector de Objetos MaterialesDTO donde se guardaran los materiales listados.
      * @return materials Una lista de objetos MaterialDTO.
      */
     public int listarMateriales(Vector<MaterialDTO> vectorMateriales) {
+    	
+    	int respuesta = -1;
         String query = properties.getProperty("find.all.materials");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
         if (vectorMateriales == null) {
             // Error: El vector proporcionado es null
-            return -1;
+            return respuesta;
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query);
@@ -295,40 +300,42 @@ public class MaterialDAO {
                     vectorMateriales.add(material);
                 } catch (IllegalArgumentException e) {
                     // Error: Formato de datos inválido en el ResultSet
-                    System.err.println("Error processing material data: " + e.getMessage());
-                    return -2;
+                	respuesta = -2;
+                    return respuesta;
                 }
             }
 
             if (vectorMateriales.isEmpty()) {
                 // No se encontraron materiales
-                return -3;
+            	respuesta = -3;
+                return respuesta;
             }
 
             // Operación exitosa
-            return 0;
+            respuesta = 0;
+            return respuesta;
 
         } catch (SQLException e) {
             // Error en la consulta SQL
-            System.err.println("Error listing materials: " + e.getMessage());
             e.printStackTrace();
-            return -4;
+            respuesta = -4;
+            return respuesta;
         } finally {
             db.closeConnection();
         }
     }
+    
     /**
      * Obtiene los materiales por pista.
+     * 
+     * @param nombrePista Nombre de la pista a obtener los materiales.
      * @return materiales Una lista de objetos MaterialDTO.
      */
     public List<MaterialDTO> obtenerMaterialesPorPista(String nombrePista) {
         List<MaterialDTO> materiales = new ArrayList<>();
-        String query = "SELECT m.idMaterial, m.tipo, m.uso, m.estado " +
-                "FROM Materiales m " +
-                "JOIN Material_Pista mp ON m.idMaterial = mp.idMaterial " +
-                "WHERE mp.nombrePista = ?";
 
-
+        // Recuperar la consulta desde el archivo properties
+        String query = properties.getProperty("obtener_materiales_por_pista");
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -347,13 +354,16 @@ public class MaterialDAO {
                 materiales.add(material);
             }
         } catch (SQLException e) {
-            System.err.println("Error obteniendo materiales de la pista: " + e.getMessage());
+            
             e.printStackTrace();
         } finally {
             db.closeConnection();
         }
 
+        System.err.println("HOLA");
         return materiales;
     }
 
+
+    
 }
