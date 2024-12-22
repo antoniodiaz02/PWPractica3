@@ -242,6 +242,16 @@
         <servlet-name>AsociarMaterialAPistaController</servlet-name>
         <url-pattern>/adminmenu/asociarMaterialAPista</url-pattern>
     </servlet-mapping>
+    
+    <!-- Configuración para el servlet ModificarReservaExitoController -->
+    <servlet>
+        <servlet-name>ModificarReservaExitoController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.ModificarReservaExitoController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ModificarReservaExitoController</servlet-name>
+        <url-pattern>/usermenu/gestionreservas/modificar/exito</url-pattern>
+    </servlet-mapping>
 
     <!-- Configuración para el servlet EliminarPistasController -->
     <servlet>
