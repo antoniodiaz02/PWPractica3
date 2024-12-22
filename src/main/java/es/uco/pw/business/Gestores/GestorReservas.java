@@ -4,6 +4,7 @@ import java.io.*;
 
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
@@ -157,11 +158,10 @@ public class GestorReservas {
 	 * @param nombrePista Nombre de la pista a filtrar.
 	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
 	 * @param idReserva Rellena el id de la reserva encontrada.
-	 * @param codigo Devuelve el código de error de la función.
-	 * @return Una clase reserva con todos los detalles de la reserva.
-	 */
-	public ReservaDTO listarReservasPorFechaYPista(Date fechaBuscada, String nombrePista, String correoUser, int idReserva, int codigo) {
-		return daoReserva.listarReservasPorFechaYPista(fechaBuscada, nombrePista, correoUser, idReserva, codigo);
+	 * @return Devuelve el código de error de la función.
+	*/
+	public int listarReservasPorFechaYPista(Vector<ReservaDTO> vectorReserva, Date fechaBuscada, String nombrePista, String correoUser, AtomicInteger idReserva) {
+		return daoReserva.listarReservasPorFechaYPista(vectorReserva, fechaBuscada, nombrePista, correoUser, idReserva);
 	}
 	
 	
