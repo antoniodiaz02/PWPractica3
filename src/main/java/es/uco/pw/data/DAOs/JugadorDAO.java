@@ -268,24 +268,21 @@ public class JugadorDAO {
         }
         return codigo;
     }
-    
+
     /**
-	 * Valida los credenciales de un usuario.
+	 * Valida las credenciales de un usuario.
 	 * @param correo Correo del usuario a validar.
 	 * @param contraseña Contraseña del usuario a validar.
-	 * @return boolean True en caso de éxito, False en caso contrario.
+	 * @return codigo Devuelve el código de error.
 	 */
     public boolean validarCredenciales(String correo, String contraseña) {
         boolean credencialesValidas = false;
-        String query = "SELECT 1 FROM Usuarios WHERE correoElectronico = ? AND contraseña = ?";
+        
+        // Recuperar la consulta desde el archivo properties
+        String query = properties.getProperty("validar_credenciales");
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
-
-        if (connection == null) {
-            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
-            return false;
-        }
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
@@ -297,13 +294,14 @@ public class JugadorDAO {
                 credencialesValidas = true; // Se encontró una fila, las credenciales son válidas
             }
         } catch (SQLException e) {
-            System.err.println("Error al validar las credenciales: " + e.getMessage());
+        	return credencialesValidas;
         } finally {
             db.closeConnection();
         }
 
         return credencialesValidas;
     }
+
 
     /**
      * Obtiene la información de un jugador a partir de su correo electrónico.
@@ -312,15 +310,12 @@ public class JugadorDAO {
      */
     public JugadorDTO obtenerJugadorPorCorreo(String correo) {
         JugadorDTO jugador = null;
-        String query = "SELECT * FROM Usuarios WHERE correoElectronico = ?";
+        
+        // Recuperar la consulta desde el archivo properties
+        String query = properties.getProperty("obtener_jugador_por_correo");
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
-
-        if (connection == null) {
-            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
-            return null;
-        }
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
@@ -335,22 +330,17 @@ public class JugadorDAO {
                     rs.getString("contraseña"),             // Contraseña (asegúrate de no exponerla)
                     rs.getString("tipoUsuario")             // Tipo de usuario (cliente o administrador)
                 );
-                System.out.println("Jugador recuperado: " + jugador.toString());
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener la información del jugador: " + e.getMessage());
+        	jugador = null;
+        	return jugador;
+        	
         } finally {
             db.closeConnection();
         }
 
         return jugador;
     }
-
-    public int validarUsuario(String correo, String contrasena) {
-    	
-    	return 0;
-    	
-    	}
     
     
     
