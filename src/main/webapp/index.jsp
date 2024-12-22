@@ -6,6 +6,8 @@
     <title>Gestión de Pistas de Baloncesto</title>
     <!-- Ruta al archivo CSS -->
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/index.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
+    
 </head>
 <body>
     <section class="vh-100 gradient-custom">

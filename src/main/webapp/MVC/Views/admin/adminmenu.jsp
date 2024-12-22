@@ -12,6 +12,7 @@
     <meta charset="UTF-8">
     <title>Panel de Control - Administrador</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/adminmenu.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
 

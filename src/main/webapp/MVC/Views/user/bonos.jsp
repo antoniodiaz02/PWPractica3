@@ -18,6 +18,7 @@
     <meta charset="UTF-8">
     <title>Gestión Bonos</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bonos.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
 

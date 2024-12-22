@@ -6,6 +6,7 @@
     <meta http-equiv="refresh" content="3;url=index.jsp"> <!-- Redirección automática en 3 segundos -->
     <title>Cerrando sesión</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/logout.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="logout-container">

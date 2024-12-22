@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuarios</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/tabla.css">
+    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
     <style>
         .error-message {
             color: red;
