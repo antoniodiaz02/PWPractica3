@@ -225,4 +225,8 @@ public class GestorReservas {
 		return daoReserva.buscarPistas(vectorPistas,isInterior,fechaHora);
 	}
 
+	public int eliminarReserva(int idReserva) {
+		return daoReserva.eliminarReserva(idReserva);
+	}
+	
 }

@@ -253,4 +253,55 @@
         <url-pattern>/usermenu/gestionreservas/modificar/exito</url-pattern>
     </servlet-mapping>
 
+    <!-- Configuración para el servlet EliminarPistasController -->
+    <servlet>
+        <servlet-name>EliminarPistasController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.admin.EliminarPistasController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>EliminarPistasController</servlet-name>
+        <url-pattern>/adminmenu/eliminarPistas</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Configuración para el servlet EliminarMaterialesController -->
+    <servlet>
+	    <servlet-name>EliminarMaterialesController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.EliminarMaterialesController</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+   		<servlet-name>EliminarMaterialesController</servlet-name>
+    	<url-pattern>/adminmenu/eliminarMateriales</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Configuración para el servlet ActualizarPistaController -->
+	<servlet>
+	    <servlet-name>UpdatePistaController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.UpdatePistaController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>UpdatePistaController</servlet-name>
+	    <url-pattern>/adminmenu/updatePista</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Configuración para el servlet EliminarReservasController -->
+	<servlet>
+	    <servlet-name>EliminarReservasController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.EliminarReservasController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>EliminarReservasController</servlet-name>
+	    <url-pattern>/adminmenu/eliminarReservas</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Configuración para el servlet ActualizarMaterialController -->
+	<servlet>
+	    <servlet-name>UpdateMaterialController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.UpdateMaterialController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>UpdateMaterialController</servlet-name>
+	    <url-pattern>/adminmenu/updateMaterial</url-pattern>
+	</servlet-mapping>
 </web-app>

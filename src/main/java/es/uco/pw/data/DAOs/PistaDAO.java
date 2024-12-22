@@ -47,13 +47,12 @@ public class PistaDAO {
             e.printStackTrace();
         }
     }
-    
 
     /**
-     * Inserta una nueva pista en la base de datos.
-     *
-     * @param pista El objeto PistaDTO que se desea insertar.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * Inserta una nueva pista en la base de datos si cumple con las validaciones necesarias.
+     * 
+     * @param pista Objeto {@link PistaDTO} que contiene los datos de la pista a insertar.
+     * @return respuesta Código entero que representa el resultado de la operación.
      */
     public int insertPista(PistaDTO pista) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -61,19 +60,23 @@ public class PistaDAO {
         String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar nombre existente
 
         if (pista == null) {
-            return -2; // Error: Pista no proporcionada
+        	respuesta = -2;
+            return respuesta; // Error: Pista no proporcionada
         }
 
         if (pista.getNombre() == null || pista.getNombre().isEmpty()) {
-            return -3; // Error: Nombre de la pista no válido
+        	respuesta = -3;
+            return respuesta; // Error: Nombre de la pista no válido
         }
 
         if (pista.getMaxJugadores() <= 0) {
-            return -4; // Error: Número máximo de jugadores no válido
+        	respuesta = -4;
+            return respuesta; // Error: Número máximo de jugadores no válido
         }
 
         if (pista.getTamanoPista() == null) {
-            return -5; // Error: Tamaño de la pista no especificado
+        	respuesta = -5;
+            return respuesta; // Error: Tamaño de la pista no especificado
         }
 
         DBConnection db = new DBConnection();
@@ -85,7 +88,8 @@ public class PistaDAO {
                 checkStatement.setString(1, pista.getNombre());
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (resultSet.next()) {
-                    return -6; // Error: Ya existe una pista con este nombre
+                	respuesta = -6;
+                    return respuesta; // Error: Ya existe una pista con este nombre
                 }
             }
 
@@ -105,7 +109,6 @@ public class PistaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al insertar la pista: " + e.getMessage());
             e.printStackTrace();
             respuesta = -8; // Error: Excepción SQL
         } finally {
@@ -118,6 +121,7 @@ public class PistaDAO {
 
     /**
      * Busca una pista por su nombre asociado.
+     * 
      * @param nombre Nombre de la pista a buscar.
      * @return pista Objeto pista si se encuentra.
      */
@@ -144,7 +148,6 @@ public class PistaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error finding pista by nombre: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
@@ -156,78 +159,140 @@ public class PistaDAO {
     /**
      * Actualiza la información de una pista en la base de datos.
      *
-     * @param pista El objeto PistaDTO con los nuevos datos.
+     * @param pista Objeto PistaDTO con los nuevos datos.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean updatePista(PistaDTO pista) {
-        boolean respuesta = false;
+    public int updatePista(PistaDTO pista) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("update_pista");
+        String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar existencia de pista
+
+        if (pista == null) {
+            return -2; // Error: Pista no proporcionada
+        }
+
+        if (pista.getNombre() == null || pista.getNombre().isEmpty()) {
+            return -3; // Error: Nombre de la pista no válido
+        }
+
+        if (pista.getMaxJugadores() <= 0) {
+            return -4; // Error: Número máximo de jugadores no válido
+        }
+
+        if (pista.getTamanoPista() == null) {
+            return -5; // Error: Tamaño de la pista no especificado
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setBoolean(1, pista.isDisponible());
-            statement.setBoolean(2, pista.isInterior());
-            statement.setString(3, pista.getTamanoPista().name());
-            statement.setInt(4, pista.getMaxJugadores());
-            statement.setString(5, pista.getNombre());
+        try {
+            // Verificar si la pista existe
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, pista.getNombre());
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -6; // Error: La pista no existe
+                }
+            }
 
-            int rowsUpdated = statement.executeUpdate();
-            respuesta = rowsUpdated > 0;
+            // Actualizar la pista
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setBoolean(1, pista.isDisponible());
+                statement.setBoolean(2, pista.isInterior());
+                statement.setString(3, pista.getTamanoPista().name());
+                statement.setInt(4, pista.getMaxJugadores());
+                statement.setString(5, pista.getNombre());
+
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -7; // Error: No se pudo actualizar la pista
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error updating pista: " + e.getMessage());
+
+            System.err.println("Error al actualizar la pista: " + e.getMessage());
+
             e.printStackTrace();
+            respuesta = -8; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Elimina una pista de la base de datos.
      *
-     * @param nombre El nombre de la pista que se desea eliminar.
+     * @param nombre Nombre de la pista que se desea eliminar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean deletePista(String nombre) {
-        boolean respuesta = false;
+    public int eliminarPista(String nombre) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("delete_pista");
+        String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar existencia
+
+        if (nombre == null || nombre.isEmpty()) {
+            return -2; // Error: Nombre no proporcionado o vacío
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, nombre);
+        try {
+            // Verificar si existe una pista con el nombre dado
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, nombre);
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -3; // Error: No existe una pista con este nombre
+                }
+            }
 
-            int rowsDeleted = statement.executeUpdate();
-            respuesta = rowsDeleted > 0;
+            // Eliminar la pista
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, nombre);
+
+                int rowsDeleted = statement.executeUpdate();
+                if (rowsDeleted > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -4; // Error: No se pudo eliminar la pista
+                }
+            }
         } catch (SQLException e) {
-            System.err.println("Error deleting pista: " + e.getMessage());
+
+            System.err.println("Error al eliminar la pista: " + e.getMessage());
+
             e.printStackTrace();
+            respuesta = -5; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
 
+
     /**
      * Lista las pistas en la base de datos.
-     * @return todasLasPistas Todas las pistas de la base de datos.
-     */
-    /**
-     * Lista las pistas en la base de datos.
+     * 
      * @param vectorPistas Vector donde se almacenarán las pistas recuperadas.
-     * @return Código de resultado (0 si es exitoso, o un número negativo para errores).
+     * @return resultado Código de resultado (0 si es exitoso, o un número negativo para errores).
      */
     public int listarPistas(Vector<PistaDTO> vectorPistas) {
+    	int resultado = -1; //Resultado por defecto
         String query = properties.getProperty("listar_todas_las_pistas");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
         if (vectorPistas == null) {
             // Error: El vector proporcionado es null
-            return -1;
+            return resultado;
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query);
@@ -250,24 +315,26 @@ public class PistaDAO {
                     vectorPistas.add(pista);
                 } catch (IllegalArgumentException e) {
                     // Error: Formato de datos inválido en el ResultSet
-                    System.err.println("Error processing pista data: " + e.getMessage());
-                    return -2;
+                    resultado = -2;
+                    return resultado;
                 }
             }
 
             if (vectorPistas.isEmpty()) {
                 // No se encontraron pistas
-                return -3;
+            	resultado = -3;
+                return resultado;
             }
 
             // Operación exitosa
-            return 0;
+            resultado = 0;
+            return resultado;
 
         } catch (SQLException e) {
             // Error en la consulta SQL
-            System.err.println("Error listing pistas: " + e.getMessage());
             e.printStackTrace();
-            return -4;
+            resultado = -4;
+            return resultado;
         } finally {
             db.closeConnection();
         }
@@ -275,11 +342,15 @@ public class PistaDAO {
     
     /**
      * Asocia el material a una pista.
+     * 
      * @param nombrePista Nombre de la pista a asociar.
      * @param idMaterial Id del material a asociar.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Código de resultado.
      */
     public int asociarMaterialAPista(String nombrePista, int idMaterial) {
+    	
+    	int resultado = -1; //Código de error por defecto
+    	
         String queryPista = properties.getProperty("obtener_tipo_pista");
         String queryMaterial = properties.getProperty("obtener_uso_material");
         String queryActualizarEstado = properties.getProperty("actualizar_estado_material");
@@ -289,12 +360,13 @@ public class PistaDAO {
 
         if (nombrePista == null || nombrePista.isEmpty()) {
             // Error: El nombre de la pista es null o vacío
-            return -1;
+            return resultado;
         }
 
         if (idMaterial <= 0) {
             // Error: El ID del material no es válido
-            return -2;
+        	resultado = -2;
+            return resultado;
         }
 
         try {
@@ -307,7 +379,8 @@ public class PistaDAO {
                         tipoPista = rs.getInt("tipo");
                     } else {
                         // Error: La pista no existe
-                        return -3;
+                    	resultado = -3;
+                        return resultado;
                     }
                 }
             }
@@ -323,7 +396,8 @@ public class PistaDAO {
                         estadoMaterial = rs.getString("estado");
                     } else {
                         // Error: El material no existe
-                        return -4;
+                    	resultado = -4;
+                        return resultado;
                     }
                 }
             }
@@ -331,13 +405,15 @@ public class PistaDAO {
             // Verificar si el material está en estado RESERVADO o MAL_ESTADO
             if ("RESERVADO".equalsIgnoreCase(estadoMaterial) || "MAL_ESTADO".equalsIgnoreCase(estadoMaterial)) {
                 // Error: El material no está disponible para asociarse
-                return -5;
+            	resultado = -5;
+                return resultado;
             }
 
             // Verificar restricción: no se pueden asociar materiales de interior a pistas de exterior y viceversa
             if (tipoPista != usoMaterial) {
                 // Error: Tipos incompatibles
-                return -6;
+            	resultado = -6;
+                return resultado;
             }
 
             // Realizar la asociación
@@ -356,19 +432,21 @@ public class PistaDAO {
                     }
 
                     // Operación exitosa
-                    return 0;
+                    resultado = 0;
+                    return resultado;
                 } else {
                     // Error: No se afectaron filas, probablemente el nombre de la pista no existe
-                    return -7;
+                	resultado = -7;
+                    return resultado;
                 }
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al asociar material a pista: " + e.getMessage());
             e.printStackTrace();
 
             // Error en la consulta SQL
-            return -8;
+            resultado = -8;
+            return resultado;
 
         } finally {
             db.closeConnection();

@@ -17,14 +17,13 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 
 /**
- * Clase que gestiona las pistas en la base de datos.
+ * Clase que gestiona las reservas en la base de datos.
  */
 public class ReservaDAO {
 
@@ -37,6 +36,7 @@ public class ReservaDAO {
      * Objeto properties encargado de las sentencias SQL.
      */
     private Properties properties;
+    
     /**
      * Constructor que inicializa la conexión con base de datos.
      */
@@ -49,37 +49,54 @@ public class ReservaDAO {
                 throw new FileNotFoundException("Properties file 'sql.properties' not found in classpath");
             }
         } catch (IOException e) {
-            System.err.println("Error loading SQL properties file: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
+    /**
+     * Realiza una reserva individual.
+     * 
+     * @param correoUsuario Correo del usuario a realizar la reserva.
+     * @param nombrePista Nombre de la pista a reservar.
+     * @param fechaHora Fecha de la reserva.
+     * @param duracion Duración de la reserva.
+     * @param numeroAdultos Número de adultos a participar.
+     * @param numeroNinos Numero de ninos a participar.
+     * @return respuesta Código de respuesta.
+     */
     public int hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
-        int jugador = buscarIdJugador(correoUsuario); // Obtener el ID del jugador
+        int respuesta = -10; //Codigo de error por defecto.
+    	int jugador = buscarIdJugador(correoUsuario); // Obtener el ID del jugador
         int pistaId = buscarIdPista(nombrePista); // Obtener el ID de la pista
 
         // Comprobación adicional para evitar reservas en la misma pista y hora
         if (existeReservaParaPistaYHora(nombrePista, fechaHora)) {
-            return -1;
+        	respuesta = -1;
+            return respuesta;
         }
 
         // Validaciones de existencia y disponibilidad
         if (jugador == -1) {
-            return -2;
+        	respuesta = -2;
+            return respuesta;
         }
         PistaDTO pista = buscarPista(nombrePista);
         if (pista == null) {
-            return -3;
+        	respuesta = -3;
+            return respuesta;
         }
         if (!pista.isDisponible()) {
-            return -4;
+        	respuesta = -4;
+            return respuesta;
         }
         if (plazoExcedido(fechaHora)) {
-            return -5;
+        	respuesta = -5;
+            return respuesta;
         }
         
         if(pista.getMaxJugadores() < numeroAdultos + numeroNinos) {
-        	return -7;
+        	respuesta = -7;
+        	return respuesta;
         }
 
         // Calcular precio y descuento
@@ -97,12 +114,13 @@ public class ReservaDAO {
         } else if (tipoReserva == ReservaAdultosDTO.class) {
             tipoReservaString = "ADULTOS";
         } else {
-            return -6;
+        	respuesta = -6;
+            return respuesta;
         }
 
         // Inserción en la base de datos
         String query = properties.getProperty("insert_reserva");
-        int respuesta = -8;
+        respuesta = -8;
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -123,8 +141,9 @@ public class ReservaDAO {
             	respuesta = 0;        	
             }
         } catch (SQLException e) {
-            System.err.println("Error al insertar la reserva: " + e.getMessage());
-            e.printStackTrace();
+        	e.printStackTrace();
+        	respuesta = -9;
+            return respuesta;
         } finally {
             db.closeConnection();
         }
@@ -143,34 +162,41 @@ public class ReservaDAO {
 	 * @param numeroNinos Número de niños que acuden.
 	 * @param tipoReserva Clase Reserva que tiene más cantidad de detalles de la reserva como el tipo de reserva, el tamaño de la pista...
 	 * @param bonoId El identificador del bono con el que se va a realizar la reserva.
-	 * @return Devuelve true si el procedimiento de reserva se ha hecho de manera correcta, y false si hay algo que se incumple.
+	 * @return respuesta Código de respuesta.
 	 */
     public int hacerReservaBono(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva, int bonoId) {
-        int jugador = buscarIdJugador(correoUsuario); // Obtener ID del jugador
+        int respuesta = -15;
+    	int jugador = buscarIdJugador(correoUsuario); // Obtener ID del jugador
         int pistaId = buscarIdPista(nombrePista); // Obtener ID de la pista
 
         // Comprobación adicional para evitar reservas en la misma pista y hora
         if (existeReservaParaPistaYHora(nombrePista, fechaHora)) {
-            return -1;
+        	respuesta = -1;
+            return respuesta;
         }
 
         // Validaciones de existencia y disponibilidad
         if (jugador == -1) {
-            return -2;
+        	respuesta = -2;
+            return respuesta;
         }
         PistaDTO pista = buscarPista(nombrePista);
         if (pista == null) {
-            return -3;
+        	respuesta = -3;
+            return respuesta;
         }
         if (!pista.isDisponible()) {
-            return -4;
+        	respuesta = -4;
+            return respuesta;
         }
         if (plazoExcedido(fechaHora)) {
-            return -5;
+        	respuesta = -5;
+            return respuesta;
         }
 
         if(pista.getMaxJugadores() < numeroAdultos + numeroNinos) {
-        	return -6;
+        	respuesta = -6;
+        	return respuesta;
         }
 
         // Comprobación del bono
@@ -183,7 +209,8 @@ public class ReservaDAO {
 
         // Validar que queden sesiones disponibles
         if (sesionesRestantes <= 0) {
-            return -10;
+        	respuesta = -10;
+            return respuesta;
         }
 
         float precio = calcularPrecio(duracion);
@@ -200,12 +227,13 @@ public class ReservaDAO {
         } else if (tipoReserva == ReservaAdultosDTO.class) {
             tipoReservaString = "ADULTOS";
         } else {
-            return -7;
+        	respuesta = -7;
+            return respuesta;
         }
 
         // Inserción en la base de datos
         String queryInsertReserva = properties.getProperty("insert_reserva");
-        int respuesta = 0;
+        respuesta = 0;
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -229,7 +257,8 @@ public class ReservaDAO {
                 int rowsInserted = statement.executeUpdate();
                 if (rowsInserted <= 0) {
                     System.out.println(" ERROR! No se pudo insertar la reserva.");
-                    return -13;
+                    respuesta = -13;
+                    return respuesta;
                 }
             }
 
@@ -240,12 +269,10 @@ public class ReservaDAO {
             respuesta= 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al realizar la reserva con bono: " + e.getMessage());
             e.printStackTrace();
             try {
                 connection.rollback(); // Revertir cambios en caso de error
             } catch (SQLException rollbackEx) {
-                System.err.println("Error al hacer rollback: " + rollbackEx.getMessage());
                 rollbackEx.printStackTrace();
             }
         } finally {
@@ -257,11 +284,14 @@ public class ReservaDAO {
    
     
     /**
-	 * Genera un nuevo bono de usuario.
+	 * Calcula la antiguedad del jugador.
+	 * 
 	 * @param correoElectronico Correo del usuario que pide el bono.
-	 * @return Devuelve el codigo de error del proceso.
+	 * @return Respuesta Devuelve el codigo de error del proceso.
 	 */
     public int calcularAntiguedadJugador(String correoElectronico) {
+    	
+    	int respuesta = -15;
     	String queryBuscar = properties.getProperty("buscar_por_correo");
         DBConnection db = new DBConnection();
         connection = db.getConnection();
@@ -276,19 +306,21 @@ public class ReservaDAO {
             if (rs.next()) {
             	fechaInscripcion= rs.getDate("fechaInscripcion");
             	if (fechaInscripcion == null) {
-            		return 0;
+            		respuesta = 0;
+            		return respuesta;
             	}
                 long diffInMillis = new Date().getTime() - fechaInscripcion.getTime();
                 return (int) TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) / 365;
             	
             }
 	    } catch (SQLException e) {
-	        System.err.println("Error al buscar el usuario en la base de datos: " + e.getMessage());
-	        return -1; // Código para indicar error general de base de datos.
+	    	respuesta = -1;
+	        return respuesta; // Código para indicar error general de base de datos.
 	    } finally {
 	        db.closeConnection();
 	    }
-        return -1;
+        respuesta = -1;
+        return respuesta;
     }
     
     /**
@@ -1257,4 +1289,44 @@ public class ReservaDAO {
         }
 	}
 
+	
+	/**
+	 * Elimina una reserva específica de la base de datos. Esta función está diseñada para ser utilizada por un administrador.
+	 *
+	 * @param idReserva Identificador de la reserva a eliminar.
+	 * @return boolean True si la eliminación fue exitosa, False en caso contrario.
+	 */
+	public int eliminarReserva(int idReserva) {
+	    int resultado = -1;
+
+	    // Consulta para eliminar la reserva (definida en el archivo de propiedades)
+	    String queryEliminarReserva = properties.getProperty("eliminar_reserva");
+
+	    DBConnection db = new DBConnection();
+	    connection = db.getConnection();
+
+	    try (PreparedStatement stmtEliminar = connection.prepareStatement(queryEliminarReserva)) {
+	        // Establecer el parámetro para la consulta de eliminación
+	        stmtEliminar.setInt(1, idReserva);
+
+	        // Ejecutar la consulta de eliminación
+	        int filasAfectadas = stmtEliminar.executeUpdate();
+	        if (filasAfectadas > 0) {
+	            resultado = 0; // Si la eliminación fue exitosa
+	        } else {
+	            resultado = -1; //No se ha eliminado la reserva.
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        resultado = -2;
+	    } finally {
+	        // Cerrar la conexión a la base de datos
+	        db.closeConnection();
+	    }
+
+	    return resultado;
+	}
+	
+	
+	
 }
