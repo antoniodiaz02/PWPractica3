@@ -162,29 +162,68 @@ public class PistaDAO {
      * @param pista Objeto PistaDTO con los nuevos datos.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean updatePista(PistaDTO pista) {
-        boolean respuesta = false;
+    public int updatePista(PistaDTO pista) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("update_pista");
+        String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar existencia de pista
+
+        if (pista == null) {
+            return -2; // Error: Pista no proporcionada
+        }
+
+        if (pista.getNombre() == null || pista.getNombre().isEmpty()) {
+            return -3; // Error: Nombre de la pista no válido
+        }
+
+        if (pista.getMaxJugadores() <= 0) {
+            return -4; // Error: Número máximo de jugadores no válido
+        }
+
+        if (pista.getTamanoPista() == null) {
+            return -5; // Error: Tamaño de la pista no especificado
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setBoolean(1, pista.isDisponible());
-            statement.setBoolean(2, pista.isInterior());
-            statement.setString(3, pista.getTamanoPista().name());
-            statement.setInt(4, pista.getMaxJugadores());
-            statement.setString(5, pista.getNombre());
+        try {
+            // Verificar si la pista existe
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, pista.getNombre());
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -6; // Error: La pista no existe
+                }
+            }
 
-            int rowsUpdated = statement.executeUpdate();
-            respuesta = rowsUpdated > 0;
+            // Actualizar la pista
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setBoolean(1, pista.isDisponible());
+                statement.setBoolean(2, pista.isInterior());
+                statement.setString(3, pista.getTamanoPista().name());
+                statement.setInt(4, pista.getMaxJugadores());
+                statement.setString(5, pista.getNombre());
+
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -7; // Error: No se pudo actualizar la pista
+                }
+            }
         } catch (SQLException e) {
+
+            System.err.println("Error al actualizar la pista: " + e.getMessage());
+
             e.printStackTrace();
+            respuesta = -8; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Elimina una pista de la base de datos.
@@ -192,25 +231,52 @@ public class PistaDAO {
      * @param nombre Nombre de la pista que se desea eliminar.
      * @return respuesta True si la operación es exitosa, false de lo contrario.
      */
-    public boolean deletePista(String nombre) {
-        boolean respuesta = false;
+    public int eliminarPista(String nombre) {
+        int respuesta = -1; // Valor por defecto para error desconocido
         String query = properties.getProperty("delete_pista");
+        String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar existencia
+
+        if (nombre == null || nombre.isEmpty()) {
+            return -2; // Error: Nombre no proporcionado o vacío
+        }
 
         DBConnection db = new DBConnection();
         connection = db.getConnection();
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, nombre);
+        try {
+            // Verificar si existe una pista con el nombre dado
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, nombre);
+                ResultSet resultSet = checkStatement.executeQuery();
+                if (!resultSet.next()) {
+                    return -3; // Error: No existe una pista con este nombre
+                }
+            }
 
-            int rowsDeleted = statement.executeUpdate();
-            respuesta = rowsDeleted > 0;
+            // Eliminar la pista
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, nombre);
+
+                int rowsDeleted = statement.executeUpdate();
+                if (rowsDeleted > 0) {
+                    respuesta = 0; // Operación exitosa
+                } else {
+                    respuesta = -4; // Error: No se pudo eliminar la pista
+                }
+            }
         } catch (SQLException e) {
+
+            System.err.println("Error al eliminar la pista: " + e.getMessage());
+
             e.printStackTrace();
+            respuesta = -5; // Error: Excepción SQL
         } finally {
             db.closeConnection();
         }
+
         return respuesta;
     }
+
 
     /**
      * Lista las pistas en la base de datos.

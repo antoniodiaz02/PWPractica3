@@ -33,9 +33,11 @@
             <li><a href="<%= request.getContextPath() %>/listarMateriales">Listar Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerMaterial">Dar de Alta Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/registerPista">Dar de Alta Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/eliminarPistas">Dar de Baja Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/eliminarMateriales">Dar de Baja Materiales</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/asociarMaterialAPista">Asociar Materiales a Pistas</a></li>
-            <li><a href="modificarEstadoMateriales.jsp">Modificar Estado de Materiales</a></li>
-            <li><a href="modificarEstadoPistas.jsp">Modificar Estado de Pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/updatePista">Modificar estado de pistas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/updateMaterial">Modificar estado de materiales</a></li>
             <li><a href="eliminarReservas.jsp">Eliminar Reservas</a></li>
             <li><a href="<%= request.getContextPath() %>/modificarUsuario" class="btn btn-danger">Modificar Datos de Usuarios</a></li>
             <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>

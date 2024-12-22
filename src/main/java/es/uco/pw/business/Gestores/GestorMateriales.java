@@ -26,11 +26,19 @@ public class GestorMateriales {
     	return daoMaterial.insertMaterial(material);
     }
     
+    public int eliminarMaterial(int idMaterial) {
+        
+    	return daoMaterial.eliminarMaterial(idMaterial);
+    }
     
     public int listarMateriales(Vector<MaterialDTO> todosLosMateriales) {
     	
     	return daoMaterial.listarMateriales(todosLosMateriales);
     	
+    }
+    
+    public int updateMaterial(MaterialDTO material) {
+    	return daoMaterial.updateMaterial(material);
     }
     
     
