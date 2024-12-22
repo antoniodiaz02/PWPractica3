@@ -41,8 +41,8 @@ public class LoginController extends HttpServlet {
 
                 // Determina el destino según el tipo de usuario
                 String destino = "administrador".equalsIgnoreCase(jugador.getTipoUsuario())
-                        ? "/MVC/Views/admin/adminmenu.jsp"
-                        : "/MVC/Views/user/usermenu.jsp";
+                        ? "/adminmenu"
+                        : "/usermenu";
 
                 // Redirige a la página correspondiente
                 response.sendRedirect(request.getContextPath() + destino);

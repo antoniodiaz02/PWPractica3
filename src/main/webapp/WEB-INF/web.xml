@@ -4,6 +4,29 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID" version="3.0" metadata-complete="true">
 
+	<!-- Configuración para el servlet adminmenu -->
+    <servlet>
+        <servlet-name>AdminMenuController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.admin.AdminMenuController</servlet-class> <!-- Clase que maneja la lógica de login -->
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>AdminMenuController</servlet-name>
+        <url-pattern>/adminmenu</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
+    </servlet-mapping>
+    
+    <!-- Configuración para el servlet usermenu -->
+    <servlet>
+        <servlet-name>UserMenuController</servlet-name>
+        <servlet-class>es.uco.pw.servlets.user.UserMenuController</servlet-class> <!-- Clase que maneja la lógica de login -->
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>UserMenuController</servlet-name>
+        <url-pattern>/usermenu</url-pattern> <!-- URL a la que se accede para ejecutar el servlet -->
+    </servlet-mapping>
+
+
     <!-- Configuración para el servlet LoginController -->
     <servlet>
         <servlet-name>LoginController</servlet-name>

@@ -36,7 +36,7 @@
 	<nav class="navbar">
 	    <div class="container">
 	        <ul>
-	            <li><a href="<%= request.getContextPath() %>/MVC/Views/user/usermenu.jsp">Volver al menú principal</a></li>
+	            <li><a href="<%= request.getContextPath() %>/usermenu">Volver al menú principal</a></li>
 	            <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
 	        </ul>
 	    </div>

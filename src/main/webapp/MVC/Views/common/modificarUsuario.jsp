@@ -94,7 +94,7 @@
             </form>
 
             <!-- Botón para volver al panel admin -->
-            <a href="<%= "administrador".equals(admin.getTipoUsuario()) ? request.getContextPath() + "/MVC/Views/admin/adminmenu.jsp" : request.getContextPath() + "/MVC/Views/user/usermenu.jsp" %>" class="back-button">Volver al Panel</a>
+            <a href="<%= "administrador".equals(admin.getTipoUsuario()) ? request.getContextPath() + "/adminmenu" : request.getContextPath() + "/usermenu" %>" class="back-button">Volver al Panel</a>
         </div>
     </div>
 </body>

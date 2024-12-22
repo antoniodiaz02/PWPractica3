@@ -30,7 +30,7 @@
     
                 <!-- Botón de regreso al menú -->
                 <div class="form-group">
-                    <a href="<%= request.getContextPath() %>/MVC/Views/user/usermenu.jsp" class="fw-bold">Volver al menú principal</a>
+                    <a href="<%= request.getContextPath() %>/usermenu" class="fw-bold">Volver al menú principal</a>
                 </div>
             </form>
 	           

@@ -14,7 +14,7 @@
             <p>La pista ha sido registrada correctamente.</p>
 			<a href="<%= request.getContextPath() %>/listarPistas" class="button">Ver Lista de Pistas</a>
             <a href="<%= request.getContextPath() %>/adminmenu/registerPista">Dar de alta otra pista</a>
-			<a href="<%= request.getContextPath() %>/MVC/Views/admin/adminmenu.jsp" class="button">Volver al inicio</a>
+			<a href="<%= request.getContextPath() %>/adminmenu" class="button">Volver al inicio</a>
         </div>
     </div>
 </body>

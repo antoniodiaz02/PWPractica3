@@ -73,7 +73,7 @@
                     </tbody>
                 </table>
             <% } %>
-            <a href="<%= request.getContextPath() %>/MVC/Views/admin/adminmenu.jsp" class="button">Volver al Menú</a>
+            <a href="<%= request.getContextPath() %>/adminmenu" class="button">Volver al Menú</a>
         </div>
     </div>
     <div class="footer">

@@ -68,8 +68,8 @@ public class RegisterController extends HttpServlet {
                 session.setAttribute("jugador", jugador); // Jugador disponible en toda la sesión
 
                 String destino = "administrador".equalsIgnoreCase(tipoUsuario) 
-                    ? "/MVC/Views/admin/adminmenu.jsp" 
-                    : "/MVC/Views/user/usermenu.jsp";
+                    ? "/adminmenu" 
+                    : "/usermenu";
 
                 response.sendRedirect(request.getContextPath() + destino);
             } else if (resultado == -2) {

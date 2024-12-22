@@ -2,17 +2,8 @@
 <%@ page import="java.util.List" %> <!-- Importar List -->
 
 <%
+	// Sanitización correcta realizada en el serverlet.
     es.uco.pw.business.DTOs.JugadorDTO admin = (es.uco.pw.business.DTOs.JugadorDTO) session.getAttribute("jugador");
-
-    if (admin == null || !admin.getTipoUsuario().equals("administrador")) {
-        response.sendRedirect("../../../index.jsp"); // Redireccionar al login si no hay usuario en sesión
-        return; // Detener la ejecución de la página
-    }
-
-    // Obtener la lista de usuarios desde el DAO
-    //es.uco.pw.data.DAOs.JugadorDAO jugadorDAO = new es.uco.pw.data.DAOs.JugadorDAO();
-    //List<es.uco.pw.business.DTOs.JugadorDTO> usuarios = jugadorDAO.listarUsuarios();
-
 %>
 
 <!DOCTYPE html>

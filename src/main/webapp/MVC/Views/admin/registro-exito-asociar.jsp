@@ -14,7 +14,7 @@
             <p>El material ha sido asociado correctamente a la pista.</p>
             <a href="<%= request.getContextPath() %>/listarPistas" class="button">Ver Lista de Pistas</a>
             <a href="<%= request.getContextPath() %>/adminmenu/asociarMaterialAPista" class="button">Asociar otro material</a>
-            <a href="<%= request.getContextPath() %>/MVC/Views/admin/adminmenu.jsp" class="button">Volver al inicio</a>
+            <a href="<%= request.getContextPath() %>/adminmenu" class="button">Volver al inicio</a>
         </div>
     </div>
 </body>
