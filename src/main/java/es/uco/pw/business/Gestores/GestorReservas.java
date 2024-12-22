@@ -193,8 +193,8 @@ public class GestorReservas {
 	 * @param correoUser Correo del reservante.
 	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
 	 */
-	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Date fechaInicio, Date fechaFinal, String correoUser) {
-		return daoReserva.listarReservasEntreFechas(vectorReserva,fechaInicio,fechaFinal,correoUser);
+	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Vector<String> vectorNombres, Date fechaInicio, Date fechaFinal, String correoUser) {
+		return daoReserva.listarReservasEntreFechas(vectorReserva, vectorNombres, fechaInicio, fechaFinal, correoUser);
 	}
 	
 	/**

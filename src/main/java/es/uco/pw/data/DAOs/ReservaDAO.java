@@ -5,6 +5,7 @@ import es.uco.pw.business.DTOs.ReservaAdultosDTO;
 import es.uco.pw.business.DTOs.ReservaDTO;
 import es.uco.pw.business.DTOs.ReservaFamiliarDTO;
 import es.uco.pw.business.DTOs.ReservaInfantilDTO;
+import es.uco.pw.business.Gestores.GestorPistas;
 import es.uco.pw.business.DTOs.PistaDTO.TamanoPista;
 import es.uco.pw.common.DBConnection;
 
@@ -685,11 +686,12 @@ public class ReservaDAO {
 	 * @param correoUser Correo del reservante.
 	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
 	 */
-	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Date fechaInicio, Date fechaFinal, String correoUser) {
+	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Vector<String> vectorNombres, Date fechaInicio, Date fechaFinal, String correoUser) {
 	    String query = properties.getProperty("select_entre_fechas");
 	    DBConnection db = null;
 	    Connection connection = null;
 	    int usuarioId = buscarIdJugador(correoUser);
+	    GestorPistas gestor= new GestorPistas();
 
 	    try {
 	        db = new DBConnection();
@@ -703,6 +705,7 @@ public class ReservaDAO {
 	                while (rs.next()) {
 	                    try {
 	                        String tipoReserva = rs.getString("tipoReserva");
+	                        int pistaId= rs.getInt("pistaId");
 	                        if (tipoReserva.equals("FAMILIAR")) {
 	                            vectorReserva.add(new ReservaFamiliarDTO(
 	                                rs.getInt("usuarioId"),
@@ -714,6 +717,7 @@ public class ReservaDAO {
 	                                rs.getInt("numAdultos"),
 	                                rs.getInt("numNinos")
 	                            ));
+	                      
 	                        } else if (tipoReserva.equals("INFANTIL")) {
 	                            vectorReserva.add(new ReservaInfantilDTO(
 	                                rs.getInt("usuarioId"),
@@ -724,6 +728,7 @@ public class ReservaDAO {
 	                                rs.getFloat("descuento"),
 	                                rs.getInt("numNinos")
 	                            ));
+	                            
 	                        } else {
 	                            vectorReserva.add(new ReservaAdultosDTO(
 	                                rs.getInt("usuarioId"),
@@ -735,6 +740,7 @@ public class ReservaDAO {
 	                                rs.getInt("numAdultos")
 	                            ));
 	                        }
+	                        vectorNombres.add(gestor.nombrePistas(pistaId));
 	                    } catch (IllegalArgumentException e) {
 	                        e.printStackTrace();
 	                    }
@@ -775,12 +781,10 @@ public class ReservaDAO {
 	    try {
 	        // Comprobación de fecha futura y dentro del plazo permitido
 	        if (!esReservaFutura(nuevaReserva.getFechaHora())) {
-	            System.out.println(" ERROR! No se puede modificar la reserva a una fecha pasada.");
 	            return -1;
 	        }
 	        if (plazoExcedido(nuevaReserva.getFechaHora())) {
-	            System.out.println(" ERROR! No se puede modificar la reserva porque excede el plazo permitido.");
-	            return -1;
+	            return -2;
 	        }
 
 	        try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -829,10 +833,9 @@ public class ReservaDAO {
 	            int rowsUpdated = statement.executeUpdate();
 
 	            if (rowsUpdated > 0) {
-	                codigo = 1; // Reserva modificada correctamente
+	                codigo = 0; // Reserva modificada correctamente
 	            } else {
-	                System.out.println(" ERROR! No se encontró la reserva con ID: " + idReserva);
-	                codigo = 0; // Reserva no encontrada
+	                codigo = -3; // Reserva no encontrada
 	            }
 	        }
 	    } catch (SQLException e) {
@@ -1142,11 +1145,11 @@ public class ReservaDAO {
 	            int numNinos= rs.getInt("numNinos");
 	            int numAdultos= rs.getInt("numAdultos");
 	            
-                if(tipoReserva== "ADULTOS") {
+                if(tipoReserva.equals("ADULTOS")) {
                 	reserva = new ReservaAdultosDTO(usuarioId, fechaReserva, duracion, pistaId, precio, descuento, numAdultos);
                 }
                 
-                else if(tipoReserva== "FAMILIAR") {
+                else if(tipoReserva.equals("FAMILIAR")) {
                 	reserva = new ReservaFamiliarDTO(usuarioId, fechaReserva, duracion, pistaId, precio, descuento, numAdultos, numNinos);
                 }
                 

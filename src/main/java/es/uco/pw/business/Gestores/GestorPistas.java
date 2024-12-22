@@ -146,4 +146,22 @@ public class GestorPistas {
 
         return result;
     }
+    
+    public String nombrePistas(int pistaId) {
+        return daoPista.nombrePistas(pistaId);
+    }
+    
+    /**
+     * Busca una pista por su nombre asociado.
+     * @param nombre Nombre de la pista a buscar.
+     * @return pista Objeto pista si se encuentra.
+     */
+    public PistaDTO findPistaByNombre(String nombre) {
+    	return daoPista.findPistaByNombre(nombre);
+    }
+    
+    
+    public int idPistaByNombre(String nombre) {
+    	return daoPista.idPistaByNombre(nombre);
+    }
 }

@@ -374,6 +374,59 @@ public class PistaDAO {
             db.closeConnection();
         }
     }
+    
+    
+    
+    /**
+     * Devuelve el nombre de una pista según el id.
+     * @param pistaId Es el id de la pista a buscar su nombre.
+     * @return Devuelve el nombre de la pista.
+     */
+    public String nombrePistas(int pistaId) {
+        String query = properties.getProperty("find_pista_by_id");
+        DBConnection db = new DBConnection();
+        connection = db.getConnection();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, pistaId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {    
+                    return resultSet.getString("nombre");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding pista by nombre: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            db.closeConnection();
+        }
+
+        return "";
+    }
+    
+    public int idPistaByNombre(String nombre) {
+        String query = properties.getProperty("find_pista_by_nombre");
+
+        DBConnection db = new DBConnection();
+        connection = db.getConnection();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                	return resultSet.getInt("idPista");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding pista by nombre: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            db.closeConnection();
+        }
+        return -1;
+    }
 
 
 }

@@ -75,7 +75,7 @@
             }
         %>
     </div>
-    <% if ("POST".equalsIgnoreCase(request.getMethod())) { %>
+    <% if ("POST".equalsIgnoreCase(request.getMethod()) && request.getAttribute("error-buscar") == null) { %>
     <hr>
     <div class="main-content">
         <div class="container">
@@ -117,8 +117,9 @@
 				                        adultos = (ReservaAdultosDTO) reserva;
 				                    }
 				        %>
+				        
 				        <tr>
-				            <td><%= reserva.getPistaId() %></td>
+				            <td><%= request.getAttribute("nombre") %></td>
 				            <td><%= tipo %></td>
 				            <td><%= reserva.getFechaHora() %></td>
 				            <td><%= reserva.getDuracion() %></td>
@@ -144,7 +145,7 @@
 				            } else {
 				        %>
 				        <tr>
-				            <td colspan="8">No tienes reservas entre las fechas especificadas</td>
+				            <td colspan="8">No tienes reservas según los datos especificados.</td>
 				        </tr>
 				        <% 
 				            } 
@@ -156,13 +157,13 @@
         <h2>Modificar Datos</h2>
         	<form action="<%= request.getContextPath() %>/usermenu/gestionreservas/modificar" method="POST">
 	        	<input type="hidden" name="action" value="modificar">
-	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
-	                
+	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>"> 
+	        	<input type="hidden" id="idReservaAntigua" name="idReservaAntigua" value="<%= session.getAttribute("idReserva") != null ? session.getAttribute("idReserva").toString() : "" %>"> 
 	
 	                <!-- Nueva Duracion -->
 	                <div class="form-group">
-	                    <label for="nuevDuracion">Duración</label>
-	                    <select id="nuevDuracion" name="nuevDuracion" required>
+	                    <label for="nuevaDuracion">Duración</label>
+	                    <select id="nuevaDuracion" name="nuevaDuracion">
 	                        <option value="60">60 mins.</option>
 	                        <option value="90">90 mins.</option>
 	                        <option value="120">120 mins.</option>
@@ -172,27 +173,39 @@
 	                <!-- Nueva Fecha de Reserva -->
 	                <div class="form-group">
 	                    <label for="NuevaFechaHora">Nueva fecha de reserva</label>
-	                    <input type="datetime-local" id="NuevaFechaHora" name="NuevaFechaHora" required>
+	                    <input type="datetime-local" id="NuevaFechaHora" name="NuevaFechaHora">
 	                </div>
 	                
-	                <!-- Nueva cantidad de Participantes -->
-	                
+	                <!-- Nueva cantidad de Participantes -->	                
 			        <div class="form-group">
 			            <label for="numAdultos">Número de Adultos</label>
 			            <input type="number" id="numAdultos" name="numAdultos">
 			        </div>
 				
-			        <!-- Mostrar el campo de número de niños si el tipo es Infantil o Familiar -->
-			        
+			        <!-- Mostrar el campo de número de niños si el tipo es Infantil o Familiar -->			        
 			        <div class="form-group">
 			            <label for="numNinos">Número de Niños</label>
 			            <input type="number" id="numNinos" name="numNinos">
 			        </div>
+			        
+			        <div class="form-group">
+		                <label for="nuevoNombre">Nueva pista</label>
+		                <input type="text" id="nuevoNombre" name="nuevoNombre">
+		            </div>
 	                
-	               
-	                
-	                
+                    <!-- Botón de modificar la reserva -->
+	               <div class="form-group">
+	                	<input type="submit" value="Modificar Reserva">
+	               </div>              	                
              </form>
+             <% 
+            String errorMod = (String) request.getAttribute("error-modificar");
+            if (errorMod != null) {
+        %>
+            <p class="error"><%= errorMod %></p>
+        <% 
+            }
+        %>
     
     </div>
     

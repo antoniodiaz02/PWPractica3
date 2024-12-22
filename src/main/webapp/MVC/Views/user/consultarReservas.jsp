@@ -75,82 +75,88 @@
 	    <% if ("POST".equalsIgnoreCase(request.getMethod())) { %>
         <hr>
         <div class="main-content">
-	        <div class="container">
-	            <table class="tabla-reservas">
-				    <thead>
-				        <tr>
-				            <th>Pista</th>
-				            <th>Tipo de reserva</th>
-				            <th>Día y hora</th>
-				            <th>Duración</th>
-				            <th>Precio</th>
-				            <th>Descuento</th>
-				            <th>Nº de adultos</th>
-				            <th>Nº de niños</th>
-				        </tr>
-				    </thead>
-				    <tbody>
-				        <% 
-				            Vector<ReservaDTO> reservas = (Vector<ReservaDTO>) request.getAttribute("reservas");
-				            GestorReservas gestor = new GestorReservas();
-				            if (reservas != null && !reservas.isEmpty()) {
-				                for (ReservaDTO reserva : reservas) {
-				                    String tipo = ""; // Declarar la variable 'tipo' para cada reserva
-				                    
-				                    // Declarar variables null por fuera
-				                    ReservaInfantilDTO infantil = null;
-				                    ReservaFamiliarDTO familiar = null;
-				                    ReservaAdultosDTO adultos = null;
-				
-				                    // Realizar los castings según el tipo de reserva
-				                    if (reserva instanceof ReservaInfantilDTO) {
-				                        tipo = "Infantil";
-				                        infantil = (ReservaInfantilDTO) reserva;
-				                    } else if (reserva instanceof ReservaFamiliarDTO) {
-				                        tipo = "Familiar";
-				                        familiar = (ReservaFamiliarDTO) reserva;
-				                    } else {
-				                        tipo = "Adultos";
-				                        adultos = (ReservaAdultosDTO) reserva;
-				                    }
-				        %>
-				        <tr>
-				            <td><%= reserva.getPistaId() %></td>
-				            <td><%= tipo %></td>
-				            <td><%= reserva.getFechaHora() %></td>
-				            <td><%= reserva.getDuracion() %></td>
-				            <td><%= reserva.getPrecio() %></td>
-				            <td><%= reserva.getDescuento() %></td>
-				
-				            <!-- Condicional para imprimir numAdultos según el tipo -->
-				            <td>
-				                <% if ("Adultos".equals(tipo) || "Familiar".equals(tipo)) { %>
-				                    <%= (adultos != null) ? adultos.getNumAdultos() : familiar.getNumAdultos() %>
-				                <% } %>
-				            </td>
-				
-				            <!-- Condicional para imprimir numNinos según el tipo -->
-				            <td>
-				                <% if ("Infantil".equals(tipo) || "Familiar".equals(tipo)) { %>
-				                    <%= (infantil != null) ? infantil.getNumNinos() : familiar.getNumNinos() %>
-				                <% } %>
-				            </td>
-				        </tr>
-				        <% 
-				                }
-				            } else {
-				        %>
-				        <tr>
-				            <td colspan="8">No tienes reservas entre las fechas especificadas</td>
-				        </tr>
-				        <% 
-				            } 
-				        %>
-				    </tbody>
-				</table>
-
-	        </div>
-	    </div>
+		    <div class="container">
+		        <table class="tabla-reservas">
+		            <thead>
+		                <tr>
+		                    <th>Pista</th>
+		                    <th>Tipo de reserva</th>
+		                    <th>Día y hora</th>
+		                    <th>Duración</th>
+		                    <th>Precio</th>
+		                    <th>Descuento</th>
+		                    <th>Nº de adultos</th>
+		                    <th>Nº de niños</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		                <% 
+		                    Vector<ReservaDTO> reservas = (Vector<ReservaDTO>) request.getAttribute("reservas");
+		                    Vector<String> nombres = (Vector<String>) request.getAttribute("nombres");  // Asegúrate de que 'nombres' esté disponible
+		                    if (reservas != null && !reservas.isEmpty()) {
+		                        for (int i = 0; i < reservas.size(); i++) {  // Usamos un índice para acceder a los elementos
+		                            ReservaDTO reserva = reservas.get(i);
+		                            String tipo = "";
+		                            ReservaInfantilDTO infantil = null;
+		                            ReservaFamiliarDTO familiar = null;
+		                            ReservaAdultosDTO adultos = null;
+		            
+		                            // Realizar los castings según el tipo de reserva
+		                            if (reserva instanceof ReservaInfantilDTO) {
+		                                tipo = "Infantil";
+		                                infantil = (ReservaInfantilDTO) reserva;
+		                            } else if (reserva instanceof ReservaFamiliarDTO) {
+		                                tipo = "Familiar";
+		                                familiar = (ReservaFamiliarDTO) reserva;
+		                            } else {
+		                                tipo = "Adultos";
+		                                adultos = (ReservaAdultosDTO) reserva;
+		                            }
+		                %>
+		                <tr>
+		                    <!-- Imprimir el nombre de la pista desde el vector 'nombres' usando el índice i -->
+		                    <td><%= nombres.get(i) %></td>  <!-- El nombre de la pista es el que está en el índice 'i' del vector nombres -->
+		                    <td><%= tipo %></td>
+		                    <td><%= reserva.getFechaHora() %></td>
+		                    <td><%= reserva.getDuracion() %></td>
+		                    <td><%= reserva.getPrecio() %></td>
+		                    <td><%= reserva.getDescuento() %></td>
+		
+		                    <!-- Condicional para imprimir numAdultos según el tipo -->
+		                    <td>
+		                        <% 
+		                            if ("Adultos".equals(tipo) || "Familiar".equals(tipo)) {
+		                                int numAdultos = (adultos != null) ? adultos.getNumAdultos() : (familiar != null ? familiar.getNumAdultos() : 0);
+		                                out.print(numAdultos); // Imprimir el número de adultos
+		                            }
+		                        %>
+		                    </td>
+		
+		                    <!-- Condicional para imprimir numNinos según el tipo -->
+		                    <td>
+		                        <% 
+		                            if ("Infantil".equals(tipo) || "Familiar".equals(tipo)) {
+		                                int numNinos = (infantil != null) ? infantil.getNumNinos() : (familiar != null ? familiar.getNumNinos() : 0);
+		                                out.print(numNinos); // Imprimir el número de niños
+		                            }
+		      
+		                        %>
+		                    </td>
+		                </tr>
+		                <% 
+		                        }
+		                    } else {
+		                %>
+		                <tr>
+		                    <td colspan="8">No tienes reservas entre las fechas especificadas</td>
+		                </tr>
+		                <% 
+		                    } 
+		                %>
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
 	    <% } %>
     </main>
     

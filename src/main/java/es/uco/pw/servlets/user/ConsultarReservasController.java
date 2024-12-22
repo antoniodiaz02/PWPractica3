@@ -49,11 +49,13 @@ public class ConsultarReservasController extends HttpServlet {
             // Consultar reservas a través del Gestor
             GestorReservas gestor = new GestorReservas();
             Vector<ReservaDTO> vectorReservas = new Vector<>();
-            int resultado = gestor.listarReservasEntreFechas(vectorReservas, fechaInicio, fechaFinal, correoUser);
+            Vector<String> vectorNombres = new Vector<>();
+            int resultado= gestor.listarReservasEntreFechas(vectorReservas, vectorNombres, fechaInicio, fechaFinal, correoUser);
 
             switch (resultado) {
                 case 0: // Reservas encontradas
                     request.setAttribute("reservas", vectorReservas);
+                    request.setAttribute("nombres", vectorNombres);
                     request.getRequestDispatcher("/MVC/Views/user/consultarReservas.jsp").forward(request, response);
                     break;
                 case -1: // Error genérico
