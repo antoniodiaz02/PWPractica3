@@ -275,6 +275,16 @@
 	    <url-pattern>/adminmenu/updatePista</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Configuración para el servlet EliminarReservasController -->
+	<servlet>
+	    <servlet-name>EliminarReservasController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.admin.EliminarReservasController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>EliminarReservasController</servlet-name>
+	    <url-pattern>/adminmenu/eliminarReservas</url-pattern>
+	</servlet-mapping>
+	
 	<!-- Configuración para el servlet ActualizarMaterialController -->
 	<servlet>
 	    <servlet-name>UpdateMaterialController</servlet-name>

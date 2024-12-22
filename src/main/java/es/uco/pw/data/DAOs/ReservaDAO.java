@@ -16,7 +16,6 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1287,4 +1286,44 @@ public class ReservaDAO {
         }
 	}
 
+	
+	/**
+	 * Elimina una reserva específica de la base de datos. Esta función está diseñada para ser utilizada por un administrador.
+	 *
+	 * @param idReserva Identificador de la reserva a eliminar.
+	 * @return boolean True si la eliminación fue exitosa, False en caso contrario.
+	 */
+	public int eliminarReserva(int idReserva) {
+	    int resultado = -1;
+
+	    // Consulta para eliminar la reserva (definida en el archivo de propiedades)
+	    String queryEliminarReserva = properties.getProperty("eliminar_reserva");
+
+	    DBConnection db = new DBConnection();
+	    connection = db.getConnection();
+
+	    try (PreparedStatement stmtEliminar = connection.prepareStatement(queryEliminarReserva)) {
+	        // Establecer el parámetro para la consulta de eliminación
+	        stmtEliminar.setInt(1, idReserva);
+
+	        // Ejecutar la consulta de eliminación
+	        int filasAfectadas = stmtEliminar.executeUpdate();
+	        if (filasAfectadas > 0) {
+	            resultado = 0; // Si la eliminación fue exitosa
+	        } else {
+	            resultado = -1; //No se ha eliminado la reserva.
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        resultado = -2;
+	    } finally {
+	        // Cerrar la conexión a la base de datos
+	        db.closeConnection();
+	    }
+
+	    return resultado;
+	}
+	
+	
+	
 }

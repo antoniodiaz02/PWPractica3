@@ -38,7 +38,7 @@
             <li><a href="<%= request.getContextPath() %>/adminmenu/asociarMaterialAPista">Asociar Materiales a Pistas</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/updatePista">Modificar estado de pistas</a></li>
             <li><a href="<%= request.getContextPath() %>/adminmenu/updateMaterial">Modificar estado de materiales</a></li>
-            <li><a href="eliminarReservas.jsp">Eliminar Reservas</a></li>
+            <li><a href="<%= request.getContextPath() %>/adminmenu/eliminarReservas">Eliminar Reservas</a></li>
             <li><a href="<%= request.getContextPath() %>/modificarUsuario" class="btn btn-danger">Modificar Datos de Usuarios</a></li>
             <li><a href="<%= request.getContextPath() %>/logout" class="btn btn-danger">Cerrar sesión</a></li>
         </ul>

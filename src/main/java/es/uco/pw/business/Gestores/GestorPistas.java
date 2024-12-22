@@ -120,10 +120,10 @@ public class GestorPistas {
      * 
      * @return List<PistaDTO> Lista de pistas no disponibles
      */
-    public int listarPistasNoDisponibles(Vector<PistaDTO> pistasNoDisponibles) {
+    /*public int listarPistasNoDisponibles(Vector<PistaDTO> pistasNoDisponibles) {
         
         return daoPista.listarPistasNoDisponibles(pistasNoDisponibles);
-    }
+    }*/
 
     /**
      * Método para buscar pistas libres según el número de jugadores y tipo de pista.
