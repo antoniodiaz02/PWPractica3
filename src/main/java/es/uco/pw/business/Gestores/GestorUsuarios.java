@@ -24,8 +24,8 @@ public class GestorUsuarios {
     
     /**
 	 * Añade un nuevo usuario.
-	 * @param jugador Jugador a añadir.
-	 * @return codigo Código de salida.
+	 * @param jugador JugadorDTO a añadir.
+	 * @return int Código de salida.
 	 */
     public int insertarUsuario(JugadorDTO jugador) {
         return daoJugador.insertJugador(jugador);
@@ -33,19 +33,18 @@ public class GestorUsuarios {
 
     /**
 	 * Lista usuarios en la base de datos.
-	 * 
-	 * @return codigo Código de salida.
+	 * @param vectorUsuarios Vector de objetos JugadorDTO a rellenar.
+	 * @return int Código de salida.
 	 */
     public int listarUsuarios(Vector<JugadorDTO> vectorUsuarios) {
         return daoJugador.listarUsuarios(vectorUsuarios);
     }
     
     /**
-	 * Modifica el usuario en base a el parámetro deseado.
-	 * 
+	 * Modifica el usuario en base a el parámetro deseado. 
 	 * @param jugador Objeto Jugador de JugadorDTO.
 	 * @param correoModificar Correo del usuario a identificar.
-	 * @return codigo Código de salida.
+	 * @return int Código de salida.
 	 */
     public int modificarUsuario(JugadorDTO jugador, String correoModificar) {
         return daoJugador.modificarUsuario(jugador, correoModificar);
@@ -53,27 +52,31 @@ public class GestorUsuarios {
 
     /**
 	 * Busca usuario por correo.
-	 * 
 	 * @param correo Correo del jugador a buscar en la base de datos.
-	 * @return codigo Código de salida.
+	 * @return int Código de salida.
 	 */
     public int buscarUsuarioPorCorreo(String correo) {
         return daoJugador.buscarUsuarioPorCorreo(correo);
     }
     
+    /**
+	 * Valida las credenciales de un usuario.
+	 * @param correo Correo del jugador a buscar en la base de datos.
+	 * @param contraseña Contraseña del usuario.
+	 * @return boolean Código de salida True o False.
+	 */
     public boolean validarCredenciales(String correo, String contraseña) {
     	return daoJugador.validarCredenciales(correo, contraseña);
     }
     
+    /**
+	 * Obtiene el jugador mediante su correo.
+	 * @param correo Correo del jugador a buscar en la base de datos.
+	 * @return JugadorDTO Objeto JugadorDTO con los datos del usuario.
+	 */
     public JugadorDTO obtenerJugadorPorCorreo(String correo) {
     	return daoJugador.obtenerJugadorPorCorreo(correo);
     }
-    
- 
-    
-    
-    
-    
-    
+
     
 }
