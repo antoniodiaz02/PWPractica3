@@ -1,9 +1,15 @@
 package es.uco.pw.data.DAOs;
 
+import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
+
+
 import es.uco.pw.common.DBConnection;
 
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.io.FileNotFoundException;
