@@ -51,7 +51,7 @@
         <p>Cualquier reserva que hayas solicitado la puedes cancelar desde esta opción.
            No se podrá cancelar una reserva 24 horas antes de la fecha de la reserva.</p>
         <!-- Enlace para Cancelar una Reserva -->
-        <a href="<%= request.getContextPath() %>/usermenu/gestionreservas/cancelar">Realizar Reserva</a>
+        <a href="<%= request.getContextPath() %>/usermenu/gestionreservas/cancelar">Cancelar Reserva</a>
     </div>
 </main>
 

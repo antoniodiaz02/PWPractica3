@@ -163,12 +163,22 @@ public class ModificarReservaController extends HttpServlet {
             }
 	    }
 	    
+	    else {
+	    	pista= gestorPista.findPistaByNombre(gestorPista.nombrePistas(datosReserva.getPistaId()));
+	    }
+	    
 	    // Validación del número de niños
 	    if (!numNinosStr.isEmpty() && (datosReserva instanceof ReservaInfantilDTO || datosReserva instanceof ReservaFamiliarDTO)) {
 	        try {
 	            int numNinos = Integer.parseInt(numNinosStr);
+	            //Se comprueba si sobrepasa el límite de jugadores cuando se introduce una nueva cantidad de participantes.
 	            if (datosReserva instanceof ReservaInfantilDTO) {
-	                ((ReservaInfantilDTO) datosReserva).setNumNinos(numNinos);
+	            	if(numNinos > pista.getMaxJugadores()) {
+	            		solucion= -6;
+	            	}
+	            	else {
+	            		((ReservaInfantilDTO) datosReserva).setNumNinos(numNinos);	            		
+	            	}
 	            } else if (datosReserva instanceof ReservaFamiliarDTO) {
 	                ((ReservaFamiliarDTO) datosReserva).setNumNinos(numNinos);
 	            }
@@ -185,9 +195,21 @@ public class ModificarReservaController extends HttpServlet {
 	        try {
 	            int numAdultos = Integer.parseInt(numAdultosStr);
 	            if (datosReserva instanceof ReservaAdultosDTO) {
-	                ((ReservaAdultosDTO) datosReserva).setNumAdultos(numAdultos);
+	            	//Se comprueba si sobrepasa el límite de jugadores cuando se introduce una nueva cantidad de participantes.
+	            	if(numAdultos > pista.getMaxJugadores()) {
+	            		solucion= -6;
+	            	}
+	            	else {
+	            		((ReservaAdultosDTO) datosReserva).setNumAdultos(numAdultos);	            		
+	            	}
 	            } else if (datosReserva instanceof ReservaFamiliarDTO) {
-	                ((ReservaFamiliarDTO) datosReserva).setNumAdultos(numAdultos);
+	            	//Se comprueba si sobrepasa el límite de jugadores cuando se introduce una nueva cantidad de participantes.
+	            	if(numAdultos + ((ReservaFamiliarDTO) datosReserva).getNumNinos() > pista.getMaxJugadores()) {
+	            		solucion= -6;
+	            	}
+	            	else {
+	            		((ReservaFamiliarDTO) datosReserva).setNumAdultos(numAdultos);
+	            	}
 	            }
 	        } catch (NumberFormatException e) {
 	            request.setAttribute("error-modificar", "Número de adultos no válido.");
@@ -195,6 +217,25 @@ public class ModificarReservaController extends HttpServlet {
 	            return;
 	        }
 	    }
+	    
+	    //Validación del número de participantes SI SE CAMBIA LA PISTA PERO NO EL NÚMERO DE PARTICIPANTES
+	    if (numAdultosStr.isEmpty() && datosReserva instanceof ReservaAdultosDTO) {
+        	//Se comprueba si sobrepasa el límite de jugadores.
+        	if(((ReservaAdultosDTO) datosReserva).getNumAdultos() > pista.getMaxJugadores()) {
+        		solucion= -6;
+        	}
+        } else if (numAdultosStr.isEmpty() && numNinosStr.isEmpty() && datosReserva instanceof ReservaFamiliarDTO) {
+        	//Se comprueba si sobrepasa el límite de jugadores.
+        	if(((ReservaFamiliarDTO) datosReserva).getNumAdultos() + ((ReservaFamiliarDTO) datosReserva).getNumNinos() > pista.getMaxJugadores()) {
+        		solucion= -6;
+        	}
+        }
+        else if (numNinosStr.isEmpty() && datosReserva instanceof ReservaInfantilDTO) {
+        	//Se comprueba si sobrepasa el límite de jugadores.
+        	if(((ReservaInfantilDTO) datosReserva).getNumNinos() > pista.getMaxJugadores()) {
+        		solucion= -6;
+        	}
+        }
 	    
 	    // Validación de la duración
 	    if(!duracionStr.isEmpty()) {
@@ -225,7 +266,7 @@ public class ModificarReservaController extends HttpServlet {
 	    }
 
 	    try {
-	    	if(solucion!=-4 && solucion!=-5) {
+	    	if(solucion== 0) {
 	    		// Consultar reservas a través del Gestor
 	    		solucion= gestor.modificarReserva(idReserva, datosReserva);	    		
 	    	}
@@ -252,6 +293,10 @@ public class ModificarReservaController extends HttpServlet {
 	                break;
 	            case -5: // La pista no es del mismo tipo que la reserva
 	                request.setAttribute("error-modificar", "El tipo de pista debe ser compatible con el tipo de reserva.");
+	                request.getRequestDispatcher("/MVC/Views/user/modificarReserva.jsp").forward(request, response);
+	                break;
+	            case -6: // Se ha sobrepasado el límite de jugadores en la modificación
+	                request.setAttribute("error-modificar", "El número de participantes no puede superar al del límite de la pista.");
 	                request.getRequestDispatcher("/MVC/Views/user/modificarReserva.jsp").forward(request, response);
 	                break;
 	            default: // Error desconocido

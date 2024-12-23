@@ -193,6 +193,7 @@ hr {
     margin-bottom: 20px; /* Añade margen inferior si lo necesitas */
 }
 
+/* Estilo de la tabla */
 .tabla-reservas {
     width: 100%;
     border-collapse: collapse;
@@ -202,11 +203,12 @@ hr {
 
 .tabla-reservas th, .tabla-reservas td {
     padding: 12px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #333; /* Cambia el color de las líneas que separan las celdas a oscuro */
 }
 
 .tabla-reservas th {
-    background-color: #f4f4f4;
+    background-color: #005f73; /* Color de fondo de la primera fila */
+    color: #ffffff; /* Color del texto de los encabezados */
     font-weight: bold;
 }
 
@@ -216,6 +218,14 @@ hr {
 
 .tabla-reservas tr:hover {
     background-color: #f1f1f1;
+}
+
+table.tabla-reservas tr.reserva-futura {
+    background-color: #59ca23!important;
+}
+
+table.tabla-reservas tr.reserva-pasada {
+    background-color: #ed333b !important;
 }
 
 /* Responsive */

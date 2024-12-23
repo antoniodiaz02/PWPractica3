@@ -47,7 +47,44 @@
 <main class="main-content">
     <div class="container">
         <h2>Información General</h2>
-        <p>Aquí puedes gestionar tus reservas, modificar tus datos personales y disfrutar de nuestras pistas deportivas.</p>
+        <p>
+            Bienvenido a nuestra plataforma de gestión de reservas para pistas de baloncesto. Aquí puedes realizar reservas de nuestras pistas deportivas, gestionar tus datos personales, y aprovechar las diversas ventajas que ofrecemos a nuestros usuarios. Disfruta de una experiencia completa con la mejor infraestructura deportiva disponible para todos los niveles de juego.
+        </p>
+        
+        <h3>Nuestras Pistas</h3>
+        <p>
+            Contamos con una variedad de pistas que se ajustan a todas las necesidades: desde pistas especializadas para <strong>mini-basket</strong>, ideales para jugadores jóvenes y principiantes, hasta pistas para juegos de <strong>tres contra tres</strong> o tamaño completo para <strong>jugadores adultos</strong>. Cada pista está diseñada para ofrecerte la mejor experiencia de juego, tanto si prefieres entrenamientos intensos como encuentros casuales con amigos.
+        </p>
+        
+        <div class="gallery">
+            <h4>Galería de Nuestras Pistas</h4>
+            <div class="row">
+                <div class="column">
+                    <img src="<%= request.getContextPath() %>/images/pista1.jpg" alt="Pista de Minibasket" style="width:100%">
+                    <p>Pista de Minibasket</p>
+                </div>
+                <div class="column">
+                    <img src="<%= request.getContextPath() %>/images/pista2.jpg" alt="Pista Adultos" style="width:100%">
+                    <p>Pista para Adultos</p>
+                </div>
+                <div class="column">
+                    <img src="<%= request.getContextPath() %>/images/pista3.jpg" alt="Pista 3 vs 3" style="width:100%">
+                    <p>Pista de 3 contra 3</p>
+                </div>
+            </div>
+        </div>
+
+        <p>
+            ¿Buscas ahorrar en tus reservas? Te ofrecemos la posibilidad de adquirir <strong>bonos</strong> con los cuales puedes obtener un <strong>descuento del 5%</strong> en tus próximas reservas. ¡Es una excelente opción para quienes disfrutan de un juego regular y quieren maximizar su tiempo en la cancha!
+        </p>
+        
+        <p>
+            Además, si decides unirte a nuestra comunidad de jugadores con una <strong>inscripción anual</strong>, tendrás acceso a <strong>descuentos adicionales y exclusivos</strong>. A lo largo del año, disfrutarás de promociones especiales que te permitirán obtener mayores ahorros y ventajas personalizadas, haciendo de tu experiencia deportiva algo aún más gratificante.
+        </p>
+        
+        <p>
+            Explora nuestras distintas categorías de pistas, y asegúrate de reservar con tiempo para disfrutar de nuestras instalaciones al máximo. Cada una de nuestras pistas está diseñada para garantizar que tu experiencia sea óptima y llena de emoción. ¡No te pierdas la oportunidad de ser parte de nuestra comunidad deportiva!
+        </p>
     </div>
 </main>
 

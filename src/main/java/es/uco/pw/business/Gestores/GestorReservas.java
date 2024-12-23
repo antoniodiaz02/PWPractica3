@@ -229,4 +229,8 @@ public class GestorReservas {
 		return daoReserva.eliminarReserva(idReserva);
 	}
 	
+	public boolean esReservaFutura(Date fechaHora) {
+		return daoReserva.esReservaFutura(fechaHora);
+	}
+	
 }
