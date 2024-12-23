@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
 import es.uco.pw.business.DTOs.ReservaDTO;
 import es.uco.pw.business.DTOs.PistaDTO.TamanoPista;
@@ -32,7 +31,7 @@ public class GestorReservas {
      * Constructor de la clase GestorReservas.
      */
     public GestorReservas() {
-        // Constructor vacío si no tenemos nada que inicializar
+
     }
     
 	
@@ -45,7 +44,7 @@ public class GestorReservas {
 	 * @param numeroAdultos Número de adultos que acuden.
 	 * @param numeroNinos Número de niños que acuden.
 	 * @param tipoReserva Clase Reserva que tiene más cantidad de detalles de la reserva como el tipo de reserva, el tamaño de la pista...
-	 * @return Devuelve 0 si se ha realizado correctamente la reserva, y un valor negativo según el tipo de error.
+	 * @return int Devuelve 0 si se ha realizado correctamente la reserva, y un valor negativo según el tipo de error.
 	 */
     public int hacerReservaIndividual(String correoUsuario, String nombrePista, Date fechaHora, int duracion, int numeroAdultos, int numeroNinos, Class<? extends ReservaDTO> tipoReserva) {
     	return daoReserva.hacerReservaIndividual(correoUsuario, nombrePista, fechaHora, duracion, numeroAdultos, numeroNinos, tipoReserva);
@@ -85,7 +84,7 @@ public class GestorReservas {
      * Luego, convierte los datos en un objeto Jugador.
      *
      * @param correoElectronico Correo electrónico del jugador a buscar.
-     * @return Un objeto Jugador si el correo existe en el archivo, o null si no se encuentra
+     * @return int Un objeto Jugador si el correo existe en el archivo, o null si no se encuentra
      *         o si ocurre algún error.
      */
     public int buscarIdJugador(String correoElectronico) {
@@ -99,7 +98,7 @@ public class GestorReservas {
      * Luego, convierte los datos en un objeto Pista.
      *
      * @param nombre Nombre de la pista a buscar.
-     * @return Un objeto Pista si el nombre existe en el archivo, o null si no se encuentra
+     * @return PistaDTO Un objeto Pista si el nombre existe en el archivo, o null si no se encuentra
      *         o si ocurre algún error.
      */
     public PistaDTO buscarPista(String nombre) {
@@ -113,8 +112,7 @@ public class GestorReservas {
 	 * @param bonoId Identificador único del bono.
 	 * @param correoUsuario Correo del usuario
 	 * @param tamano Indica el tamaño de pista.
-	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si contradice una de las condiciones
-	 * 		   o si ha habido un error.
+	 * @return int Código de respuesta.
 	 */
     public int comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
     	return daoReserva.comprobarBono(bonoId, correoUsuario, tamano);
@@ -124,7 +122,7 @@ public class GestorReservas {
     /**
 	 * Función que decrementa el numero de sesiones del bono y que añade la fecha al final si es la primera reserva del bono.
 	 * @param bonoId Identificador único del bono.
-	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si ha habido algun error.
+	 * @return boolean Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si ha habido algun error.
 	 */
 	public boolean actualizarSesionesBono(int bonoId) {
 		return daoReserva.actualizarSesionesBono(bonoId);
@@ -132,7 +130,7 @@ public class GestorReservas {
 	
 	/**
 	 * Función que muestra todos los detalles de las reservas futuras.
-	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 * @return int Código de respuesta
 	 */
 	public int listarReservasFuturas() {
 		return daoReserva.listarReservasFuturas();
@@ -143,7 +141,7 @@ public class GestorReservas {
 	 * Función que modifica una reserva buscada por identificador único.
 	 * @param idReserva Identificador único de la reserva a modificar.
 	 * @param nuevaReserva Clase Reserva con todos los nuevos detalles modificados.
-	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 * @return int Código de respuesta.
 	 * @throws IOException Si ocurre un error de entrada/salida al modificar el archivo de reservas.
 	 */
 	public int modificarReserva(int idReserva, ReservaDTO nuevaReserva) throws IOException {
@@ -158,7 +156,7 @@ public class GestorReservas {
 	 * @param nombrePista Nombre de la pista a filtrar.
 	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
 	 * @param idReserva Rellena el id de la reserva encontrada.
-	 * @return Devuelve el código de error de la función.
+	 * @return int Devuelve el código de error de la función.
 	*/
 	public int listarReservasPorFechaYPista(Vector<ReservaDTO> vectorReserva, Date fechaBuscada, String nombrePista, String correoUser, AtomicInteger idReserva) {
 		return daoReserva.listarReservasPorFechaYPista(vectorReserva, fechaBuscada, nombrePista, correoUser, idReserva);
@@ -168,7 +166,7 @@ public class GestorReservas {
 	/**
 	 * Función que cancela una reserva si no se ha excedido el plazo de 24 horas antes.
 	 * @param idReserva Identificador único de la reserva a cancelar.
-	 * @return Devuelve true si consiguió borrar la reserva del fichero correctamente, y devuelve false si hubo algún error.
+	 * @return boolean Devuelve true si consiguió borrar la reserva del fichero correctamente, y devuelve false si hubo algún error.
 	 */
 	public boolean cancelarReserva(int idReserva) {
 		return daoReserva.cancelarReserva(idReserva);
@@ -178,7 +176,7 @@ public class GestorReservas {
 	/**
 	 * Función que obtiene el numero de sesiones restantes de un bono.
 	 * @param bonoId Identificador único del bono a buscar.
-	 * @return sesionesRestantes Es la cantidad de sesiones que le quedan al bono.
+	 * @return int sesionesRestantes, cantidad de sesiones que le quedan al bono.
 	 */
 	public int obtenerSesionesRestantes(int bonoId) {
 		return daoReserva.obtenerSesionesRestantes(bonoId);
@@ -191,7 +189,7 @@ public class GestorReservas {
 	 * @param fechaInicio Fecha inicial del filtro de la búsqueda.
 	 * @param fechaFinal Fecha final del filtro de la búsqueda.
 	 * @param correoUser Correo del reservante.
-	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
+	 * @return int Código de respuesta.
 	 */
 	public int listarReservasEntreFechas(Vector<ReservaDTO> vectorReserva, Vector<String> vectorNombres, Date fechaInicio, Date fechaFinal, String correoUser) {
 		return daoReserva.listarReservasEntreFechas(vectorReserva, vectorNombres, fechaInicio, fechaFinal, correoUser);
@@ -200,33 +198,67 @@ public class GestorReservas {
 	/**
 	 * Obtiene el tamaño de pistas del bono. 
 	 * @param bonoId Es el identificador de bono.
-	 * @return Devuelve el string del tamaño del bono.
+	 * @return String Devuelve el string del tamaño del bono.
 	 */
 	public String obtenerTamanoBono(int bonoId) {
 		return daoReserva.obtenerTamanoBono(bonoId);
 	}
 	
 	
-	
+	/**
+	 * Obtiene la reserva por el identificador.
+	 * @param idReserva Identificador de la reserva.
+	 * @return ReservaDTO Objeto ReservaDTO.
+	 */
 	public ReservaDTO obtenerReservaPorId(int idReserva) {
 		return daoReserva.obtenerReservaPorId(idReserva);
     }
 	
-	
+	/**
+	 * Busca el identificador de una pista.
+	 * @param idPistaString Cadena idPistaString.
+	 * @return int Código de respuesta.
+	 */
 	public int buscarIdPista(String idPistaString) {
 		return daoReserva.buscarIdPista(idPistaString);
 	}
 	
+	/**
+	 * Muestra los bonos asociados a un usuario.
+	 * @param correoUser Correo del usuario.
+	 * @return boolean Código de respuesta True o False.
+	 */
 	public boolean mostrarBonos(String correoUser) {
 		return daoReserva.mostrarBonos(correoUser);
 	}
 	
+	/**
+	 * Busca las pistas.
+	 * @param vectorPistas Vector de objetos PistaDTO a rellenar
+	 * @param isInterior Muestra si la pista es interior o no.
+	 * @param fechaHora Fecha y hora de la pista.
+	 * @return int Código de respuesta.
+	 */
 	public int buscarPistas(Vector<PistaDTO> vectorPistas, boolean isInterior, Date fechaHora) {
 		return daoReserva.buscarPistas(vectorPistas,isInterior,fechaHora);
 	}
 
+	/**
+	 * Elimina la Reserva.
+	 * @param idReserva Identificador de la reserva a eliminar.
+	 * @return int Código de respuesta.
+	 */
 	public int eliminarReserva(int idReserva) {
 		return daoReserva.eliminarReserva(idReserva);
+	}
+	
+	/**
+	 * Consulta las reservas futuras.
+	 * @param fechaHora Fecha y hora a consultar.
+	 * @return boolean Código de respuesta True o False.
+	 */
+	public boolean esReservaFutura(Date fechaHora) {
+		return daoReserva.esReservaFutura(fechaHora);
 	}
 	
 }

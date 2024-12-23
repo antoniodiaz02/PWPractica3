@@ -82,7 +82,7 @@
 				    <div id="numeroParticipantesContainer">
 				        <div class="form-group" id="participantes">
 				            <label for="numParticipantes">Número de participantes</label>
-				            <input type="number" id="numParticipantes" name="numParticipantes">
+				            <input type="number" id="numParticipantes" name="numParticipantes" min="0">
 				        </div>
 				    </div>
 				
@@ -90,11 +90,11 @@
 				    <div id="numeroNiñosAdultos" style="display: none;">
 					    <div class="form-group">
 					        <label for="numNinos">Número de niños</label>
-					        <input type="number" id="numNinos" name="numNinos">
+					        <input type="number" id="numNinos" name="numNinos" min="0">
 					    </div>
 					    <div class="form-group">
 					        <label for="numAdultos">Número de adultos</label>
-					        <input type="number" id="numAdultos" name="numAdultos">
+					        <input type="number" id="numAdultos" name="numAdultos" min="0">
 					    </div>
 					</div>
     

@@ -22,7 +22,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modificar Reserva</title>
+    <title>Cancelar Reserva</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/buscar.css">
     <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
@@ -47,7 +47,7 @@
     <div class="container">
         <h2>Buscar Reserva</h2>
         
-        <form action="<%= request.getContextPath() %>/usermenu/gestionreservas/modificar" method="POST">
+        <form action="<%= request.getContextPath() %>/usermenu/gestionreservas/cancelar" method="POST">
             <input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>">
        		<input type="hidden" name="action" value="buscar">
             
@@ -154,64 +154,29 @@
 			</table>
         </div>
     <div class="container">
-        <h2>Modificar Datos</h2>
-        	<form action="<%= request.getContextPath() %>/usermenu/gestionreservas/modificar" method="POST">
-	        	<input type="hidden" name="action" value="modificar">
-	        	<input type="hidden" id="correoUser" name="correoUser" value="<%= jugador.getCorreoElectronico() %>"> 
-	
-	                <!-- Nueva Duracion -->
-	                <div class="form-group">
-	                    <label for="nuevaDuracion">Duración</label>
-	                    <select id="nuevaDuracion" name="nuevaDuracion">
-	                        <option value="60">60 mins.</option>
-	                        <option value="90">90 mins.</option>
-	                        <option value="120">120 mins.</option>
-	                    </select>
-	                </div>
-	                
-	                <!-- Nueva Fecha de Reserva -->
-	                <div class="form-group">
-	                    <label for="NuevaFechaHora">Nueva fecha de reserva</label>
-	                    <input type="datetime-local" id="NuevaFechaHora" name="NuevaFechaHora">
-	                </div>
-	                
-	                <!-- Nueva cantidad de Participantes -->	                
-			        <div class="form-group">
-			            <label for="numAdultos">Número de Adultos</label>
-			            <input type="number" id="numAdultos" name="numAdultos" min="0">
-			        </div>
-				
-			        <!-- Mostrar el campo de número de niños si el tipo es Infantil o Familiar -->			        
-			        <div class="form-group">
-			            <label for="numNinos">Número de Niños</label>
-			            <input type="number" id="numNinos" name="numNinos" min="0">
-			        </div>
-			        
-			        <div class="form-group">
-		                <label for="nuevoNombre">Nueva pista</label>
-		                <input type="text" id="nuevoNombre" name="nuevoNombre">
-		            </div>
-	                
-                    <!-- Botón de modificar la reserva -->
-	               <div class="form-group">
-	                	<input type="submit" value="Modificar Reserva">
-	               </div>              	                
-             </form>
-             <% 
-            String errorMod = (String) request.getAttribute("error-modificar");
-            if (errorMod != null) {
-        %>
-            <p class="error"><%= errorMod %></p>
-        <% 
-            }
-        %>
-    
+        <h2>Cancelar Reserva</h2>
+        	<p>¿Estas seguro de cancelar la reserva? Si pulsas el siguiente botón la reserva se eliminará</p>
+        	<form action="<%= request.getContextPath() %>/usermenu/gestionreservas/cancelar" method="POST">
+        		<input type="hidden" name="action" value="cancelar">
+	        	<input type="hidden" id="idReservaAntigua" name="idReservaAntigua" value="<%= session.getAttribute("idReserva") != null ? session.getAttribute("idReserva").toString() : "" %>">
+        	
+	        	<div class="form-group">
+	                <input type="submit" value="Cancelar Reserva">
+	            </div>    
+	        </form>
+	        <% 
+            String errorCan = (String) request.getAttribute("error-cancelar");
+            if (errorCan != null) {
+	        %>
+	            <p class="error"><%= errorCan %></p>
+	        <% 
+	            }
+	        %>
+        <% } %>
+        
+       </div> 
     </div>
-    
-    
-    </div>
-    <% } %>
-</main>
+        </main>
     
     <div class="footer">
         <div class="container">

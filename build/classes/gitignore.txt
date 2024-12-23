@@ -1,0 +1,4 @@
+/config.properties
+/es/
+/script.sql
+/sql.properties

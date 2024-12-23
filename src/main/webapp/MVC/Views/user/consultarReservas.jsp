@@ -22,7 +22,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar reservas</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/buscar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/consultas.css">
     <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -91,6 +91,7 @@
 		            </thead>
 		            <tbody>
 		                <% 
+		                	GestorReservas gestor= new GestorReservas();
 		                    Vector<ReservaDTO> reservas = (Vector<ReservaDTO>) request.getAttribute("reservas");
 		                    Vector<String> nombres = (Vector<String>) request.getAttribute("nombres");  // Asegúrate de que 'nombres' esté disponible
 		                    if (reservas != null && !reservas.isEmpty()) {
@@ -112,8 +113,10 @@
 		                                tipo = "Adultos";
 		                                adultos = (ReservaAdultosDTO) reserva;
 		                            }
+		                            
+		                            String claseFila = gestor.esReservaFutura(reserva.getFechaHora()) ? "reserva-futura" : "reserva-pasada";
 		                %>
-		                <tr>
+		                <tr class="<%= claseFila %>">
 		                    <!-- Imprimir el nombre de la pista desde el vector 'nombres' usando el índice i -->
 		                    <td><%= nombres.get(i) %></td>  <!-- El nombre de la pista es el que está en el índice 'i' del vector nombres -->
 		                    <td><%= tipo %></td>
@@ -156,6 +159,10 @@
 		            </tbody>
 		        </table>
 		    </div>
+		    <div class="container">
+			    <p>*(Las reservas que se muestran en rojo son aquellas que ya se han celebrado, y las que se muestran en verde son las que
+			       faltan por celebrarse).</p>
+			</div>
 		</div>
 	    <% } %>
     </main>
