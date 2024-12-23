@@ -304,4 +304,24 @@
 	    <servlet-name>UpdateMaterialController</servlet-name>
 	    <url-pattern>/adminmenu/updateMaterial</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Configuración para el servlet CancelarReservaController -->
+	<servlet>
+	    <servlet-name>CancelarReservaController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.user.CancelarReservaController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>CancelarReservaController</servlet-name>
+	    <url-pattern>/usermenu/gestionreservas/cancelar</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Configuración para el servlet CancelarReservaExitoController -->
+	<servlet>
+	    <servlet-name>CancelarReservaExitoController</servlet-name>
+	    <servlet-class>es.uco.pw.servlets.user.CancelarReservaExitoController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>CancelarReservaExitoController</servlet-name>
+	    <url-pattern>/usermenu/gestionreservas/cancelar/exito</url-pattern>
+	</servlet-mapping>
 </web-app>
