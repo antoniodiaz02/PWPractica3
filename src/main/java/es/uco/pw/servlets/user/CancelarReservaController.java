@@ -4,24 +4,36 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import es.uco.pw.business.DTOs.ReservaDTO;
-import es.uco.pw.business.DTOs.PistaDTO;
-import es.uco.pw.business.DTOs.PistaDTO.TamanoPista;
-import es.uco.pw.business.DTOs.ReservaInfantilDTO;
-import es.uco.pw.business.DTOs.ReservaFamiliarDTO;
-import es.uco.pw.business.DTOs.ReservaAdultosDTO;
 import es.uco.pw.business.Gestores.GestorReservas;
-import es.uco.pw.business.Gestores.GestorPistas;
-import es.uco.pw.data.DAOs.ReservaDAO;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ *  @author Antonio Diaz Barbancho
+ *  @author Carlos Marín Rodríguez 
+ *  @author Carlos De la Torre Frias (GM2)
+ *  @author Daniel Grande Rubio (GM2)
+ *  @since 12-10-2024
+ *  @version 1.0
+ */
+
+/**
+ * Controlador que gestiona la funcionalidad de cancelar reservas.
+ */
 public class CancelarReservaController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Maneja las solicitudes HTTP GET.
+     * 
+     * @param request el objeto {@link HttpServletRequest} que contiene la solicitud del cliente.
+     * @param response el objeto {@link HttpServletResponse} que contiene la respuesta al cliente.
+     * @throws ServletException si ocurre un error en el despacho de la solicitud.
+     * @throws IOException si ocurre un error de entrada/salida.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Redirigir a la página de gestión de bonos.
@@ -52,6 +64,13 @@ public class CancelarReservaController extends HttpServlet {
 		    }
 	}
 	
+	/**
+     * Maneja las solicitudes HTTP POST.
+     * @param request el objeto {@link HttpServletRequest} que contiene la solicitud del cliente.
+     * @param response el objeto {@link HttpServletResponse} que contiene la respuesta al cliente.
+     * @throws ServletException si ocurre un error en el despacho de la solicitud.
+     * @throws IOException si ocurre un error de entrada/salida.
+     */
 	private void buscarReserva(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String correoUser = request.getParameter("correoUser") != null ? request.getParameter("correoUser").trim() : "";
     	String nombrePista = request.getParameter("nombrePista") != null ? request.getParameter("nombrePista").trim() : "";
