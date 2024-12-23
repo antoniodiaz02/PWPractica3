@@ -21,6 +21,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ *  @author Antonio Diaz Barbancho
+ *  @author Carlos Marín Rodríguez 
+ *  @author Carlos De la Torre Frias (GM2)
+ *  @author Daniel Grande Rubio (GM2)
+ *  @since 12-10-2024
+ *  @version 1.0
+ */
 
 /**
  * Clase que gestiona las reservas en la base de datos.
@@ -55,7 +63,6 @@ public class ReservaDAO {
     
     /**
      * Realiza una reserva individual.
-     * 
      * @param correoUsuario Correo del usuario a realizar la reserva.
      * @param nombrePista Nombre de la pista a reservar.
      * @param fechaHora Fecha de la reserva.
@@ -151,7 +158,6 @@ public class ReservaDAO {
         return respuesta;
     }
 
-    
     /**
 	 * Realiza una reserva con bono.
 	 * @param correoUsuario Correo del usuario que realiza la reserva.
@@ -282,12 +288,10 @@ public class ReservaDAO {
         return respuesta;
     }
    
-    
     /**
 	 * Calcula la antiguedad del jugador.
-	 * 
 	 * @param correoElectronico Correo del usuario que pide el bono.
-	 * @return Respuesta Devuelve el codigo de error del proceso.
+	 * @return respuesta Devuelve el codigo de error del proceso.
 	 */
     public int calcularAntiguedadJugador(String correoElectronico) {
     	
@@ -327,7 +331,7 @@ public class ReservaDAO {
 	 * Genera un nuevo bono de usuario.
 	 * @param correoUsuario Correo del usuario que pide el bono.
 	 * @param tamano Tipo de pista a la que asignar el bono.
-	 * @return Devuelve 0 si el procedimiento de creacion del bono se ha hecho de manera correcta, y un valor negativo si hay algo que falla.
+	 * @return int Devuelve 0 si el procedimiento de creacion del bono se ha hecho de manera correcta, y un valor negativo si hay algo que falla.
 	 */
     public int hacerNuevoBono(String correoUsuario, TamanoPista tamano){
     	    	
@@ -381,12 +385,11 @@ public class ReservaDAO {
     	return 0;
         	
     }
-
     
     /**
 	 * Función que calcula el precio de reserva respecto al tiempo que se quiere reservar.
 	 * @param duracion Tiempo de duración de la reserva.
-	 * @return Devuelve el precio total de reserva sin descuento respecto al tiempo de reserva.
+	 * @return float Devuelve el precio total de reserva sin descuento respecto al tiempo de reserva.
 	 */
     private float calcularPrecio(int duracion) {
         switch (duracion) {
@@ -404,9 +407,8 @@ public class ReservaDAO {
     
     /**
      * Busca y devuelve el identificador del jugador con el correo descrito.
-     *
      * @param correoElectronico Correo electrónico del jugador a buscar.
-     * @return El valor de su identificador.
+     * @return idJugador El valor de su identificador.
      */
     public int buscarIdJugador(String correoElectronico) {
         String queryBuscar = properties.getProperty("buscar_por_correo");
@@ -435,9 +437,8 @@ public class ReservaDAO {
     
     /**
      * Busca y devuelve el identificador de la pista con el nombre a buscar.
-     *
      * @param nombre Nombre de la pista a buscar.
-     * @return El identificador de la pista con el nombre de pista nombre.
+     * @return idPista El identificador de la pista con el nombre de pista nombre.
      */
     public int buscarIdPista(String nombre) {
     	String queryBuscar = properties.getProperty("find_pista_by_nombre");
@@ -463,12 +464,10 @@ public class ReservaDAO {
         return idPista;
     }
     
-    
     /**
      * Busca y devuelve un objeto Pista a partir de su nombre.
      * Lee el archivo de pistas línea por línea hasta encontrar el nombre de pista solicitado.
      * Luego, convierte los datos en un objeto Pista.
-     *
      * @param nombre Nombre de la pista a buscar.
      * @return Un objeto Pista si el nombre existe en el archivo, o null si no se encuentra
      *         o si ocurre algún error.
@@ -478,15 +477,13 @@ public class ReservaDAO {
     	return pista.findPistaByNombre(nombre);
     }
  
-    
     /**
 	 * Comprueba si el bono tiene sesiones disponibles, si no está caducado, si el bono es de la persona que intenta aceder a él 
 	 * y si la reserva que se quiere hacer con el bono, es a una pista del mismo tamaño que del bono.
 	 * @param bonoId Identificador único del bono.
 	 * @param correoUsuario Correo del usuario
 	 * @param tamano Indica el tamaño de pista.
-	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si contradice una de las condiciones
-	 * 		   o si ha habido un error.
+	 * @return int Código de operación.
 	 */
     public int comprobarBono(int bonoId, String correoUsuario, TamanoPista tamano) {
     	String query = properties.getProperty("buscar_bono");
@@ -549,11 +546,10 @@ public class ReservaDAO {
     	return 0; // El bono es válido
     }
 
-    
     /**
 	 * Función que decrementa el numero de sesiones del bono y que añade la fecha al final si es la primera reserva del bono.
 	 * @param bonoId Identificador único del bono.
-	 * @return Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si ha habido algun error.
+	 * @return boolean Si se ha realizado el procedimiento correctamente devuelve true, y devuelve false si ha habido algun error.
 	 */
 	public boolean actualizarSesionesBono(int bonoId) {
 		
@@ -608,17 +604,14 @@ public class ReservaDAO {
 
 	                    int rowsUpdated = stmtActualizar.executeUpdate();
 	                    if (rowsUpdated <= 0) {
-	                        System.out.println(" ERROR! No se pudo actualizar el bono.");
 	                        return false;
 	                    }
 	                }
 	            } else {
-	                System.out.println(" ERROR! No se encontró el bono con ID: " + bonoId);
 	                return false;
 	            }
 	        }
 	    } catch (SQLException e) {
-	        System.out.println(" ERROR! No se pudo actualizar las sesiones del bono: " + e.getMessage());
 	        e.printStackTrace();
 	        return false;
 	    } finally {
@@ -628,11 +621,10 @@ public class ReservaDAO {
 	    return true;
 	}
 	
-	
 	/**
 	 * Función que calcula si se ha excedido el plazo de 24 horas anterior a la reservas.
 	 * @param fechaRecibida Fecha de la reserva que se quiere comprobar.
-	 * @return Devuelve true si se excedió el plazo, y devuelve false si no se ha excedido el plazo. 
+	 * @return staticboolean Devuelve true si se excedió el plazo, y devuelve false si no se ha excedido el plazo. 
 	 */
 	public static boolean plazoExcedido(Date fechaRecibida) {
 
@@ -646,9 +638,8 @@ public class ReservaDAO {
         return fechaActual.after(cal.getTime());
 	}
 	
-	
 	/**
-	 * Función que muestra todos los detalles de las reservas futuras.
+	 * Función que muestra todos los detalles de las reservas futuras. (Función En Mantenimiento)
 	 * @return codigo Devuelve un numero distinto dependiendo del error que haya habido. 
 	 */
 	public int listarReservasFuturas() {
@@ -798,10 +789,7 @@ public class ReservaDAO {
 	 * Función que modifica una reserva buscada por identificador único.
 	 * @param idReserva Identificador único de la reserva a modificar.
 	 * @param nuevaReserva Clase Reserva con todos los nuevos detalles modificados.
-	 * @return codigo Devuelve un número distinto dependiendo del error que haya habido. 
-	 *               -1: Error en la fecha (pasada o fuera de plazo).
-	 *                0: Reserva no encontrada.
-	 *                1: Reserva modificada correctamente.
+	 * @return codigo Código de respuesta.
 	 */
 	public int modificarReserva(int idReserva, ReservaDTO nuevaReserva) {
 	    String query = properties.getProperty("modificar_reserva");
@@ -871,7 +859,6 @@ public class ReservaDAO {
 	            }
 	        }
 	    } catch (SQLException e) {
-	        System.err.println(" ERROR! Error al modificar la reserva en la base de datos: " + e.getMessage());
 	        e.printStackTrace();
 	        codigo = -1; // Error durante la modificación
 	    } finally {
@@ -881,7 +868,6 @@ public class ReservaDAO {
 	    return codigo;
 	}
 	
-	
 	/**
 	 * Función que calcula si muestra todos los detalles de las reservas con una fecha y pista exacta.
 	 * @param reserva Se almacenan los datos de la reserva si la encuentra.
@@ -889,7 +875,7 @@ public class ReservaDAO {
 	 * @param nombrePista Nombre de la pista a filtrar.
 	 * @param correoUser Es el correo del usuario que solicita la búsqueda de la reserva.
 	 * @param idReserva Rellena el id de la reserva encontrada.
-	 * @return Devuelve el código de error de la función.
+	 * @return int Devuelve el código de error de la función.
 	*/
 	public int listarReservasPorFechaYPista(Vector<ReservaDTO> vectorReserva, Date fechaBuscada, String nombrePista, String correoUser, AtomicInteger idReserva) {
 		
@@ -976,11 +962,10 @@ public class ReservaDAO {
         
 	}
 	
-	
 	/**
 	 * Función que cancela una reserva si no se ha excedido el plazo de 24 horas antes.
 	 * @param idReserva Identificador único de la reserva a cancelar.
-	 * @return Devuelve true si consiguió borrar la reserva del fichero correctamente, y devuelve false si hubo algún error.
+	 * @return eliminada Devuelve true si consiguió borrar la reserva del fichero correctamente, y devuelve false si hubo algún error.
 	 */
 	public boolean cancelarReserva(int idReserva) {
 		boolean eliminada= false;
@@ -1017,14 +1002,14 @@ public class ReservaDAO {
 	                    }
 	                }
 	            } else {
-	                System.out.println("ERROR! No se puede eliminar la reserva porque el plazo de 24 horas ha sido excedido.");
+
 	            }
 	        } else {
-	            System.out.println("ERROR! No se encontró una reserva con el id proporcionado.");
+
 	        }
 
 	    } catch (SQLException e) {
-	        System.out.println("ERROR! Error al ejecutar la consulta: " + e.getMessage());
+
 	        e.printStackTrace();
 	    } finally {
 	        // Cerrar la conexión a la base de datos
@@ -1032,7 +1017,6 @@ public class ReservaDAO {
 	    }
 	    return eliminada;
 	}
-	
 	
 	/**
 	 * Función que obtiene el numero de sesiones restantes de un bono.
@@ -1057,7 +1041,6 @@ public class ReservaDAO {
             
             
         } catch (SQLException e) {
-            System.err.println("Error inserting pista: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
@@ -1066,12 +1049,11 @@ public class ReservaDAO {
 	    return sesionesRestantes;
 	}
 	
-	
 	/**
 	 * Verifica si ya existe una reserva para la misma pista y horario.
 	 * @param nombrePista Nombre de la pista a reservar.
 	 * @param fechaHora Día y hora de la reserva de la pista.
-	 * @return Devuelve true si ya existe una reserva para la misma pista y horario, y false si no existe.
+	 * @return boolean Devuelve true si ya existe una reserva para la misma pista y horario, y false si no existe.
 	 */
 	private boolean existeReservaParaPistaYHora(String nombrePista, Date fechaHora) {
 		String query = properties.getProperty("buscar_reserva_existente");
@@ -1098,22 +1080,20 @@ public class ReservaDAO {
 		return false; // No existe una reserva
 	}
 	
-	
 	/**
 	 * Verifica si la fecha de la reserva es una fecha futura.
 	 * @param fechaReserva Fecha de la reserva a verificar.
-	 * @return Devuelve true si la fecha es futura, y false si la fecha ya ha pasado.
+	 * @return boolean Devuelve true si la fecha es futura, y false si la fecha ya ha pasado.
 	 */
 	public boolean esReservaFutura(Date fechaReserva) {
 	    Date fechaActual = new Date();
 	    return fechaReserva.after(fechaActual);
 	}
-
 	
 	/**
 	 * Obtiene el tamaño de pistas del bono. 
 	 * @param bonoId Es el identificador de bono.
-	 * @return Devuelve el string del tamaño del bono.
+	 * @return tamanoBono Devuelve el string del tamaño del bono.
 	 */
 	public String obtenerTamanoBono(int bonoId) {
 		String tamanoBono= " ERROR!";
@@ -1139,7 +1119,6 @@ public class ReservaDAO {
 	        }
 
 	    } catch (SQLException e) {
-	        System.out.println("ERROR! Error al ejecutar la consulta: " + e.getMessage());
 	        e.printStackTrace();
 	    } finally {
 	        // Cerrar la conexión a la base de datos
@@ -1148,8 +1127,11 @@ public class ReservaDAO {
 	    return tamanoBono;
 	}
 	
-	
-	
+	/**
+	 * Obtiene la reserva por el id.
+	 * @param idReserva Identificador de la reserva.
+	 * @return reserva Objeto ReservaDTO con la reserva encontrada.
+	 */
 	public ReservaDTO obtenerReservaPorId(int idReserva) {
 		String query= properties.getProperty("buscar_reserva");
 		
@@ -1192,7 +1174,6 @@ public class ReservaDAO {
 	        }
 
 	    } catch (SQLException e) {
-	        System.out.println("ERROR! Error al ejecutar la consulta: " + e.getMessage());
 	        e.printStackTrace();
 	    } finally {
 	        // Cerrar la conexión a la base de datos
@@ -1202,7 +1183,11 @@ public class ReservaDAO {
         return reserva; // Devolver null si no se encontró la reserva
     }
 	
-	
+	/**
+	 * Muestra los bonos de un usuario
+	 * @param correoUser Correo del usuario.
+	 * @return boolean Resultado de la operación True o False.
+	 */
 	public boolean mostrarBonos(String correoUser) {
 		int jugador = buscarIdJugador(correoUser); // Obtener ID del jugador
 		String query= properties.getProperty("select_user_bono");
@@ -1218,7 +1203,6 @@ public class ReservaDAO {
 		     }
         }
         catch (SQLException e) {
-            System.out.println("ERROR! No se pudo obtener las reservas futuras: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
@@ -1232,6 +1216,13 @@ public class ReservaDAO {
 		
 	}
 	
+	/**
+	 * Busca Pista
+	 * @param vectorPistas Vector de objetos PistaDTO a rellenar.
+	 * @param isInterior indica si la pista es interior o exterior.
+	 * @param fechaHora Fecha y hora a buscar.
+	 * @return int Código de respuesta.
+	 */
 	public int buscarPistas(Vector<PistaDTO> vectorPistas, boolean isInterior, Date fechaHora) {
 		String query = properties.getProperty("select_pistas_disponibles");
         DBConnection db = new DBConnection();
@@ -1281,7 +1272,6 @@ public class ReservaDAO {
 
         } catch (SQLException e) {
             // Error en la consulta SQL
-            System.err.println("Error listing pistas: " + e.getMessage());
             e.printStackTrace();
             return -4;
         } finally {
@@ -1289,12 +1279,10 @@ public class ReservaDAO {
         }
 	}
 
-	
 	/**
 	 * Elimina una reserva específica de la base de datos. Esta función está diseñada para ser utilizada por un administrador.
-	 *
 	 * @param idReserva Identificador de la reserva a eliminar.
-	 * @return boolean True si la eliminación fue exitosa, False en caso contrario.
+	 * @return resultado Código de operación.
 	 */
 	public int eliminarReserva(int idReserva) {
 	    int resultado = -1;
@@ -1326,7 +1314,6 @@ public class ReservaDAO {
 
 	    return resultado;
 	}
-	
 	
 	
 }

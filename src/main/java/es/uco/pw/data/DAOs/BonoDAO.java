@@ -14,6 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase Bonos.
+ * 
+ * 
+ *  @author Antonio Diaz Barbancho
+ *  @author Carlos Marín Rodríguez 
+ *  @author Carlos De la Torre Frias (GM2)
+ *  @author Daniel Grande Rubio (GM2)
+ *  @since 12-10-2024
+ *  @version 1.0
+ */
+
+/**
  * Clase que gestiona los bonos en la base de datos.
  */
 public class BonoDAO {
@@ -49,7 +61,7 @@ public class BonoDAO {
      * Obtiene la lista de bonos de un usuario por su correo electrónico
      * 
      * @param correoUser Correo electrónico del usuario.
-     * @return bonos Lista de bonos asociados al usuario
+     * @return List<BonoDTO> bonos Lista de bonos asociados al usuario
      */
     public List<BonoDTO> obtenerBonosPorCorreo(String correoUser) {
     	
@@ -89,7 +101,7 @@ public class BonoDAO {
      * Inserta un nuevo bono en la base de datos
      * 
      * @param bono Objeto BonoDTO con la información del bono a insertar
-     * @return true si la inserción fue exitosa, false en caso contrario
+     * @return boolean true si la inserción fue exitosa, false en caso contrario
      */
     public boolean insertarBono(BonoDTO bono) {
     	

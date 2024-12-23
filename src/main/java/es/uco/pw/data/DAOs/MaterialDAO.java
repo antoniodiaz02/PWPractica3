@@ -15,6 +15,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ *  @author Antonio Diaz Barbancho
+ *  @author Carlos Marín Rodríguez 
+ *  @author Carlos De la Torre Frias (GM2)
+ *  @author Daniel Grande Rubio (GM2)
+ *  @since 12-10-2024
+ *  @version 1.0
+ */
+
+/**
  * Clase que gestiona los materiales en la base de datos.
  */
 public class MaterialDAO {
@@ -47,9 +56,8 @@ public class MaterialDAO {
 
     /**
      * Inserta un nuevo material en la base de datos.
-     *
      * @param material Objeto MaterialDTO que se desea insertar.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Código de respuesta.
      */
     public int insertMaterial(MaterialDTO material) {
     	
@@ -112,7 +120,6 @@ public class MaterialDAO {
     }
     /**
      * Busca un material por su ID.
-     *
      * @param idMaterial El ID del material que se desea buscar.
      * @return material Un objeto MaterialDTO si se encuentra, null en caso contrario.
      */
@@ -146,12 +153,10 @@ public class MaterialDAO {
         return material;
     }
 
-
     /**
      * Actualiza la información de un material en la base de datos.
-     *
      * @param material El objeto MaterialDTO con los nuevos datos.
-     * @return respuesta Codigo de respuesta.
+     * @return respuesta Código de respuesta.
      */
     public int updateMaterial(MaterialDTO material) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -211,10 +216,8 @@ public class MaterialDAO {
         return respuesta;
     }
 
-
     /**
      * Elimina un material de la base de datos.
-     *
      * @param idMaterial El ID del material que se desea eliminar.
      * @return respuesta Código de respuesta.
      */
@@ -263,12 +266,11 @@ public class MaterialDAO {
         return respuesta;
     }
 
-
     /**
-     * Recupera todos los materiales de la base de datos.
+     * Lista todos los materiales de la base de datos.
      * 
      * @param vectorMateriales Vector de Objetos MaterialesDTO donde se guardaran los materiales listados.
-     * @return materials Una lista de objetos MaterialDTO.
+     * @return int Código de respuesta.
      */
     public int listarMateriales(Vector<MaterialDTO> vectorMateriales) {
     	
@@ -327,7 +329,6 @@ public class MaterialDAO {
     
     /**
      * Obtiene los materiales por pista.
-     * 
      * @param nombrePista Nombre de la pista a obtener los materiales.
      * @return materiales Una lista de objetos MaterialDTO.
      */
@@ -363,7 +364,6 @@ public class MaterialDAO {
         System.err.println("HOLA");
         return materiales;
     }
-
 
     
 }

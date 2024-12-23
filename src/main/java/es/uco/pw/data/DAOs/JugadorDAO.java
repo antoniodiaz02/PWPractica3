@@ -54,7 +54,7 @@ public class JugadorDAO {
     /**
 	 * Inserta un usuario en la base de datos.
 	 * @param jugador Objeto JugadorDTO.
-	 * @return codigo Devuelve el código de error.
+	 * @return codigo Código de respuesta.
 	 */
     public int insertJugador(JugadorDTO jugador) {
         int codigo = 0;
@@ -101,7 +101,7 @@ public class JugadorDAO {
     }
     
     /**
-	 * Busca un suario por correo electrónico asociado.
+	 * Busca un usuario por correo electrónico asociado.
 	 * @param correo Correo del usuario asociado.
 	 * @return codigo Devuelve el código de error.
 	 */
@@ -211,7 +211,7 @@ public class JugadorDAO {
     public int modificarUsuario(JugadorDTO jugador, String correo) {
         int codigo = 0;
 
-        // Construcción dinámica de la query
+        // Construcción dinámica de la query (No podemos añadirla a Sql.Properties.
         StringBuilder queryActualizar = new StringBuilder("UPDATE Usuarios SET ");
         boolean firstField = true;
 
@@ -286,7 +286,7 @@ public class JugadorDAO {
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, correo);
-            stmt.setString(2, contraseña); // Aplica la función de cifrado si la contraseña está cifrada
+            stmt.setString(2, contraseña);
 
             ResultSet rs = stmt.executeQuery();
 
@@ -306,7 +306,7 @@ public class JugadorDAO {
     /**
      * Obtiene la información de un jugador a partir de su correo electrónico.
      * @param correo Correo electrónico del jugador.
-     * @return Objeto JugadorDTO con la información del jugador o null si no se encuentra.
+     * @return jugador Objeto JugadorDTO con la información del jugador o null si no se encuentra.
      */
     public JugadorDTO obtenerJugadorPorCorreo(String correo) {
         JugadorDTO jugador = null;
