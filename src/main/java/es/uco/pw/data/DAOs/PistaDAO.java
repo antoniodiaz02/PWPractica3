@@ -1,20 +1,23 @@
 package es.uco.pw.data.DAOs;
 
-import es.uco.pw.business.DTOs.JugadorDTO;
 import es.uco.pw.business.DTOs.PistaDTO;
 
-
 import es.uco.pw.common.DBConnection;
-
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+/**
+ *  @author Antonio Diaz Barbancho
+ *  @author Carlos Marín Rodríguez 
+ *  @author Carlos De la Torre Frias (GM2)
+ *  @author Daniel Grande Rubio (GM2)
+ *  @since 12-10-2024
+ *  @version 1.0
+ */
 
 /**
  * Clase que gestiona las pistas en la base de datos.
@@ -50,7 +53,6 @@ public class PistaDAO {
 
     /**
      * Inserta una nueva pista en la base de datos si cumple con las validaciones necesarias.
-     * 
      * @param pista Objeto {@link PistaDTO} que contiene los datos de la pista a insertar.
      * @return respuesta Código entero que representa el resultado de la operación.
      */
@@ -118,12 +120,10 @@ public class PistaDAO {
         return respuesta;
     }
 
-
     /**
      * Busca una pista por su nombre asociado.
-     * 
      * @param nombre Nombre de la pista a buscar.
-     * @return pista Objeto pista si se encuentra.
+     * @return pista Objeto pistaDTO si se encuentra.
      */
     public PistaDTO findPistaByNombre(String nombre) {
         PistaDTO pista = null;
@@ -158,9 +158,8 @@ public class PistaDAO {
 
     /**
      * Actualiza la información de una pista en la base de datos.
-     *
      * @param pista Objeto PistaDTO con los nuevos datos.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Código de respuesta.
      */
     public int updatePista(PistaDTO pista) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -213,8 +212,6 @@ public class PistaDAO {
             }
         } catch (SQLException e) {
 
-            System.err.println("Error al actualizar la pista: " + e.getMessage());
-
             e.printStackTrace();
             respuesta = -8; // Error: Excepción SQL
         } finally {
@@ -224,12 +221,10 @@ public class PistaDAO {
         return respuesta;
     }
 
-
     /**
      * Elimina una pista de la base de datos.
-     *
      * @param nombre Nombre de la pista que se desea eliminar.
-     * @return respuesta True si la operación es exitosa, false de lo contrario.
+     * @return respuesta Código de respuesta.
      */
     public int eliminarPista(String nombre) {
         int respuesta = -1; // Valor por defecto para error desconocido
@@ -237,7 +232,8 @@ public class PistaDAO {
         String checkQuery = properties.getProperty("check_pista_nombre"); // Consulta para verificar existencia
 
         if (nombre == null || nombre.isEmpty()) {
-            return -2; // Error: Nombre no proporcionado o vacío
+        	respuesta = -2;
+            return respuesta; // Error: Nombre no proporcionado o vacío
         }
 
         DBConnection db = new DBConnection();
@@ -249,7 +245,8 @@ public class PistaDAO {
                 checkStatement.setString(1, nombre);
                 ResultSet resultSet = checkStatement.executeQuery();
                 if (!resultSet.next()) {
-                    return -3; // Error: No existe una pista con este nombre
+                	respuesta = 3;
+                    return respuesta; // Error: No existe una pista con este nombre
                 }
             }
 
@@ -266,8 +263,6 @@ public class PistaDAO {
             }
         } catch (SQLException e) {
 
-            System.err.println("Error al eliminar la pista: " + e.getMessage());
-
             e.printStackTrace();
             respuesta = -5; // Error: Excepción SQL
         } finally {
@@ -277,12 +272,10 @@ public class PistaDAO {
         return respuesta;
     }
 
-
     /**
      * Lista las pistas en la base de datos.
-     * 
      * @param vectorPistas Vector donde se almacenarán las pistas recuperadas.
-     * @return resultado Código de resultado (0 si es exitoso, o un número negativo para errores).
+     * @return resultado Código de resultado.
      */
     public int listarPistas(Vector<PistaDTO> vectorPistas) {
     	int resultado = -1; //Resultado por defecto
@@ -342,7 +335,6 @@ public class PistaDAO {
     
     /**
      * Asocia el material a una pista.
-     * 
      * @param nombrePista Nombre de la pista a asociar.
      * @param idMaterial Id del material a asociar.
      * @return respuesta Código de resultado.
@@ -453,12 +445,10 @@ public class PistaDAO {
         }
     }
     
-    
-    
     /**
      * Devuelve el nombre de una pista según el id.
      * @param pistaId Es el id de la pista a buscar su nombre.
-     * @return Devuelve el nombre de la pista.
+     * @return String Devuelve el nombre de la pista.
      */
     public String nombrePistas(int pistaId) {
         String query = properties.getProperty("find_pista_by_id");
@@ -474,7 +464,6 @@ public class PistaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error finding pista by nombre: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
@@ -483,6 +472,11 @@ public class PistaDAO {
         return "";
     }
     
+    /**
+     * Devuelve el identificador de la pista por el nombre.
+     * @param nombre Nombre de la pista.
+     * @return int Identificador de la pista.
+     */
     public int idPistaByNombre(String nombre) {
         String query = properties.getProperty("find_pista_by_nombre");
 
@@ -498,13 +492,11 @@ public class PistaDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error finding pista by nombre: " + e.getMessage());
             e.printStackTrace();
         } finally {
             db.closeConnection();
         }
         return -1;
     }
-
 
 }
