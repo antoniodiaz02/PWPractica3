@@ -1,0 +1,9 @@
+es.uco.pw.business
+es.uco.pw.business.DTOs
+es.uco.pw.business.Gestores
+es.uco.pw.common
+es.uco.pw.data.DAOs
+es.uco.pw.display.javabean
+es.uco.pw.servlets.admin
+es.uco.pw.servlets.common
+es.uco.pw.servlets.user
