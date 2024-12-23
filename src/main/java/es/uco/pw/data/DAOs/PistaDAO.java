@@ -308,7 +308,7 @@ public class PistaDAO {
                     PistaDTO pista = new PistaDTO(
                         resultSet.getString("nombre"),
                         resultSet.getBoolean("estado"),
-                        resultSet.getString("tipo").equalsIgnoreCase("INTERIOR"),
+                        resultSet.getBoolean("tipo"),
                         tamanoPista,
                         resultSet.getInt("numMaxJugadores")
                     );
